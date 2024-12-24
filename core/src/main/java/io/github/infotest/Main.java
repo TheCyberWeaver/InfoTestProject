@@ -1,6 +1,7 @@
 package io.github.infotest;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
@@ -17,7 +18,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
-public class Main extends ApplicationAdapter {
+public class Main extends Game {
     private SpriteBatch batch;
     private Texture playerTexture;
 
@@ -28,13 +29,20 @@ public class Main extends ApplicationAdapter {
     // Store all players' position information,
     // key as socketId
     // value as a simple coordinate object
-    private HashMap<String, PlayerPosition> players = new HashMap<>();
+    private HashMap<String, Player> players = new HashMap<>();
     private String mySocketId;
 
+    private Texture t;
+
+    public int gameMode=0;//0:startScreenMode 1:gamingMode
     @Override
     public void create() {
+
+        setScreen(new StartScreen(this));
+
         batch = new SpriteBatch();
-        playerTexture = new Texture("player.png");
+        t=new Texture("assassin.png");
+
 
         try {
             socket = IO.socket("http://www.thomas-hub.com:9595");
@@ -78,7 +86,7 @@ public class Main extends ApplicationAdapter {
 
     private void updatePlayersFromJSON(JSONObject data) {
         // Clear the current players and reload them
-        HashMap<String, PlayerPosition> newPlayers = new HashMap<>();
+        HashMap<String, Player> newPlayers = new HashMap<>();
         Iterator<String> keys = data.keys();
         while (keys.hasNext()) {
             String key = keys.next();
@@ -86,7 +94,8 @@ public class Main extends ApplicationAdapter {
                 JSONObject pos = data.getJSONObject(key);
                 float x = (float) pos.getDouble("x");
                 float y = (float) pos.getDouble("y");
-                newPlayers.put(key, new PlayerPosition(x,y));
+
+                newPlayers.put(key, new Assassin(key,50,x,y,0.1f,t));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -96,20 +105,26 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void render() {
-        handleInput();
-
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        if (gameMode == 0) {
+            super.render();
+        }
+        if (gameMode==1){
+            handleInput();
+            Gdx.gl.glClearColor(0, 0, 0, 1);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+            renderPlayers();
+        }
+    }
+    private void renderPlayers() {
 
         // render players
         batch.begin();
         for (String pid : players.keySet()) {
-            PlayerPosition pos = players.get(pid);
-            batch.draw(playerTexture, pos.x, pos.y, 32, 32);
+            Player player = players.get(pid);
+            player.render(batch);
         }
         batch.end();
     }
-
     private void handleInput() {
         // Handle keyboard input
         boolean moved = false;
@@ -153,13 +168,4 @@ public class Main extends ApplicationAdapter {
         playerTexture.dispose();
     }
 
-    // A simple coordinate class
-    class PlayerPosition {
-        float x;
-        float y;
-        PlayerPosition(float x, float y) {
-            this.x = x;
-            this.y = y;
-        }
-    }
 }
