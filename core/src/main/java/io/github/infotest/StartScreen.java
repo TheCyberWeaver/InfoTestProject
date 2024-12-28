@@ -1,14 +1,12 @@
 package io.github.infotest;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
@@ -79,9 +77,8 @@ public class StartScreen implements Screen {
                 // 打印或保存
                 System.out.println("User Name:" + playerName);
                 System.out.println("Your Role:" + selectedRole);
-                game.gameMode=1;
                 // TODO: 可以在这里将玩家信息存到全局，或者切换到下一个游戏场景
-                // e.g., game.setScreen(new MainGameScreen(game, playerName, selectedRole));
+                game.startGame(playerName, selectedRole);
             }
         });
 
@@ -105,11 +102,11 @@ public class StartScreen implements Screen {
     @Override
     public void render(float delta) {
         //System.out.println("render");
-        // 清屏，准备绘制
+        // clear screen
         Gdx.gl.glClearColor(0.439f, 0.5f, 0.5625f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // 更新并绘制stage
+        // draw stage
         stage.act(delta);
         stage.draw();
     }

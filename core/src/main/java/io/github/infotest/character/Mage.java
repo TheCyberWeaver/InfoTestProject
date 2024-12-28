@@ -1,12 +1,13 @@
-package io.github.infotest;
+package io.github.infotest.character;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Vector2;
 
-public class Mage extends Player {
+public class Mage extends Character {
 
-    public Mage(String name, int maxHealthPoints, float x, float y, float speed) {
-        super(name, maxHealthPoints, x, y, speed);
+    public Mage(String name, Vector2 playerPosition, Texture t) {
+        super(name, 50,playerPosition, 100);
     }
 
     @Override

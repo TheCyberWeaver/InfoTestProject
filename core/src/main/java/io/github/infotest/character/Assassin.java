@@ -1,12 +1,13 @@
-package io.github.infotest;
+package io.github.infotest.character;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Vector2;
 
-public class Assassin extends Player {
+public class Assassin extends Character {
 
-    public Assassin(String name, int maxHealthPoints, float x, float y, float speed,Texture t) {
-        super(name, maxHealthPoints, x, y, speed);
+    public Assassin(String name, Vector2 playerPosition, Texture t) {
+        super(name, 50, playerPosition, 150);
         setTexture(t);
     }
 

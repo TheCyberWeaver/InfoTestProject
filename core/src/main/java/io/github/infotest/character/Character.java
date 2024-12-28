@@ -1,12 +1,14 @@
-package io.github.infotest;
+package io.github.infotest.character;
 
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Vector2;
 
-public abstract class Player {
+public abstract class Character {
     // 基础属性
     protected String name;         // 角色名称
+    protected String className;
     protected int healthPoints;    // 生命值
     protected int maxHealthPoints; // 生命值上限
     protected int level;           // 等级
@@ -14,16 +16,15 @@ public abstract class Player {
 
     // LibGDX 相关
     protected Texture texture;     // 角色的纹理
-    protected float x, y;          // 角色在世界坐标中的位置
+    protected Vector2 playerPosition=new Vector2(0,0);;          // 角色在世界坐标中的位置
     protected float speed;         // 角色的移动速度
 
     // 构造方法
-    public Player(String name, int maxHealthPoints, float x, float y, float speed) {
+    public Character(String name, int maxHealthPoints, Vector2 playerPosition, float speed) {
         this.name = name;
         this.maxHealthPoints = maxHealthPoints;
         this.healthPoints = maxHealthPoints; // 初始时满血
-        this.x = x;
-        this.y = y;
+        this.playerPosition=playerPosition;
         this.speed = speed;
 
         this.level = 1;
@@ -41,7 +42,7 @@ public abstract class Player {
     // 绘制方法
     public void render(Batch batch) {
         if (texture != null) {
-            batch.draw(texture, x, y,32,32);
+            batch.draw(texture, playerPosition.x, playerPosition.y,32,32);
         }
     }
 
@@ -87,6 +88,10 @@ public abstract class Player {
         return name;
     }
 
+    public String getClassName() {
+        return className;
+    }
+
     public int getHealthPoints() {
         return healthPoints;
     }
@@ -104,20 +109,31 @@ public abstract class Player {
     }
 
     public float getX() {
-        return x;
+        return playerPosition.x;
+    }
+    public void setX(float x) {
+        playerPosition.x = x;
     }
 
-    public float getY() {
-        return y;
+    public float getY() { return playerPosition.y; }
+    public void setY(float y) {
+        playerPosition.y = y;
     }
+    public Vector2 getPlayerPosition() {
+        return playerPosition;
+    }
+    public void setPlayerPosition(Vector2 playerPosition) {
+        this.playerPosition = playerPosition;
+    }
+
 
     public float getSpeed() {
         return speed;
     }
 
     public void setPosition(float x, float y) {
-        this.x = x;
-        this.y = y;
+        this.playerPosition.x = x;
+        this.playerPosition.y = y;
     }
 
     public Texture getTexture() {
