@@ -28,8 +28,7 @@ public class MainGameScreen implements Screen, InputProcessor {
     // Map data
     private int[][] map;
     private static final int CELL_SIZE = 32;
-    private static final int INITIAL_COLUMNS = 20;
-    private static final int INITIAL_ROWS = 20;
+    private static final int INITIAL_SIZE = 20;
 
     // User character
     private Character player;
@@ -63,12 +62,12 @@ public class MainGameScreen implements Screen, InputProcessor {
         serverConnection.connect();
 
         // map initialization
-        MapCreator mapCreator = new MapCreator(globalSeed, INITIAL_ROWS, INITIAL_COLUMNS);
+        MapCreator mapCreator = new MapCreator(globalSeed, INITIAL_SIZE, this);
         map = mapCreator.initializeRandomMap();
 
         gameRenderer = new GameRenderer(normalBlock, grassBlock, rockBlock, map, CELL_SIZE);
 
-        Vector2 spawnPosition = new Vector2(INITIAL_COLUMNS / 2f * CELL_SIZE, INITIAL_ROWS / 2f * CELL_SIZE);
+        Vector2 spawnPosition = new Vector2(INITIAL_SIZE / 2f * CELL_SIZE, INITIAL_SIZE / 2f * CELL_SIZE);
 
         switch (game.getPlayerClass()) {
             case "Assassin":
