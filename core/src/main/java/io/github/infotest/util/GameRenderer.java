@@ -53,15 +53,17 @@ public class GameRenderer {
     }
 
 
-    public void renderPlayers(SpriteBatch batch, HashMap<String, Character> players) {
+    public void renderPlayers(SpriteBatch batch, HashMap<String, Character> players,float deltaTime) {
         if (players == null){
             System.out.println("players is null");
             return;
         }
         for (Character player : players.values()) {
+            player.interpolatePosition(deltaTime);
             player.render(batch);
         }
     }
+
 
 
     public void dispose() {

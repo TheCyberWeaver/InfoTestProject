@@ -103,6 +103,8 @@ public class MainGameScreen implements Screen, InputProcessor {
 
         // update player list
         this.players = serverConnection.getPlayers();
+        this.players.put(serverConnection.getMySocketId(), player);
+        //System.out.println(player);
 
         // clear screen
         Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -116,7 +118,7 @@ public class MainGameScreen implements Screen, InputProcessor {
 
         batch.begin();
         gameRenderer.renderMap(batch);
-        gameRenderer.renderPlayers(batch, players);
+        gameRenderer.renderPlayers(batch, players,delta);
         batch.end();
 
         handleInput(delta);

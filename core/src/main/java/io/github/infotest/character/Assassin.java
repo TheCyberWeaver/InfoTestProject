@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 public class Assassin extends Character {
 
     public Assassin(String name, Vector2 playerPosition, Texture t) {
-        super(name, 50, playerPosition, 150);
+        super(name, "Assassin",50, playerPosition, 150);
         setTexture(t);
     }
 

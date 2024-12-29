@@ -7,7 +7,8 @@ import com.badlogic.gdx.math.Vector2;
 public class Mage extends Character {
 
     public Mage(String name, Vector2 playerPosition, Texture t) {
-        super(name, 50,playerPosition, 100);
+
+        super(name, "Assassin",50,playerPosition, 100);
     }
 
     @Override

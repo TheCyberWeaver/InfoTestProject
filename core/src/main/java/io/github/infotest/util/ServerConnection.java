@@ -20,7 +20,7 @@ import java.util.Iterator;
 public class ServerConnection {
     private Socket socket;
     private final String serverUrl;
-
+    private String mySocketId;
     // key is socketId
     // value is player object
     private HashMap<String, Character> players = new HashMap<>();
@@ -43,6 +43,14 @@ public class ServerConnection {
                 @Override
                 public void call(Object... args) {
                     System.out.println("Connected to server");
+                }
+            }).on("yourId", new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    if (args.length > 0 && args[0] instanceof String) {
+                        mySocketId = (String) args[0];
+                        System.out.println("My socket ID: " + mySocketId);
+                    }
                 }
             }).on("init", new Emitter.Listener() {
                 @Override
@@ -88,7 +96,6 @@ public class ServerConnection {
 
     private void updatePlayersFromJSON(JSONObject data) {
 
-        HashMap<String, Character> newPlayers = new HashMap<>();
         Iterator<String> keys = data.keys();
         while (keys.hasNext()) {
             String key = keys.next();
@@ -97,13 +104,24 @@ public class ServerConnection {
                 float x = (float) pos.getDouble("x");
                 float y = (float) pos.getDouble("y");
 
-                //TODO:players should be created with different classes;
-                newPlayers.put(key, new Assassin(key, new Vector2(x, y), assassinTexture));
+                if (key.equals(mySocketId)) {
+                    //System.out.println("My socket ID: " + mySocketId);
+                    continue;
+                }
+
+                Character player = players.get(key);
+                if (player == null) {
+                    // New Player
+                    player = new Assassin(key, new Vector2(x, y), assassinTexture);
+                    players.put(key, player);
+                } else {
+                    // Old Player - update position
+                    player.updateTargetPosition(new Vector2(x, y));
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        this.players = newPlayers;
     }
 
 
@@ -137,5 +155,8 @@ public class ServerConnection {
 
     public int getGlobalSeed() {
         return globalSeed;
+    }
+    public String getMySocketId() {
+        return mySocketId;
     }
 }

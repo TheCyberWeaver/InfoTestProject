@@ -6,32 +6,58 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 
 public abstract class Character {
-    // 基础属性
-    protected String name;         // 角色名称
+    // basic things
+    protected String name;
     protected String className;
-    protected int healthPoints;    // 生命值
-    protected int maxHealthPoints; // 生命值上限
-    protected int level;           // 等级
-    protected int experience;      // 经验值
+    protected int healthPoints;    // current HP
+    protected int maxHealthPoints; // maximum HP
+    protected int level;
+    protected int experience;
 
-    // LibGDX 相关
-    protected Texture texture;     // 角色的纹理
-    protected Vector2 playerPosition=new Vector2(0,0);;          // 角色在世界坐标中的位置
-    protected float speed;         // 角色的移动速度
+    //Movement related
+    private long lastUpdateTimestamp;
+    protected Vector2 position =new Vector2(0,0);
+    private Vector2 targetPosition;// World Position
+    protected float speed;
+    private Vector2 velocity;
+    private float lerpSpeed = 10f;
 
-    // 构造方法
-    public Character(String name, int maxHealthPoints, Vector2 playerPosition, float speed) {
+    // LibGDX related
+    protected Texture texture;     // character texture
+
+    public Character(String name,String className, int maxHealthPoints, Vector2 initialPosition, float speed) {
         this.name = name;
+        this.className = className;
         this.maxHealthPoints = maxHealthPoints;
-        this.healthPoints = maxHealthPoints; // 初始时满血
-        this.playerPosition=playerPosition;
-        this.speed = speed;
+        this.healthPoints = maxHealthPoints; // full HP at first
 
         this.level = 1;
         this.experience = 0;
+
+        //Movement related
+        this.position = new Vector2(initialPosition);
+        this.targetPosition = new Vector2(initialPosition);
+        this.speed = speed;
+        this.velocity = new Vector2(0, 0);
+        this.lastUpdateTimestamp = System.currentTimeMillis();
     }
 
-    // 更新方法（在游戏循环中调用，比如用于处理移动、状态更新等）
+
+    public void updateTargetPosition(Vector2 newTargetPosition) {
+        this.targetPosition.set(newTargetPosition);
+    }
+    public Vector2 predictPosition() {
+        long currentTime = System.currentTimeMillis();
+        float deltaTime = (currentTime - lastUpdateTimestamp) / 1000f;
+
+        // Prediction
+        return new Vector2(position.x + velocity.x * deltaTime,
+            position.y + velocity.y * deltaTime);
+    }
+
+    public void interpolatePosition(float deltaTime) {
+        position.lerp(targetPosition, lerpSpeed * deltaTime); // 线性插值
+    }
 
     public void update(float delta) {
         // 这里可以根据输入或者 AI 逻辑改变 x, y
@@ -39,14 +65,13 @@ public abstract class Character {
 
     }
 
-    // 绘制方法
     public void render(Batch batch) {
         if (texture != null) {
-            batch.draw(texture, playerPosition.x, playerPosition.y,32,32);
+            Vector2 predictedPosition = predictPosition();
+            batch.draw(texture, predictedPosition .x, predictedPosition .y,32,32);
         }
     }
 
-    // 受伤或扣血
     public void takeDamage(int damage) {
         healthPoints -= damage;
         if (healthPoints < 0) {
@@ -55,7 +80,6 @@ public abstract class Character {
         // 也可以在这里判断角色是否死亡
     }
 
-    // 加血
     public void heal(int amount) {
         healthPoints += amount;
         if (healthPoints > maxHealthPoints) {
@@ -63,7 +87,6 @@ public abstract class Character {
         }
     }
 
-    // 升级方法
     public void gainExperience(int exp) {
         experience += exp;
         // 这里设置一个简单的升级机制，比如经验超过 100*等级 就升级
@@ -109,21 +132,24 @@ public abstract class Character {
     }
 
     public float getX() {
-        return playerPosition.x;
+        return position.x;
     }
     public void setX(float x) {
-        playerPosition.x = x;
+        position.x = x;
+        targetPosition.x = x;
     }
 
-    public float getY() { return playerPosition.y; }
+    public float getY() { return position.y; }
     public void setY(float y) {
-        playerPosition.y = y;
+
+        position.y = y;
+        targetPosition.y=y;
     }
-    public Vector2 getPlayerPosition() {
-        return playerPosition;
+    public Vector2 getPosition() {
+        return position;
     }
-    public void setPlayerPosition(Vector2 playerPosition) {
-        this.playerPosition = playerPosition;
+    public void setPosition(Vector2 position) {
+        this.position = position;
     }
 
 
@@ -132,8 +158,8 @@ public abstract class Character {
     }
 
     public void setPosition(float x, float y) {
-        this.playerPosition.x = x;
-        this.playerPosition.y = y;
+        this.position.x = x;
+        this.position.y = y;
     }
 
     public Texture getTexture() {
@@ -142,5 +168,9 @@ public abstract class Character {
 
     public void setTexture(Texture texture) {
         this.texture = texture;
+    }
+
+    public String toString(){
+        return name+" "+className;
     }
 }
