@@ -96,6 +96,11 @@ public class MainGameScreen implements Screen, InputProcessor {
         camera.update();
 
         Gdx.input.setInputProcessor(this);
+
+
+        if(game.isDevelopmentMode){
+            player.setSpeed(500);
+        }
     }
 
     @Override
@@ -170,7 +175,10 @@ public class MainGameScreen implements Screen, InputProcessor {
     @Override
     public boolean scrolled(float amountX, float amountY) {
         camera.zoom += amountY * 0.1f;
-        camera.zoom = Math.max(0.5f, Math.min(1.5f, camera.zoom));
+        if(!game.isDevelopmentMode){
+            camera.zoom = Math.max(0.5f, Math.min(1.5f, camera.zoom));
+        }
+
         return true;
     }
 

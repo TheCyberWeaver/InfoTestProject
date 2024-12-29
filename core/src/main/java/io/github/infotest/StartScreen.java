@@ -16,6 +16,7 @@ public class StartScreen implements Screen {
     private Stage stage;           // 场景，用于摆放UI控件
     private TextField nameTextField;     // 姓名输入框
     private SelectBox<String> roleSelectBox; // 职业选择下拉框
+    private CheckBox devModeCheckBox;
 
     // 构造函数，传入主游戏对象
     public StartScreen(Main game) {
@@ -58,6 +59,15 @@ public class StartScreen implements Screen {
             }
         });
 
+        devModeCheckBox = new CheckBox("Dev Mode", skin);
+        devModeCheckBox.setChecked(true);
+        devModeCheckBox.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.isDevelopmentMode=devModeCheckBox.isChecked();
+            }
+        });
+
         // 创建“开始游戏”按钮
         TextButton startButton = new TextButton("Start Game", skin);
         startButton.addListener(new ChangeListener() {
@@ -94,6 +104,8 @@ public class StartScreen implements Screen {
         table.add(new Label("Role:", skin));
         table.add(roleSelectBox).width(150).row();
         table.add(startButton).colspan(2);
+        table.add(devModeCheckBox).width(200).row();
+
 
         // 把Table添加到Stage
         stage.addActor(table);

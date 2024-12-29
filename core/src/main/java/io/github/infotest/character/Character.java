@@ -170,6 +170,10 @@ public abstract class Character {
         this.texture = texture;
     }
 
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
+
     public String toString(){
         return name+" "+className;
     }
