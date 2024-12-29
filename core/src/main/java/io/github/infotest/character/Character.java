@@ -3,6 +3,8 @@ package io.github.infotest.character;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.Vector2;
 
 public abstract class Character {
@@ -13,6 +15,9 @@ public abstract class Character {
     protected int maxHealthPoints; // maximum HP
     protected int level;
     protected int experience;
+
+    private static BitmapFont font;
+
 
     //Movement related
     private long lastUpdateTimestamp;
@@ -27,6 +32,7 @@ public abstract class Character {
 
     public Character(String name,String className, int maxHealthPoints, Vector2 initialPosition, float speed) {
         this.name = name;
+
         this.className = className;
         this.maxHealthPoints = maxHealthPoints;
         this.healthPoints = maxHealthPoints; // full HP at first
@@ -34,12 +40,23 @@ public abstract class Character {
         this.level = 1;
         this.experience = 0;
 
+        // use custom font
+//        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("font.ttf"));
+//        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+//        parameter.size = 16;
+//        this.font = generator.generateFont(parameter);
+//        generator.dispose();
+
         //Movement related
         this.position = new Vector2(initialPosition);
         this.targetPosition = new Vector2(initialPosition);
         this.speed = speed;
         this.velocity = new Vector2(0, 0);
         this.lastUpdateTimestamp = System.currentTimeMillis();
+
+        if (font == null) {
+            font = new BitmapFont(); // 只初始化一次
+        }
     }
 
 
@@ -60,16 +77,22 @@ public abstract class Character {
     }
 
     public void update(float delta) {
-        // 这里可以根据输入或者 AI 逻辑改变 x, y
-        // 示例：x += speed * delta;
+        //  AI logic maybe
 
     }
 
     public void render(Batch batch) {
+        Vector2 predictedPosition = predictPosition();
         if (texture != null) {
-            Vector2 predictedPosition = predictPosition();
             batch.draw(texture, predictedPosition .x, predictedPosition .y,32,32);
         }
+        //System.out.println(name);
+        //calculate name width
+
+        GlyphLayout layout = new GlyphLayout(font, name);
+        float textWidth = layout.width;
+
+        font.draw(batch, name, predictedPosition.x + 16 - (int)textWidth/2, predictedPosition.y + 40);
     }
 
     public void takeDamage(int damage) {

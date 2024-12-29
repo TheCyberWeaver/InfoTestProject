@@ -112,11 +112,15 @@ public class ServerConnection {
                 Character player = players.get(key);
                 if (player == null) {
                     // New Player
-                    player = new Assassin(key, new Vector2(x, y), assassinTexture);
+                    player = new Assassin("Gegener", new Vector2(x, y), assassinTexture);
+
+                    //String name=player.getName();
+
                     players.put(key, player);
                 } else {
                     // Old Player - update position
                     player.updateTargetPosition(new Vector2(x, y));
+
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
