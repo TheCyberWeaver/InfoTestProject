@@ -2,8 +2,8 @@ package io.github.infotest.character;
 
 import com.badlogic.gdx.math.Vector2;
 
-public class Player extends Character {
-    public Player(String name, int maxHealthPoints, Vector2 playerPosition, float speed) {
+public class NPC extends Character {
+    public NPC(String name, int maxHealthPoints, Vector2 playerPosition, float speed) {
         super(name, "Player", maxHealthPoints, playerPosition, speed);
 
     }
