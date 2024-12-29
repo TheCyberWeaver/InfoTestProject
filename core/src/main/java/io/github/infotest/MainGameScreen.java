@@ -1,6 +1,7 @@
 package io.github.infotest;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -18,18 +19,20 @@ import java.util.HashMap;
 public class MainGameScreen implements Screen, InputProcessor {
     private SpriteBatch batch;
     private OrthographicCamera camera;
+    private AssetManager assetManager; //TODO
 
     // texture needed
     private Texture assassinTexture;
     private Texture normalBlock;
     private Texture grassBlock;
     private Texture rockBlock;
+    private Texture basicWoodBlock;
 
     // Map data
     private int[][] map;
     private static final int CELL_SIZE = 32;
     private static final int INITIAL_SIZE = 100;
-    private static int numOfValidTextures = 3;
+    private static int numOfValidTextures = 4;
 
     // User character
     private Character player;
@@ -57,6 +60,8 @@ public class MainGameScreen implements Screen, InputProcessor {
         normalBlock = new Texture("normal_block.jpg");
         grassBlock = new Texture("grass_block.jpg");
         rockBlock = new Texture("stone_block.png");
+        basicWoodBlock = new Texture("basicWood.png");
+
 
         // connect to server
         serverConnection = new ServerConnection("http://www.thomas-hub.com:9595", assassinTexture);
@@ -66,7 +71,13 @@ public class MainGameScreen implements Screen, InputProcessor {
         MapCreator mapCreator = new MapCreator(globalSeed, INITIAL_SIZE, this, numOfValidTextures);
         map = mapCreator.initializePerlinNoiseMap();
 
-        gameRenderer = new GameRenderer(normalBlock, grassBlock, rockBlock, map, CELL_SIZE);
+        Texture[] textures = new Texture[numOfValidTextures];
+        textures[0] = normalBlock;
+        textures[1] = grassBlock;
+        textures[2] = rockBlock;
+        textures[3] = basicWoodBlock;
+
+        gameRenderer = new GameRenderer(textures, map, CELL_SIZE);
 
         Vector2 spawnPosition = new Vector2(INITIAL_SIZE / 2f * CELL_SIZE, INITIAL_SIZE / 2f * CELL_SIZE);
 

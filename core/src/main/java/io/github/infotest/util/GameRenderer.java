@@ -10,18 +10,11 @@ import java.util.HashMap;
 
 public class GameRenderer {
 
-    private final Texture normalBlock;
-    private final Texture grassBlock;
-    private final Texture rockBlock;
-
+    private Texture[] textures;
     private final int[][] map;
     private final int cellSize;
 
-    public GameRenderer(Texture normalBlock, Texture grassBlock, Texture rockBlock,
-                        int[][] map, int cellSize) {
-        this.normalBlock = normalBlock;
-        this.grassBlock = grassBlock;
-        this.rockBlock = rockBlock;
+    public GameRenderer(Texture[] textures, int[][] map, int cellSize) {
         this.map = map;
         this.cellSize = cellSize;
     }
@@ -33,20 +26,7 @@ public class GameRenderer {
         int columns = map[0].length;
         for (int y = 0; y < rows; y++) {
             for (int x = 0; x < columns; x++) {
-                Texture cellTexture;
-                switch (map[y][x]) {
-                    case 0:
-                        cellTexture = normalBlock;
-                        break;
-                    case 1:
-                        cellTexture = grassBlock;
-                        break;
-                    case 2:
-                        cellTexture = rockBlock;
-                        break;
-                    default:
-                        cellTexture = normalBlock;
-                }
+                Texture cellTexture = textures[map[y][x]];
                 batch.draw(cellTexture, x * cellSize, y * cellSize, cellSize, cellSize);
             }
         }
@@ -67,8 +47,8 @@ public class GameRenderer {
 
 
     public void dispose() {
-        normalBlock.dispose();
-        grassBlock.dispose();
-        rockBlock.dispose();
+        for (Texture texture : textures) {
+            texture.dispose();
+        }
     }
 }
