@@ -28,7 +28,7 @@ public class MainGameScreen implements Screen, InputProcessor {
     // Map data
     private int[][] map;
     private static final int CELL_SIZE = 32;
-    private static final int INITIAL_SIZE = 20;
+    private static final int INITIAL_SIZE = 100;
     private static int numOfValidTextures = 3;
 
     // User character
@@ -64,7 +64,7 @@ public class MainGameScreen implements Screen, InputProcessor {
 
         // map initialization
         MapCreator mapCreator = new MapCreator(globalSeed, INITIAL_SIZE, this, numOfValidTextures);
-        map = mapCreator.initializeRandomMap();
+        map = mapCreator.initializePerlinNoiseMap();
 
         gameRenderer = new GameRenderer(normalBlock, grassBlock, rockBlock, map, CELL_SIZE);
 

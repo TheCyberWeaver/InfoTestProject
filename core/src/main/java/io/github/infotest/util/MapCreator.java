@@ -16,7 +16,7 @@ public class MapCreator {
     private int numOfValidTextures;
 
     public MapCreator(int pSeed, int width, MainGameScreen pGame, int pNumOfValidTextures) {
-        seed = pSeed;
+        seed = 98272654;
         mapWidth = width;
         map = new int[width][width];
         game = pGame;
@@ -30,7 +30,7 @@ public class MapCreator {
 
                 // generate perlin noise based on seed (see Perlin Class)
                 float[][] whiteNoise = perlinClass.GenerateWhiteNoise(mapWidth, mapWidth, seed);
-                float[][] perlinNoise = perlinClass.GeneratePerlinNoise(whiteNoise, 8);
+                float[][] perlinNoise = perlinClass.GeneratePerlinNoise(whiteNoise, 9);
 
                 // convert perlin noise to valid map
                 map[y][x] = (int) (perlinNoise[y][x]*(numOfValidTextures+1));

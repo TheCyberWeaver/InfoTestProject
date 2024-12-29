@@ -26,7 +26,7 @@ public class GameRenderer {
         this.cellSize = cellSize;
     }
 
-
+    //TODO not gernerate whole map
     public void renderMap(SpriteBatch batch) {
         if (map == null) return;
         int rows = map.length;
