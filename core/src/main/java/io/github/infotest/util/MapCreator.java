@@ -33,6 +33,7 @@ public class MapCreator {
                 float[][] perlinNoise = perlinClass.GeneratePerlinNoise(whiteNoise, 8);
 
                 // convert perlin noise to valid map
+                map[y][x] = (int) (perlinNoise[y][x]*(numOfValidTextures+1));
             }
         }
         return map;
