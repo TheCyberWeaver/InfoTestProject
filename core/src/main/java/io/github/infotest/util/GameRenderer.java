@@ -14,7 +14,8 @@ public class GameRenderer {
     private final int[][] map;
     private final int cellSize;
 
-    public GameRenderer(Texture[] textures, int[][] map, int cellSize) {
+    public GameRenderer(Texture[] pTextures, int[][] map, int cellSize) {
+        textures = pTextures;
         this.map = map;
         this.cellSize = cellSize;
     }
