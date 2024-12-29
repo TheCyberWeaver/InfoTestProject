@@ -18,7 +18,9 @@ public class MapCreator {
     public int[][] initializeRandomMap(){
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                map[y][x] = (int) (Math.random() * 3); // 随机生成三种cell类型
+                //map[y][x] = (int) (Math.random() * 3); // 随机生成三种cell类型 // Erzeuge 3 zufällige Zellen
+                int a;
+
             }
         }
         return map;
