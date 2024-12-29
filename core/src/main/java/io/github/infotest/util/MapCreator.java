@@ -25,15 +25,14 @@ public class MapCreator {
     }
 
     public int[][] initializePerlinNoiseMap(){
+        // generate perlin noise based on seed (see Perlin Class)
+        float[][] whiteNoise = perlinClass.GenerateWhiteNoise(mapWidth, mapWidth, seed);
+        float[][] perlinNoise = perlinClass.GeneratePerlinNoise(whiteNoise, 8);
+
+        // convert perlin noise to valid map
         for (int y = 0; y < mapWidth; y++) {
             for (int x = 0; x < mapWidth; x++) {
-
-                // generate perlin noise based on seed (see Perlin Class)
-                float[][] whiteNoise = perlinClass.GenerateWhiteNoise(mapWidth, mapWidth, seed);
-                float[][] perlinNoise = perlinClass.GeneratePerlinNoise(whiteNoise, 9);
-
-                // convert perlin noise to valid map
-                map[y][x] = (int) (perlinNoise[y][x]*(numOfValidTextures+1));
+                map[y][x] = ((int) (perlinNoise[y][x]*(numOfValidTextures)));
             }
         }
         return map;

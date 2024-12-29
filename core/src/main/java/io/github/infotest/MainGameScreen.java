@@ -31,7 +31,7 @@ public class MainGameScreen implements Screen, InputProcessor {
     // Map data
     private int[][] map;
     private static final int CELL_SIZE = 32;
-    private static final int INITIAL_SIZE = 10;
+    private static final int INITIAL_SIZE = 500;
     private static int numOfValidTextures = 4;
 
     // User character
