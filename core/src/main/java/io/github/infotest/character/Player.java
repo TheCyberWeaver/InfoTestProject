@@ -8,34 +8,68 @@ public class Player extends Character {
     private Vector2 rotation;
     private final float speed;
     private float health;
+    private float healthRegen; // health regeneration per second
     private float maxHealth;
     private float mana;
+    private float manaRegen; // mana regeneration per second
     private float maxMana;
+    private Class klasse;
 
     private float timeSinceLastFireball;
 
-    public Player(String name, int maxHealthPoints, Vector2 playerPosition, float speed, Vector2 position, Vector2 rotation, float health, float maxHealth, float mana, float maxMana) {
+
+    public Player(String name,Class klasse, int maxHealthPoints, float healthRegen, float maxMana, float manaRegen, Vector2 playerPosition, float speed, Vector2 rotation) {
         super(name, "Player", maxHealthPoints, playerPosition, speed);
 
-        this.position = position;
+        this.position = playerPosition;
         this.rotation = rotation;
         this.speed = speed;
-        this.health = health;
-        this.maxHealth = maxHealth;
-        this.mana = mana;
+        this.health = maxHealthPoints;
+        this.healthRegen = healthRegen;
+        this.maxHealth = maxHealthPoints;
+        this.mana = maxMana;
+        this.manaRegen = manaRegen;
         this.maxMana = maxMana;
+        this.klasse = klasse;
+
+        timeSinceLastFireball = 0;
+
     }
 
     @Override
-    public void castSkill() {
+    public void castSkill(){
 
     }
 
-    public void castFireball() {
-        Mage.fireball(position.x, position.y, rotation);
+    //TODO player caracter system
+    public void castSkill(int skillID) {
+        klasse.cast(this);
+
+        if (skillID == 1) {
+            timeSinceLastFireball = 0;
+        }
+
     }
 
+    public void render(float delta) {
+        if (health < maxHealth) {
+            health += manaRegen * delta;
+            if (health > maxHealth) {
+                health = maxHealth;
+            }
+        }
 
+        if (mana < maxMana) {
+            mana += manaRegen * delta;
+            if (mana > maxMana) {
+                mana = maxMana;
+            }
+        }
+
+        timeSinceLastFireball += delta;
+
+
+    }
 
     public Vector2 getPosition() {
         return position;

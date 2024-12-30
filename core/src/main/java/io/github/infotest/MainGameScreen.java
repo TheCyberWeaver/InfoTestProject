@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.character.Assassin;
 import io.github.infotest.character.Character;
+import io.github.infotest.character.Player;
 import io.github.infotest.util.ServerConnection;
 import io.github.infotest.util.GameRenderer;
 import io.github.infotest.util.MapCreator;
@@ -33,6 +34,10 @@ public class MainGameScreen implements Screen, InputProcessor {
     private static final int CELL_SIZE = 32;
     private static final int INITIAL_SIZE = 3000;
     private static int numOfValidTextures = 4;
+
+    //player stats
+    float pMaxHP = 50f;
+    float pSpeed = 1.5f;
 
     // User character
     private Character player;
@@ -82,6 +87,7 @@ public class MainGameScreen implements Screen, InputProcessor {
         Vector2 spawnPosition = new Vector2(INITIAL_SIZE / 2f * CELL_SIZE, INITIAL_SIZE / 2f * CELL_SIZE);
 
         //TODO
+        player = new Player(game.getUsername(), pMaxHP, spawnPosition, pSpeed,  );
         switch (game.getPlayerClass()) {
             case "Assassin":
                 player = new Assassin(game.getUsername(), spawnPosition, assassinTexture);
