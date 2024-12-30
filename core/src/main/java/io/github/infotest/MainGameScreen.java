@@ -102,7 +102,8 @@ public class MainGameScreen implements Screen, InputProcessor {
         }
 
         // send initial position to server
-        serverConnection.sendPlayerPosition(player.getX(), player.getY());
+        //serverConnection.sendPlayerPosition(player.getX(), player.getY());
+        serverConnection.sendPlayerInit(player);
 
         camera.zoom = 1f;
         camera.position.set(player.getX(), player.getY(), 0);

@@ -55,7 +55,7 @@ public class StartScreen implements Screen {
             public void changed(ChangeEvent event, Actor actor) {
                 // 可以在这里监听SelectBox切换
                 String selectedRole = roleSelectBox.getSelected();
-                System.out.println("Selected:" + selectedRole);
+                //System.out.println("Selected:" + selectedRole);
             }
         });
 
@@ -80,11 +80,12 @@ public class StartScreen implements Screen {
 
                 // 此处可进行一些校验，如名字是否为空，或者名字长度是否合法等
                 if (playerName == null || playerName.trim().isEmpty()) {
-                    System.out.println("Name cannot be empty！");
+                    System.out.println("[WARNING]: Name cannot be empty!");
                     return;
                 }
 
                 // 打印或保存
+                System.out.println("------Init Setup-------");
                 System.out.println("User Name:" + playerName);
                 System.out.println("Your Role:" + selectedRole);
                 // TODO: 可以在这里将玩家信息存到全局，或者切换到下一个游戏场景

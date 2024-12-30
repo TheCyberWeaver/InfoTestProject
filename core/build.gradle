@@ -13,6 +13,7 @@ dependencies {
 
   api "io.socket:socket.io-client:2.1.1"
   api "org.json:json:20230227"
+  api "com.google.code.gson:gson:2.10.1"
 
   if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"

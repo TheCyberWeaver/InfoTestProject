@@ -6,6 +6,10 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.Vector2;
+import io.github.infotest.item.Item;
+import io.github.infotest.util.ItemFactory;
+
+import java.util.ArrayList;
 
 public abstract class Character {
     // basic things
@@ -15,6 +19,7 @@ public abstract class Character {
     protected int maxHealthPoints; // maximum HP
     protected int level;
     protected int experience;
+    protected ArrayList<Item> items;
 
     private static BitmapFont font;
 
@@ -39,7 +44,7 @@ public abstract class Character {
 
         this.level = 1;
         this.experience = 0;
-
+        items=new ArrayList<>();
         // use custom font
 //        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("font.ttf"));
 //        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -196,8 +201,20 @@ public abstract class Character {
     public void setSpeed(int speed) {
         this.speed = speed;
     }
-
+    public ArrayList<Item> getItems() {
+        return items;
+    }
     public String toString(){
         return name+" "+className;
+    }
+
+    public void updateItemFromPlayerData(String[] playerDataItems) {
+        for (String itemName : playerDataItems) {
+            Item item = ItemFactory.createItem(itemName);
+            items.add(item);
+        }
+    }
+    public void updateHPFromPlayerData(int hp) {
+        healthPoints= (int) hp;
     }
 }

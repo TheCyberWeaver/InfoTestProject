@@ -4,15 +4,22 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.character.Assassin;
 import io.github.infotest.character.Character;
+import io.github.infotest.character.Mage;
+import io.github.infotest.util.DataObjects.PlayerData;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
-import java.util.Iterator;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.reflect.Type;
+import java.util.Map;
 
 /**
  * maintain connection to server and other player's information
@@ -28,11 +35,11 @@ public class ServerConnection {
     private int globalSeed = 0;
 
     // TODO
-    private Texture assassinTexture;
+    private Texture testTexture;
 
-    public ServerConnection(String serverUrl, Texture assassinTexture) {
+    public ServerConnection(String serverUrl, Texture testTexture) {
         this.serverUrl = serverUrl;
-        this.assassinTexture = assassinTexture;
+        this.testTexture = testTexture;
     }
 
     public void connect() {
@@ -42,31 +49,42 @@ public class ServerConnection {
             socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    System.out.println("Connected to server");
+                    System.out.println("[INFO]: Connected to server");
                 }
             }).on("yourId", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
                     if (args.length > 0 && args[0] instanceof String) {
                         mySocketId = (String) args[0];
-                        System.out.println("My socket ID: " + mySocketId);
+                        System.out.println("[INFO]: My socket ID: " + mySocketId);
                     }
                 }
             }).on("init", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    if (args.length > 0 && args[0] instanceof JSONObject) {
-                        JSONObject data = (JSONObject) args[0];
-                        updatePlayersFromJSON(data);
-                    }
+                    String updatedPlayersJson = args[0].toString();
+
+                    //   - key: socketId (e.g., "socketId_1")
+                    //   - value: <PlayerData>
+                    Gson gson = new Gson();
+                    Type typeOfHashMap = new TypeToken<Map<String, PlayerData>>(){}.getType();
+                    Map<String, PlayerData> playersMap = gson.fromJson(updatedPlayersJson, typeOfHashMap);
+
+                    updatePlayers(playersMap);
                 }
             }).on("updateAllPlayers", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    if (args.length > 0 && args[0] instanceof JSONObject) {
-                        JSONObject data = (JSONObject) args[0];
-                        updatePlayersFromJSON(data);
-                    }
+                    String updatedPlayersJson = args[0].toString();
+
+                    //   - key: socketId (e.g., "socketId_1")
+                    //   - value: <PlayerData>
+                    Gson gson = new Gson();
+                    Type typeOfHashMap = new TypeToken<Map<String, PlayerData>>(){}.getType();
+                    Map<String, PlayerData> playersMap = gson.fromJson(updatedPlayersJson, typeOfHashMap);
+
+                    updatePlayers(playersMap);
+
                 }
             }).on("playerLeft", new Emitter.Listener() {
                 @Override
@@ -81,7 +99,7 @@ public class ServerConnection {
                 public void call(Object... args) {
                     if (args.length > 0 && args[0] instanceof Integer) {
                         globalSeed = (int) args[0];
-                        System.out.println("Global seed: " + globalSeed);
+                        System.out.println("[INFO]: Global seed: " + globalSeed);
                     }
                 }
             });
@@ -93,40 +111,44 @@ public class ServerConnection {
         }
     }
 
+    private void updatePlayers(Map<String, PlayerData> playersMap){
+        // playersMap 中每一个 key 都是一个 socketId，
+        // value 则是对应的 PlayerData 对象
+        for (Map.Entry<String, PlayerData> entry : playersMap.entrySet()) {
+            String socketId = entry.getKey();
+            PlayerData playerData = entry.getValue();
 
-    private void updatePlayersFromJSON(JSONObject data) {
+            float x = (float)playerData.position.x;
+            float y = (float)playerData.position.y;
 
-        Iterator<String> keys = data.keys();
-        while (keys.hasNext()) {
-            String key = keys.next();
-            try {
-                JSONObject pos = data.getJSONObject(key);
-                float x = (float) pos.getDouble("x");
-                float y = (float) pos.getDouble("y");
-
-                if (key.equals(mySocketId)) {
-                    //System.out.println("My socket ID: " + mySocketId);
-                    continue;
+            if (socketId.equals(mySocketId)) {
+                continue;
+            }
+            Character player = players.get(socketId);
+            if (player == null) {
+                switch (playerData.classtype){
+                    case "Assassin":
+                        player = new Assassin(playerData.name, new Vector2(x, y), testTexture);
+                        players.put(socketId, player);
+                        break;
+                    case "Mage":
+                        player = new Mage(playerData.name, new Vector2(x, y), testTexture);
+                        players.put(socketId, player);
+                        break;
+                    default:
+                        System.out.println("[WARNING]: Unknown class: " + playerData.classtype+ " - Player not created");
+                        //player = new Assassin("Gegener", new Vector2(x, y), testTexture);
+                        break;
                 }
-
-                Character player = players.get(key);
-                if (player == null) {
-                    // New Player
-                    player = new Assassin("Gegener", new Vector2(x, y), assassinTexture);
-
-                    //String name=player.getName();
-
-                    players.put(key, player);
-                } else {
-                    // Old Player - update position
-                    player.updateTargetPosition(new Vector2(x, y));
-
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
+            } else {
+                // Old Player - update position
+                player.updateTargetPosition(new Vector2(x, y));
+                player.updateHPFromPlayerData(playerData.hp);
+                player.updateItemFromPlayerData(playerData.items);
             }
         }
     }
+
 
 
     public void sendPlayerPosition(float x, float y) {
@@ -136,6 +158,25 @@ public class ServerConnection {
             pos.put("x", x);
             pos.put("y", y);
             socket.emit("updatePosition", pos);
+            //System.out.println("Updated position: " + pos);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendPlayerInit(Character player) {
+        JSONObject initData = new JSONObject();
+        try {
+            initData.put("x", player.getX());
+            initData.put("y", player.getY());
+            initData.put("name", player.getName());
+            initData.put("hp",player.getHealthPoints());
+            initData.put("classtype",player.getClassName());
+            initData.put("items",player.getItems());
+            System.out.println("----------");
+            System.out.println(initData.toString());
+
+            socket.emit("init", initData);
             //System.out.println("Updated position: " + pos);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -164,3 +205,5 @@ public class ServerConnection {
         return mySocketId;
     }
 }
+
+

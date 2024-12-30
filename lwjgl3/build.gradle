@@ -40,7 +40,7 @@ dependencies {
 
   implementation ('io.socket:socket.io-client:2.1.1')
   implementation 'org.json:json:20230227'
-
+  implementation 'com.google.code.gson:gson:2.10.1'
 
   if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-backend-lwjgl3:$graalHelperVersion"
