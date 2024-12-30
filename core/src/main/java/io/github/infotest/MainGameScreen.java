@@ -33,7 +33,7 @@ public class MainGameScreen implements Screen, InputProcessor {
     // Map data
     private int[][] map;
     private static final int CELL_SIZE = 32;
-    private static final int INITIAL_SIZE = 500;
+    private static final int INITIAL_SIZE = 3000;
     private static int numOfValidTextures = 4;
 
     // User character
@@ -136,7 +136,7 @@ public class MainGameScreen implements Screen, InputProcessor {
         batch.setProjectionMatrix(camera.combined);
 
         batch.begin();
-        gameRenderer.renderMap(batch);
+        gameRenderer.renderMap(batch, camera.zoom, player.getPosition());
         gameRenderer.renderPlayers(batch, players,delta);
         batch.end();
 
@@ -217,9 +217,11 @@ public class MainGameScreen implements Screen, InputProcessor {
         // release rendering resources
         batch.dispose();
         assassinTexture.dispose();
+
         normalBlock.dispose();
         grassBlock.dispose();
         rockBlock.dispose();
+        basicWoodBlock.dispose();
 
         // gameRenderer.dispose();
     }
