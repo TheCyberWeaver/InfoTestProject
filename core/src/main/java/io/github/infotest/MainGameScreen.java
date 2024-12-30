@@ -162,7 +162,7 @@ public class MainGameScreen implements Screen, InputProcessor {
             player.setRotation(new Vector2(0,-1));
         }
         if (Gdx.input.isKeyPressed(Input.Keys.E)) {
-            Mage.fireball(player.getX(), player.getY(), player.getRotation());
+            //TODO
         }
 
         if (moved) {

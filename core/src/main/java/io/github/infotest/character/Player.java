@@ -1,6 +1,7 @@
 package io.github.infotest.character;
 
 import com.badlogic.gdx.math.Vector2;
+import io.github.infotest.classes.Mage;
 
 public class Player extends Character {
     private Vector2 position;
@@ -10,6 +11,8 @@ public class Player extends Character {
     private float maxHealth;
     private float mana;
     private float maxMana;
+
+    private float timeSinceLastFireball;
 
     public Player(String name, int maxHealthPoints, Vector2 playerPosition, float speed, Vector2 position, Vector2 rotation, float health, float maxHealth, float mana, float maxMana) {
         super(name, "Player", maxHealthPoints, playerPosition, speed);
@@ -26,6 +29,10 @@ public class Player extends Character {
     @Override
     public void castSkill() {
 
+    }
+
+    public void castFireball() {
+        Mage.fireball(position.x, position.y, rotation);
     }
 
 

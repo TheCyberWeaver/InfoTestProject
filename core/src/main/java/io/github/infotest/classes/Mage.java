@@ -10,10 +10,16 @@ public class Mage {
     private static final float fireballSpeed = 1.5f;
 
     public static void fireball(float x, float y, Vector2 playerRot) {
-        float velocityX = 1.5f;
-        float velocityY = fireballSpeed-velocityX;
+        playerRot.nor();
+        float velocityX = 1.5f * playerRot.x;
+        float velocityY = 1.5f * playerRot.y;
 
-        GameRenderer.fireball(x, y, velocityX, velocityY);
+        float calculatedSpeed = (float)Math.sqrt(velocityX * velocityX + velocityY * velocityY);
+        if (calculatedSpeed != fireballSpeed) {
+            System.out.println(calculatedSpeed + " ist ungleich 1.5");
+        }
+
+        GameRenderer.fireball(x, y, velocityX, velocityY, playerRot);
     }
 
 

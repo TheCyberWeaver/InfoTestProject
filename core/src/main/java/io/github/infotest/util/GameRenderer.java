@@ -89,23 +89,29 @@ public class GameRenderer {
         }
     }
 
+    float time = 0;
     public void renderAnimations(SpriteBatch batch, float deltaTime) {
+        time += deltaTime;
         renderFireballs(batch, deltaTime);
-
+        if (time > 1f){
+            System.out.println(activeFireballs.size());
+        }
     }
+
+
 
 
 
     /// ANIMATIONS
     // Fireball
-    public static void fireball(float startX, float startY, float velocityX, float velocityY) {
-        activeFireballs.add(new FireballInstance(startX, startY, velocityX, velocityY));
+    public static void fireball(float startX, float startY, float velocityX, float velocityY, Vector2 rotation) {
+        activeFireballs.add(new FireballInstance(startX, startY, velocityX, velocityY, rotation));
     }
 
 
 
     /// ANIMATION HELPER
-    public void renderFireballs(SpriteBatch batch, float deltaTime) {
+    private void renderFireballs(SpriteBatch batch, float deltaTime) {
         ArrayList<FireballInstance> toRemove = new ArrayList<>();
 
         for (FireballInstance fireball : activeFireballs) {
@@ -121,9 +127,9 @@ public class GameRenderer {
 
                 batch.draw(
                     currentFrame,
-                    fireball.x, fireball.y,
-                    currentFrame.getRegionWidth() / 2f,
-                    currentFrame.getRegionHeight() / 2f,
+                    fireball.x+1, fireball.y+1,
+                    16,
+                    16,
                     currentFrame.getRegionWidth(),
                     currentFrame.getRegionHeight(),
                     cellSize*8, cellSize*8,
@@ -143,6 +149,8 @@ public class GameRenderer {
 
 
 
+
+
     public void dispose() {
         for (Texture texture : textures) {
             texture.dispose();
@@ -150,24 +158,28 @@ public class GameRenderer {
     }
 
 
+
+
+
     /// Helper class for tracking fireball instances
     private static class FireballInstance {
-        float x, y;            // Position des Feuerballs
-        float velocityX, velocityY; // Geschwindigkeit in X- und Y-Richtung
+        float x, y;
+        float velocityX, velocityY;
+        Vector2 rotation;
         float elapsedTime;
 
-        FireballInstance(float x, float y, float velocityX, float velocityY) {
+        FireballInstance(float x, float y, float velocityX, float velocityY, Vector2 rotation) {
             this.x = x;
             this.y = y;
             this.velocityX = velocityX;
             this.velocityY = velocityY;
+            this.rotation = rotation;
             this.elapsedTime = 0f;
         }
 
-        // Update Position basierend auf der Geschwindigkeit
         public void updatePosition(float deltaTime) {
-            this.x += velocityX * deltaTime; // Neue X-Position
-            this.y += velocityY * deltaTime; // Neue Y-Position
+            this.x += velocityX * deltaTime;
+            this.y += velocityY * deltaTime;
         }
     }
 
