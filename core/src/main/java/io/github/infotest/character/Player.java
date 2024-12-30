@@ -1,25 +1,27 @@
 package io.github.infotest.character;
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.classes.Mage;
 
 public class Player extends Character {
-    private Vector2 position;
-    private Vector2 rotation;
-    private final float speed;
-    private float health;
-    private float healthRegen; // health regeneration per second
-    private float maxHealth;
-    private float mana;
-    private float manaRegen; // mana regeneration per second
-    private float maxMana;
     private Class klasse;
 
     private float timeSinceLastFireball;
 
+    public Player(String name, Vector2 position, Texture texture){
+        super(name,);
 
-    public Player(String name,Class klasse, int maxHealthPoints, float healthRegen, float maxMana, float manaRegen, Vector2 playerPosition, float speed, Vector2 rotation) {
-        super(name, "Player", maxHealthPoints, playerPosition, speed);
+        this.position = position;
+        this.texture = texture;
+        super.name = "name";
+
+    }
+
+    public Player(String name,Class klasse, int maxHealthPoints, float healthRegen, int maxMana, float manaRegen, Vector2 targetPosition, float speed, Vector2 rotation, Texture texture) {
+        super(name, healthRegen, maxHealthPoints, manaRegen, maxMana, , speed);
+        this.texture = texture;
 
         this.position = playerPosition;
         this.rotation = rotation;
@@ -71,6 +73,15 @@ public class Player extends Character {
 
     }
 
+    @Override
+    public void render(Batch batch) {
+        if (texture != null) {
+            Vector2 predictedPosition = predictPosition();
+            batch.draw(texture, predictedPosition .x, predictedPosition .y,32,32);
+        }
+    }
+
+
     public Vector2 getPosition() {
         return position;
     }
@@ -103,13 +114,13 @@ public class Player extends Character {
     public float getMaxHealth() {
         return maxHealth;
     }
-    public void setMaxHealth(float maxHealth) {
-        this.maxHealth = maxHealth;
+    public void setMaxHealth(int maxHealth) {
+        this.maxHealth = (int) maxHealth;
     }
     public float getMaxMana() {
         return maxMana;
     }
-    public void setMaxMana(float maxMana) {
+    public void setMaxMana(int maxMana) {
         this.maxMana = maxMana;
     }
 }

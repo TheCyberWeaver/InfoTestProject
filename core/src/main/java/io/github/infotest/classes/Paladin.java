@@ -1,4 +1,4 @@
 package io.github.infotest.classes;
 
-public class Paladin {
+public class Paladin extends Class{
 }

@@ -6,17 +6,25 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 
 public abstract class Character {
+
     // basic things
     protected String name;
-    protected String className;
-    protected int healthPoints;    // current HP
-    protected int maxHealthPoints; // maximum HP
     protected int level;
     protected int experience;
 
+    protected float health; // current Health
+    protected float healthRegen; // health regeneration per second
+    protected boolean isRegenerating; // if the character is regenerating health this is true
+    protected int maxHealth; // maximum Health
+
+    protected float mana; // current mana
+    protected float manaRegen; // mana regeneration per second
+    protected boolean isRegeneratingMana; // if the character is regenerating mana this is true
+    protected int maxMana; // maximum Mana
+
     //Movement related
     private long lastUpdateTimestamp;
-    protected Vector2 position =new Vector2(0,0);
+    protected Vector2 position = new Vector2(0,0);
     private Vector2 targetPosition;// World Position
     protected float speed;
     private Vector2 velocity;
@@ -24,16 +32,20 @@ public abstract class Character {
     protected Vector2 rotation;
 
     // LibGDX related
-    protected Texture texture;     // character texture
+    protected Texture texture; // character texture
 
-    public Character(String name,String className, int maxHealthPoints, Vector2 initialPosition, float speed) {
+    public Character(String name,float healthRegen, int maxHealth, float manaRegen, int maxMana, Vector2 initialPosition, float speed) {
         this.name = name;
-        this.className = className;
-        this.maxHealthPoints = maxHealthPoints;
-        this.healthPoints = maxHealthPoints; // full HP at first
-
         this.level = 1;
         this.experience = 0;
+
+        this.health = maxHealth;
+        this.healthRegen = healthRegen;
+        this.maxHealth = maxHealth;
+
+        this.mana = maxMana;
+        this.manaRegen = manaRegen;
+        this.maxMana = maxMana;
 
         //Movement related
         this.position = new Vector2(initialPosition);
@@ -62,6 +74,19 @@ public abstract class Character {
     }
 
     public void update(float delta) {
+        if (isRegenerating && health < maxHealth) {
+            health += healthRegen * delta;
+            if (health > maxHealth) {
+                health = maxHealth;
+            }
+        }
+        if (isRegeneratingMana && mana < maxMana) {
+            mana += manaRegen * delta;
+            if (mana > maxMana) {
+                mana = maxMana;
+            }
+        }
+
         // 这里可以根据输入或者 AI 逻辑改变 x, y
         // 示例：x += speed * delta;
 
@@ -75,17 +100,24 @@ public abstract class Character {
     }
 
     public void takeDamage(int damage) {
-        healthPoints -= damage;
-        if (healthPoints < 0) {
-            healthPoints = 0;
+        health -= damage;
+        if (health < 0) {
+            health = 0;
         }
         // 也可以在这里判断角色是否死亡
     }
 
     public void heal(int amount) {
-        healthPoints += amount;
-        if (healthPoints > maxHealthPoints) {
-            healthPoints = maxHealthPoints;
+        health += amount;
+        if (health > maxHealth) {
+            health = maxHealth;
+        }
+    }
+
+    public void healMana(int amount) {
+        mana += amount;
+        if (mana > maxMana) {
+            mana = maxMana;
         }
     }
 
@@ -101,25 +133,22 @@ public abstract class Character {
         level++;
         experience = 0; // 升级后将经验清零或其他处理
         // 升级时也可以增加最大生命值或其他属性
-        maxHealthPoints += 10;
-        healthPoints = maxHealthPoints;
+        maxHealth += 5;
+        health = maxHealth;
     }
 
-    // 抽象方法：角色技能（由各个子类实现）
+    // 抽象方法：角色技能（由各个子类实现）-
     public abstract void castSkill();
 
     // Getter、Setter
     public String getName() {
         return name;
     }
-    public String getClassName() {
-        return className;
-    }
-    public int getHealthPoints() {
-        return healthPoints;
+    public float getHP() {
+        return health;
     }
     public int getMaxHealthPoints() {
-        return maxHealthPoints;
+        return maxHealth;
     }
     public int getLevel() {
         return level;
@@ -160,7 +189,7 @@ public abstract class Character {
         this.texture = texture;
     }
     public String toString(){
-        return name+" "+className;
+        return "Character: Name:"+name;
     }
     public Vector2 getRotation(){
         return rotation;

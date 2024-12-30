@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.character.Assassin;
 import io.github.infotest.character.Character;
+import io.github.infotest.character.Player;
+import io.github.infotest.classes.Mage;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -25,7 +27,7 @@ public class ServerConnection {
     private String mySocketId;
     // key is socketId
     // value is player object
-    private HashMap<String, Character> players = new HashMap<>();
+    private HashMap<String, Player> players = new HashMap<>();
 
     private int globalSeed = 0;
 
@@ -111,10 +113,10 @@ public class ServerConnection {
                     continue;
                 }
 
-                Character player = players.get(key);
+                Player player = players.get(key);
                 if (player == null) {
                     // New Player
-                    player = new Assassin(key, new Vector2(x, y), assassinTexture);
+                    player = new Player(key, Mage.class, 50, 2, 50, 2, new Vector2(x, y), 2, 0, assassinTexture);
                     players.put(key, player);
                 } else {
                     // Old Player - update position
@@ -150,7 +152,7 @@ public class ServerConnection {
     }
 
 
-    public HashMap<String, Character> getPlayers() {
+    public HashMap<String, Player> getPlayers() {
         return players;
     }
 

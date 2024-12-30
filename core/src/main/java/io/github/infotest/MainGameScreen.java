@@ -10,11 +10,12 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.character.Assassin;
 import io.github.infotest.character.Character;
 import io.github.infotest.character.Player;
+import io.github.infotest.classes.*;
 import io.github.infotest.util.ServerConnection;
 import io.github.infotest.util.GameRenderer;
 import io.github.infotest.util.MapCreator;
-import io.github.infotest.classes.Mage;
 
+import java.lang.Class;
 import java.util.HashMap;
 
 public class MainGameScreen implements Screen, InputProcessor {
@@ -36,17 +37,20 @@ public class MainGameScreen implements Screen, InputProcessor {
     private static int numOfValidTextures = 4;
 
     //player stats
-    float pMaxHP = 50f;
+    int pMaxHP = 50;
+    float pHPRegen = 2;
+    int pMaxMana = 50;
+    float pManaRegen = 2;
     float pSpeed = 1.5f;
 
     // User character
-    private Character player;
+    private Player player;
     private ServerConnection serverConnection;
     // Renderer
     private GameRenderer gameRenderer;
 
     // player list
-    private HashMap<String, Character> players = new HashMap<>();
+    private HashMap<String, Player> players = new HashMap<>();
 
     private Main game;
     public int globalSeed = 0;
@@ -87,24 +91,31 @@ public class MainGameScreen implements Screen, InputProcessor {
         Vector2 spawnPosition = new Vector2(INITIAL_SIZE / 2f * CELL_SIZE, INITIAL_SIZE / 2f * CELL_SIZE);
 
         //TODO
-        player = new Player(game.getUsername(), pMaxHP, spawnPosition, pSpeed,  );
+        Class klasse;
         switch (game.getPlayerClass()) {
+            case "Archer":
+                klasse = Archer.class;
+                break;
             case "Assassin":
-                player = new Assassin(game.getUsername(), spawnPosition, assassinTexture);
-                break;
-            case "Mage":
-                //player = new Mage(game.getUsername(), spawnPosition, assassinTexture);
-                break;
-            case "Healer":
-                player= new Assassin(game.getUsername(),spawnPosition, assassinTexture);
+                klasse = Assasin.class;
                 break;
             case "Defender":
-                player= new Assassin(game.getUsername(),spawnPosition, assassinTexture);
+                klasse = Defender.class;
+                break;
+            case "Healer":
+                klasse = Healer.class;
+                break;
+            case "Mage":
+                klasse = Mage.class;
+                break;
+            case "Paladin":
+                klasse = Paladin.class;
                 break;
             default:
-                player = new Assassin(game.getUsername(), spawnPosition, assassinTexture);
+                klasse = Archer.class;
                 break;
         }
+        player = new Player(game.getUsername(), klasse, pMaxHP, pHPRegen, pMaxMana, pManaRegen, spawnPosition, pSpeed, new Vector2(0, 0), assassinTexture);
 
         // send initial position to server
         serverConnection.sendPlayerPosition(player.getX(), player.getY());

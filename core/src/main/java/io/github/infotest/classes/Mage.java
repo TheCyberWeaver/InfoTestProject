@@ -3,7 +3,7 @@ package io.github.infotest.classes;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.util.GameRenderer;
 
-public class Mage {
+public class Mage extends Class{
     private static final float fireballCost = 4;
     private static final float fireballDamage = 3;
     private static final float fireballCooldown = 2;

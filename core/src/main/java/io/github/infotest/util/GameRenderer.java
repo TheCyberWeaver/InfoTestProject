@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.character.Character;
+import io.github.infotest.character.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,12 +79,12 @@ public class GameRenderer {
 
     }
 
-    public void renderPlayers(SpriteBatch batch, HashMap<String, Character> players,float deltaTime) {
+    public void renderPlayers(SpriteBatch batch, HashMap<String, Player> players, float deltaTime) {
         if (players == null){
             System.out.println("players is null");
             return;
         }
-        for (Character player : players.values()) {
+        for (Player player : players.values()) {
             player.interpolatePosition(deltaTime);
             player.render(batch);
         }
@@ -93,9 +94,6 @@ public class GameRenderer {
     public void renderAnimations(SpriteBatch batch, float deltaTime) {
         time += deltaTime;
         renderFireballs(batch, deltaTime);
-        if (time > 1f){
-            System.out.println(activeFireballs.size());
-        }
     }
 
 

@@ -1,4 +1,4 @@
 package io.github.infotest.classes;
 
-public class Archer {
+public class Archer extends Class{
 }
