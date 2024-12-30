@@ -16,6 +16,7 @@ public class StartScreen implements Screen {
     private Stage stage;           // 场景，用于摆放UI控件
     private TextField nameTextField;     // 姓名输入框
     private SelectBox<String> roleSelectBox; // 职业选择下拉框
+    private CheckBox devModeCheckBox;
 
     // 构造函数，传入主游戏对象
     public StartScreen(Main game) {
@@ -54,7 +55,16 @@ public class StartScreen implements Screen {
             public void changed(ChangeEvent event, Actor actor) {
                 // 可以在这里监听SelectBox切换
                 String selectedRole = roleSelectBox.getSelected();
-                System.out.println("Selected:" + selectedRole);
+                //System.out.println("Selected:" + selectedRole);
+            }
+        });
+
+        devModeCheckBox = new CheckBox("Dev Mode", skin);
+        devModeCheckBox.setChecked(true);
+        devModeCheckBox.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.isDevelopmentMode=devModeCheckBox.isChecked();
             }
         });
 
@@ -70,11 +80,12 @@ public class StartScreen implements Screen {
 
                 // 此处可进行一些校验，如名字是否为空，或者名字长度是否合法等
                 if (playerName == null || playerName.trim().isEmpty()) {
-                    System.out.println("Name cannot be empty！");
+                    System.out.println("[WARNING]: Name cannot be empty!");
                     return;
                 }
 
                 // 打印或保存
+                System.out.println("------Init Setup-------");
                 System.out.println("User Name:" + playerName);
                 System.out.println("Your Role:" + selectedRole);
                 // TODO: 可以在这里将玩家信息存到全局，或者切换到下一个游戏场景
@@ -94,6 +105,8 @@ public class StartScreen implements Screen {
         table.add(new Label("Role:", skin));
         table.add(roleSelectBox).width(150).row();
         table.add(startButton).colspan(2);
+        table.add(devModeCheckBox).width(200).row();
+
 
         // 把Table添加到Stage
         stage.addActor(table);

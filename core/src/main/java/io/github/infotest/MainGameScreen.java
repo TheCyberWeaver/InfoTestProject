@@ -5,6 +5,8 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.character.Assassin;
@@ -118,13 +120,19 @@ public class MainGameScreen implements Screen, InputProcessor {
         player = new Player(game.getUsername(), klasse, pMaxHP, pHPRegen, pMaxMana, pManaRegen, spawnPosition, pSpeed, new Vector2(0, 0), assassinTexture);
 
         // send initial position to server
-        serverConnection.sendPlayerPosition(player.getX(), player.getY());
+        //serverConnection.sendPlayerPosition(player.getX(), player.getY());
+        serverConnection.sendPlayerInit(player);
 
         camera.zoom = 1f;
         camera.position.set(player.getX(), player.getY(), 0);
         camera.update();
 
         Gdx.input.setInputProcessor(this);
+
+
+        if(game.isDevelopmentMode){
+            player.setSpeed(500);
+        }
     }
 
     @Override
@@ -207,7 +215,13 @@ public class MainGameScreen implements Screen, InputProcessor {
     @Override
     public boolean scrolled(float amountX, float amountY) {
         camera.zoom += amountY * 0.1f;
-        camera.zoom = Math.max(0.5f, Math.min(1.5f, camera.zoom));
+        if(!game.isDevelopmentMode){
+            camera.zoom = Math.max(0.5f, Math.min(1.5f, camera.zoom));
+        }
+        if(game.isDevelopmentMode){
+            camera.zoom = Math.max(0.01f, camera.zoom);
+        }
+
         return true;
     }
 

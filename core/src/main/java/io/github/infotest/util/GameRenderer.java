@@ -63,7 +63,7 @@ public class GameRenderer {
         int playerX = (int) (pos.x/cellSize);
         int playerY = (int) (pos.y/cellSize);
 
-        for (int y = - 7; y < heightCell + 7; y++) {
+        for (int y =  -7; y < heightCell + 7; y++) {
             for (int x = -7; x < widthCell + 7; x++) {
 
                 int worldX = playerX - widthCell/2 + x ;
