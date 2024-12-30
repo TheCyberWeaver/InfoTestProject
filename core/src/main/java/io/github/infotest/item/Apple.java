@@ -4,7 +4,7 @@ public class Apple extends Item {
     public String color;
 
     public Apple() {
-        super("apple","just a apple");
+        super("apple","just an apple");
     }
     public void render(){
 
