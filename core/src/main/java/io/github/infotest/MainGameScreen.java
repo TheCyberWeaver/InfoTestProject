@@ -9,10 +9,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.character.Assassin;
 import io.github.infotest.character.Character;
-import io.github.infotest.character.Mage;
 import io.github.infotest.util.ServerConnection;
 import io.github.infotest.util.GameRenderer;
 import io.github.infotest.util.MapCreator;
+import io.github.infotest.classes.Mage;
 
 import java.util.HashMap;
 
@@ -81,12 +81,13 @@ public class MainGameScreen implements Screen, InputProcessor {
 
         Vector2 spawnPosition = new Vector2(INITIAL_SIZE / 2f * CELL_SIZE, INITIAL_SIZE / 2f * CELL_SIZE);
 
+        //TODO
         switch (game.getPlayerClass()) {
             case "Assassin":
                 player = new Assassin(game.getUsername(), spawnPosition, assassinTexture);
                 break;
             case "Mage":
-                player = new Mage(game.getUsername(), spawnPosition, assassinTexture);
+                //player = new Mage(game.getUsername(), spawnPosition, assassinTexture);
                 break;
             case "Healer":
                 player= new Assassin(game.getUsername(),spawnPosition, assassinTexture);
@@ -130,6 +131,7 @@ public class MainGameScreen implements Screen, InputProcessor {
         batch.begin();
         gameRenderer.renderMap(batch, camera.zoom, player.getPosition());
         gameRenderer.renderPlayers(batch, players,delta);
+        gameRenderer.renderAnimations(batch,delta);
         batch.end();
 
         handleInput(delta);
@@ -142,18 +144,25 @@ public class MainGameScreen implements Screen, InputProcessor {
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             player.setX(player.getX() - speed * delta);
             moved = true;
+            player.setRotation(new Vector2(-1,0));
         }
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             player.setX(player.getX() + speed * delta);
             moved = true;
+            player.setRotation(new Vector2(1,0));
         }
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             player.setY(player.getY() + speed * delta);
             moved = true;
+            player.setRotation(new Vector2(0,1));
         }
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
             player.setY(player.getY() - speed * delta);
             moved = true;
+            player.setRotation(new Vector2(0,-1));
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.E)) {
+            Mage.fireball(player.getX(), player.getY(), player.getRotation());
         }
 
         if (moved) {

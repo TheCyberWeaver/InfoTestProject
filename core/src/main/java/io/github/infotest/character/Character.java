@@ -21,6 +21,7 @@ public abstract class Character {
     protected float speed;
     private Vector2 velocity;
     private float lerpSpeed = 10f;
+    protected Vector2 rotation;
 
     // LibGDX related
     protected Texture texture;     // character texture
@@ -40,6 +41,7 @@ public abstract class Character {
         this.speed = speed;
         this.velocity = new Vector2(0, 0);
         this.lastUpdateTimestamp = System.currentTimeMillis();
+        this.rotation = new Vector2(0, 0);
     }
 
 
@@ -110,27 +112,21 @@ public abstract class Character {
     public String getName() {
         return name;
     }
-
     public String getClassName() {
         return className;
     }
-
     public int getHealthPoints() {
         return healthPoints;
     }
-
     public int getMaxHealthPoints() {
         return maxHealthPoints;
     }
-
     public int getLevel() {
         return level;
     }
-
     public int getExperience() {
         return experience;
     }
-
     public float getX() {
         return position.x;
     }
@@ -138,7 +134,6 @@ public abstract class Character {
         position.x = x;
         targetPosition.x = x;
     }
-
     public float getY() { return position.y; }
     public void setY(float y) {
 
@@ -151,26 +146,26 @@ public abstract class Character {
     public void setPosition(Vector2 position) {
         this.position = position;
     }
-
-
     public float getSpeed() {
         return speed;
     }
-
     public void setPosition(float x, float y) {
         this.position.x = x;
         this.position.y = y;
     }
-
     public Texture getTexture() {
         return texture;
     }
-
     public void setTexture(Texture texture) {
         this.texture = texture;
     }
-
     public String toString(){
         return name+" "+className;
+    }
+    public Vector2 getRotation(){
+        return rotation;
+    }
+    public void setRotation(Vector2 rotation) {
+        this.rotation = rotation;
     }
 }

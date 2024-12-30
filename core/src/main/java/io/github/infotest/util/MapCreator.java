@@ -20,7 +20,7 @@ public class MapCreator {
     private int numOfValidTextures;
 
     public MapCreator(int pSeed, int width, MainGameScreen pGame, int pNumOfValidTextures) {
-        seed = 98272654;
+        seed = pSeed;
         mapWidth = width;
         map = new int[width][width];
         game = pGame;
@@ -50,8 +50,6 @@ public class MapCreator {
                 }
             }
         }
-
-
         return map;
     }
 
@@ -90,17 +88,19 @@ public class MapCreator {
         int currentBlock = map[y1][x1];
 
         // Check neighbors of the first block
-        if (x1 > 0 && map[y1][x1 - 1] == currentBlock && !(x1 - 1 == x2 && y1 == y2)) return true; // Left
-        if (x1 < mapWidth - 1 && map[y1][x1 + 1] == currentBlock && !(x1 + 1 == x2 && y1 == y2)) return true; // Right
-        if (y1 > 0 && map[y1 - 1][x1] == currentBlock && !(x1 == x2 && y1 - 1 == y2)) return true; // Up
-        if (y1 < mapWidth - 1 && map[y1 + 1][x1] == currentBlock && !(x1 == x2 && y1 + 1 == y2)) return true; // Down
+        if (CheckEveryNeighbour(x1, y1, x2, y2, currentBlock)) return true; // Down
 
         // Check neighbors of the second block
-        if (x2 > 0 && map[y2][x2 - 1] == currentBlock && !(x2 - 1 == x1 && y2 == y1)) return true; // Left
-        if (x2 < mapWidth - 1 && map[y2][x2 + 1] == currentBlock && !(x2 + 1 == x1 && y2 == y1)) return true; // Right
-        if (y2 > 0 && map[y2 - 1][x2] == currentBlock && !(x2 == x1 && y2 - 1 == y1)) return true; // Up
-        if (y2 < mapWidth - 1 && map[y2 + 1][x2] == currentBlock && !(x2 == x1 && y2 + 1 == y1)) return true; // Down
+        if (CheckEveryNeighbour(x2, y2, x1, y1, currentBlock)) return true;
 
+        return false;
+    }
+
+    private boolean CheckEveryNeighbour(int x1, int y1, int x2, int y2, int currentBlock) {
+        if (x1 > 0 && map[y1][x1 - 1] == currentBlock && !(x1 - 1 == x2 && y1 == y2)) return true;
+        if (x1 < mapWidth - 1 && map[y1][x1 + 1] == currentBlock && !(x1 + 1 == x2 && y1 == y2)) return true;
+        if (y1 > 0 && map[y1 - 1][x1] == currentBlock && !(x1 == x2 && y1 - 1 == y2)) return true;
+        if (y1 < mapWidth - 1 && map[y1 + 1][x1] == currentBlock && !(x1 == x2 && y1 + 1 == y2)) return true;
         return false;
     }
 

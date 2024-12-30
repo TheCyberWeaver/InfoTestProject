@@ -14,6 +14,8 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Iterator;
 
+// TODO name,klasse,HP   ;   dropItem, PickupItem, skillCasting/attack, defend, quickChat, NPC interaction, animation, (mapSync),
+
 /**
  * maintain connection to server and other player's information
  */
