@@ -126,20 +126,11 @@ public class ServerConnection {
             }
             Player player = players.get(socketId);
             if (player == null) {
-                switch (playerData.classtype){
-                    case "Assassin":
-                        player = new Assassin(playerData.name, new Vector2(x, y), testTexture);
-                        players.put(socketId, player);
-                        break;
-                    case "Mage":
-                        player = new Mage(playerData.name, new Vector2(x, y), testTexture);
-                        players.put(socketId, player);
-                        break;
-                    default:
-                        System.out.println("[WARNING]: Unknown class: " + playerData.classtype+ " - Player not created");
-                        //player = new Assassin("Gegener", new Vector2(x, y), testTexture);
-                        break;
-                }
+
+                player= PlayerFactory.createPlayer(playerData.name,playerData.classtype, new Vector2(x, y), testTexture);
+
+                if(player!=null){players.put(socketId, player);}
+
             } else {
                 // Old Player - update position
                 player.updateTargetPosition(new Vector2(x, y));
