@@ -3,10 +3,10 @@ package io.github.infotest.util;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.MainGameScreen;
-import io.github.infotest.character.Assassin;
 import io.github.infotest.character.Character;
-import io.github.infotest.character.Mage;
 import io.github.infotest.character.Player;
+import io.github.infotest.classes.*;
+import io.github.infotest.classes.Class;
 import io.github.infotest.util.DataObjects.PlayerData;
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -128,25 +128,23 @@ public class ServerConnection {
             }
             Player player = players.get(socketId);
             if (player == null) {
-                /*switch (playerData.classtype){
-                    case "Assassin":
-                        player = new Assassin(playerData.name, new Vector2(x, y), testTexture);
-                        players.put(socketId, player);
-                        break;
-                    case "Mage":
-                        player = new Mage(playerData.name, new Vector2(x, y), testTexture);
-                        players.put(socketId, player);
-                        break;
-                    default:
-                        System.out.println("[WARNING]: Unknown class: " + playerData.classtype+ " - Player not created");
-                        //player = new Assassin("Gegener", new Vector2(x, y), testTexture);
-                        break;
-                }*/
-                int pLevel = playerData.level; // the level of the player
-                player = new Player(playerData.name, playerData.classtype,
-                    MainGameScreen.lvlToMaxHP(pLevel), playerData.hp, MainGameScreen.get_PHPRegen(),
-                    MainGameScreen.lvlToMaxMana(pLevel), playerData.mana, MainGameScreen.get_PManaRegen(),
-                    playerData.position, playerData.rotation, testTexture, MainGameScreen.get_PInvSize());
+                Class klasse;
+                switch (playerData.classtype) {
+                    case "Archer": klasse = new Archer(); break;
+                    case "Assassin": klasse = new Assassin(); break;
+                    case "Defender": klasse = new Defender(); break;
+                    case "Healer": klasse = new Healer(); break;
+                    case "Mage": klasse = new Mage(); break;
+                    case "Paladin": klasse = new Paladin(); break;
+                    default: klasse = new Archer(); break;
+                }
+
+                int pLevel = 1; //playerData.level; // the level of the player
+                Vector2 pRotation = new Vector2(0,0); //playerData.rotation; // rotation of player
+                player = new Player(playerData.name, klasse,
+                    MainGameScreen.lvlToMaxHP(pLevel), (float) playerData.hp, MainGameScreen.get_PHPRegen(),
+                    MainGameScreen.lvlToMaxMana(pLevel), MainGameScreen.get_PManaRegen(),
+                    new Vector2(x, y), pRotation, testTexture, MainGameScreen.get_PInvSize());
             } else {
                 // Old Player - update position
                 player.updateTargetPosition(new Vector2(x, y));

@@ -9,10 +9,13 @@ public class Mage extends Class{
     private static final float fireballCooldown = 2;
     private static final float fireballSpeed = 1.5f;
 
-    public static void fireball(float x, float y, Vector2 playerRot) {
+    @Override
+    public void castT1Skill(float x, float y, Vector2 playerRot) {
         playerRot.nor();
         float velocityX = 1.5f * playerRot.x;
         float velocityY = 1.5f * playerRot.y;
+
+        System.out.println("Casted first skill");
 
         float calculatedSpeed = (float)Math.sqrt(velocityX * velocityX + velocityY * velocityY);
         if (calculatedSpeed != fireballSpeed) {
@@ -23,18 +26,16 @@ public class Mage extends Class{
     }
 
 
+
     public static float getFireballCost() {
         return fireballCost;
     }
-
     public static float getFireballDamage() {
         return fireballDamage;
     }
-
     public static float getFireballCooldown() {
         return fireballCooldown;
     }
-
     public static float getFireballSpeed() {
         return fireballSpeed;
     }

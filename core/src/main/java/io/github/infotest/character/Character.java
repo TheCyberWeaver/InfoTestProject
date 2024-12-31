@@ -21,11 +21,6 @@ public abstract class Character {
     protected boolean isRegenerating; // if the character is regenerating health this is true
     protected int maxHealth; // maximum Health
 
-    protected float mana; // current mana
-    protected float manaRegen; // mana regeneration per second
-    protected boolean isRegeneratingMana; // if the character is regenerating mana this is true
-    protected int maxMana; // maximum Mana
-
     //Movement related
     private long lastUpdateTimestamp;
     protected Vector2 position = new Vector2(0,0);
@@ -38,7 +33,9 @@ public abstract class Character {
     // LibGDX related
     protected Texture texture; // character texture
 
-    public Character(String name,float healthRegen, int maxHealth, float manaRegen, int maxMana, Vector2 initialPosition, float speed) {
+    public Character(String name,float healthRegen, int maxHealth, float manaRegen, int maxMana, Vector2 initialPosition, float speed, Texture texture) {
+        this.texture = texture;
+
         this.name = name;
         this.level = 1;
         this.experience = 0;
@@ -48,10 +45,6 @@ public abstract class Character {
         this.health = maxHealth;
         this.healthRegen = healthRegen;
         this.maxHealth = maxHealth;
-
-        this.mana = maxMana;
-        this.manaRegen = manaRegen;
-        this.maxMana = maxMana;
 
         //Movement related
         this.position = new Vector2(initialPosition);
@@ -86,12 +79,6 @@ public abstract class Character {
                 health = maxHealth;
             }
         }
-        if (isRegeneratingMana && mana < maxMana) {
-            mana += manaRegen * delta;
-            if (mana > maxMana) {
-                mana = maxMana;
-            }
-        }
 
         // 这里可以根据输入或者 AI 逻辑改变 x, y
         // 示例：x += speed * delta;
@@ -114,24 +101,10 @@ public abstract class Character {
         // 也可以在这里判断角色是否死亡
     }
 
-    public void drainMana(int amount){
-        mana -= amount;
-        if (mana < 0) {
-            mana = 0;
-        }
-    }
-
     public void heal(int amount) {
         health += amount;
         if (health > maxHealth) {
             health = maxHealth;
-        }
-    }
-
-    public void healMana(int amount) {
-        mana += amount;
-        if (mana > maxMana) {
-            mana = maxMana;
         }
     }
 
@@ -149,8 +122,6 @@ public abstract class Character {
         // 升级时也可以增加最大生命值或其他属性
         maxHealth = MainGameScreen.lvlToMaxHP(level);
         health = maxHealth;
-        maxMana = MainGameScreen.lvlToMaxMana(level);
-        mana = maxMana;
         neededExperience = MainGameScreen.neededExpForLevel(level);
     }
 
@@ -177,11 +148,6 @@ public abstract class Character {
     public float getHPRegen() {return healthRegen;}
     public boolean isRegenerating() {return isRegenerating;}
     public int getMaxHP() {return maxHealth;}
-
-    public float getMana() {return mana;}
-    public float getManaRegen() {return manaRegen;}
-    public boolean isRegeneratingMana() {return isRegeneratingMana;}
-    public int getMaxMana() {return maxMana;}
 
     public float getX() {
         return position.x;

@@ -12,11 +12,12 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.character.Character;
 import io.github.infotest.character.Player;
 import io.github.infotest.classes.*;
+import io.github.infotest.classes.Class;
+import io.github.infotest.util.ClassFactory;
 import io.github.infotest.util.ServerConnection;
 import io.github.infotest.util.GameRenderer;
 import io.github.infotest.util.MapCreator;
 
-import java.lang.Class;
 import java.util.HashMap;
 
 public class MainGameScreen implements Screen, InputProcessor {
@@ -55,7 +56,7 @@ public class MainGameScreen implements Screen, InputProcessor {
     private HashMap<String, Player> players = new HashMap<>();
 
     private Main game;
-    public int globalSeed = 0;
+    public int globalSeed;
 
     public MainGameScreen(Game game) {
         this.game = (Main) game;
@@ -80,6 +81,7 @@ public class MainGameScreen implements Screen, InputProcessor {
 
         // map initialization
         MapCreator mapCreator = new MapCreator(globalSeed, INITIAL_SIZE, this, numOfValidTextures);
+        System.out.println("Seed: "+globalSeed);
         map = mapCreator.initializePerlinNoiseMap();
 
         Texture[] textures = new Texture[numOfValidTextures];
@@ -92,35 +94,10 @@ public class MainGameScreen implements Screen, InputProcessor {
 
         Vector2 spawnPosition = new Vector2(INITIAL_SIZE / 2f * CELL_SIZE, INITIAL_SIZE / 2f * CELL_SIZE);
 
-        //TODO
-        Class klasse;
-        switch (game.getPlayerClass()) {
-            case "Archer":
-                klasse = Archer.class;
-                break;
-            case "Assassin":
-                klasse = Assassin.class;
-                break;
-            case "Defender":
-                klasse = Defender.class;
-                break;
-            case "Healer":
-                klasse = Healer.class;
-                break;
-            case "Mage":
-                klasse = Mage.class;
-                break;
-            case "Paladin":
-                klasse = Paladin.class;
-                break;
-            default:
-                klasse = Archer.class;
-                break;
-        }
-        player = new Player(game.getUsername(), klasse, pMaxHP, pHPRegen, pMaxMana, pManaRegen, spawnPosition, pSpeed, new Vector2(0, 0), assassinTexture, invSize);
+        player = new Player(game.getUsername(), ClassFactory.createClass(game.getPlayerClass()), pMaxHP, pHPRegen, pMaxMana, pManaRegen, spawnPosition, pSpeed, new Vector2(0, 0), assassinTexture, invSize);
 
         // send initial position to server
-        //serverConnection.sendPlayerPosition(player.getX(), player.getY());
+        // serverConnection.sendPlayerPosition(player.getX(), player.getY());
         serverConnection.sendPlayerInit(player);
 
         camera.zoom = 1f;
@@ -128,7 +105,6 @@ public class MainGameScreen implements Screen, InputProcessor {
         camera.update();
 
         Gdx.input.setInputProcessor(this);
-
 
         if(game.isDevelopmentMode){
             player.setSpeed(500);
@@ -187,7 +163,7 @@ public class MainGameScreen implements Screen, InputProcessor {
             player.setRotation(new Vector2(0,-1));
         }
         if (Gdx.input.isKeyPressed(Input.Keys.E)) {
-            //TODO
+            player.castSkill(1);
         }
 
         if (moved) {
@@ -281,7 +257,7 @@ public class MainGameScreen implements Screen, InputProcessor {
     public static float get_PSpeed(){
         return pSpeed;
     }
-    public static float get_PInvSize(){
+    public static int get_PInvSize(){
         return invSize;
     }
 }
