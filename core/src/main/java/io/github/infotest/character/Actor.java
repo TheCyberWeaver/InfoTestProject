@@ -22,6 +22,7 @@ public abstract class Actor {
     protected float speed;
     protected Vector2 velocity;
     protected float lerpSpeed = 10f;
+    protected Vector2 rotation = new Vector2(0,0);
 
     // LibGDX related
     protected Texture texture;     // character texture

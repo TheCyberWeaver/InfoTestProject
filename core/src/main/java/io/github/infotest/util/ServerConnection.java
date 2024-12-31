@@ -37,6 +37,15 @@ public class ServerConnection {
     // TODO
     private Texture testTexture;
 
+    public interface SeedListener {
+        void onSeedReceived(int seed);
+    }
+
+    private SeedListener seedListener;
+    public void setSeedListener(SeedListener listener) {
+        this.seedListener = listener;
+    }
+
     public ServerConnection(String serverUrl, Texture testTexture) {
         this.serverUrl = serverUrl;
         this.testTexture = testTexture;
@@ -99,7 +108,12 @@ public class ServerConnection {
                 public void call(Object... args) {
                     if (args.length > 0 && args[0] instanceof Integer) {
                         globalSeed = (int) args[0];
-                        System.out.println("[INFO]: Global seed: " + globalSeed);
+                        //System.out.println("[INFO]: Global seed : " + globalSeed);
+
+                        // call back
+                        if (seedListener != null) {
+                            seedListener.onSeedReceived(globalSeed);
+                        }
                     }
                 }
             });

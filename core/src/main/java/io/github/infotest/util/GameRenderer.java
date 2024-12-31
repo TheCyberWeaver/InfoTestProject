@@ -28,14 +28,14 @@ public class GameRenderer {
     private float fireballFrameDuration = 0.1f;
 
 
-    public GameRenderer(Texture[] pTextures, int[][] map, int cellSize) {
+    public GameRenderer(Texture[] pTextures, int[][] map, int cellSize, Texture fireballTexture) {
         textures = pTextures;
         this.map = map;
         this.cellSize = cellSize;
 
 
         // Initialize the fireball animation
-        Texture fireballSheet = new Texture(Gdx.files.internal("fireball_sheet.png"));
+        Texture fireballSheet = fireballTexture;
         int frameCols = 29; // Number of columns in the animation sheet
         int frameRows = 1; // Number of rows in the animation sheet
         TextureRegion[][] tempFrames = TextureRegion.split(fireballSheet,
@@ -57,6 +57,7 @@ public class GameRenderer {
 
 
     public void renderMap(SpriteBatch batch, float zoom, Vector2 pos) {
+        if (map == null) {return;}
         int widthCell = (int) Math.ceil(Gdx.graphics.getWidth() * zoom / cellSize);
         int heightCell = (int) Math.ceil(Gdx.graphics.getHeight() * zoom / cellSize);
 

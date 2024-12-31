@@ -19,7 +19,6 @@ public abstract class Player extends Actor{
     protected ArrayList<Item> items;
 
 
-
     public Player(String name, String className, int maxHealthPoints, Vector2 initialPosition, float speed,Texture t) {
         super(name,maxHealthPoints,initialPosition,speed);
         this.texture=t;
@@ -90,6 +89,9 @@ public abstract class Player extends Actor{
             Item item = ItemFactory.createItem(itemName);
             items.add(item);
         }
+    }
+    public void setRotation(Vector2 rotation) {
+        this.rotation=rotation.cpy();
     }
     @Override
     public String toString(){
