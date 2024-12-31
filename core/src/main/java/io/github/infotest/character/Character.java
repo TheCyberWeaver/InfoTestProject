@@ -143,11 +143,11 @@ public abstract class Character {
         return className;
     }
 
-    public int getHealthPoints() {
+    public float getHealthPoints() {
         return healthPoints;
     }
 
-    public int getMaxHealthPoints() {
+    public float getMaxHealthPoints() {
         return maxHealthPoints;
     }
 
@@ -155,7 +155,7 @@ public abstract class Character {
         return level;
     }
 
-    public int getExperience() {
+    public float getExperience() {
         return experience;
     }
 
