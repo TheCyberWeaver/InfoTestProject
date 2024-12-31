@@ -1,8 +1,8 @@
 package io.github.infotest.classes;
 
-public class Archer extends Class{
+public class Assassin extends Class{
     @Override
     public String toString() {
-        return "Archer";
+        return "Assassin";
     }
 }

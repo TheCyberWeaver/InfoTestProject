@@ -2,9 +2,11 @@ package io.github.infotest.util;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
+import io.github.infotest.MainGameScreen;
 import io.github.infotest.character.Assassin;
 import io.github.infotest.character.Character;
 import io.github.infotest.character.Mage;
+import io.github.infotest.character.Player;
 import io.github.infotest.util.DataObjects.PlayerData;
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -30,7 +32,7 @@ public class ServerConnection {
     private String mySocketId;
     // key is socketId
     // value is player object
-    private HashMap<String, Character> players = new HashMap<>();
+    private HashMap<String, Player> players = new HashMap<>();
 
     private int globalSeed = 0;
 
@@ -124,9 +126,9 @@ public class ServerConnection {
             if (socketId.equals(mySocketId)) {
                 continue;
             }
-            Character player = players.get(socketId);
+            Player player = players.get(socketId);
             if (player == null) {
-                switch (playerData.classtype){
+                /*switch (playerData.classtype){
                     case "Assassin":
                         player = new Assassin(playerData.name, new Vector2(x, y), testTexture);
                         players.put(socketId, player);
@@ -139,7 +141,12 @@ public class ServerConnection {
                         System.out.println("[WARNING]: Unknown class: " + playerData.classtype+ " - Player not created");
                         //player = new Assassin("Gegener", new Vector2(x, y), testTexture);
                         break;
-                }
+                }*/
+                int pLevel = playerData.level; // the level of the player
+                player = new Player(playerData.name, playerData.classtype,
+                    MainGameScreen.lvlToMaxHP(pLevel), playerData.hp, MainGameScreen.get_PHPRegen(),
+                    MainGameScreen.lvlToMaxMana(pLevel), playerData.mana, MainGameScreen.get_PManaRegen(),
+                    playerData.position, playerData.rotation, testTexture, MainGameScreen.get_PInvSize());
             } else {
                 // Old Player - update position
                 player.updateTargetPosition(new Vector2(x, y));
@@ -164,14 +171,14 @@ public class ServerConnection {
         }
     }
 
-    public void sendPlayerInit(Character player) {
+    public void sendPlayerInit(Player player) {
         JSONObject initData = new JSONObject();
         try {
             initData.put("x", player.getX());
             initData.put("y", player.getY());
             initData.put("name", player.getName());
-            initData.put("hp",player.getHealthPoints());
-            initData.put("classtype",player.getClassName());
+            initData.put("hp",player.getHP());
+            initData.put("classtype",player.getClass().toString());
             initData.put("items",player.getItems());
             System.out.println("----------");
             System.out.println(initData.toString());
@@ -193,7 +200,7 @@ public class ServerConnection {
     }
 
 
-    public HashMap<String, Character> getPlayers() {
+    public HashMap<String, Player> getPlayers() {
         return players;
     }
 

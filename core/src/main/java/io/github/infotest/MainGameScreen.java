@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import io.github.infotest.character.Assassin;
 import io.github.infotest.character.Character;
 import io.github.infotest.character.Player;
 import io.github.infotest.classes.*;
@@ -39,11 +38,12 @@ public class MainGameScreen implements Screen, InputProcessor {
     private static int numOfValidTextures = 4;
 
     //player stats
-    int pMaxHP = 50;
-    float pHPRegen = 2;
-    int pMaxMana = 50;
-    float pManaRegen = 2;
-    float pSpeed = 1.5f;
+    private static final int pMaxHP = 50;
+    private static final float pHPRegen = 2;
+    private static final int pMaxMana = 50;
+    private static final float pManaRegen = 2;
+    private static final float pSpeed = 1.5f;
+    private static final int invSize = 10;
 
     // User character
     private Player player;
@@ -99,7 +99,7 @@ public class MainGameScreen implements Screen, InputProcessor {
                 klasse = Archer.class;
                 break;
             case "Assassin":
-                klasse = Assasin.class;
+                klasse = Assassin.class;
                 break;
             case "Defender":
                 klasse = Defender.class;
@@ -117,7 +117,7 @@ public class MainGameScreen implements Screen, InputProcessor {
                 klasse = Archer.class;
                 break;
         }
-        player = new Player(game.getUsername(), klasse, pMaxHP, pHPRegen, pMaxMana, pManaRegen, spawnPosition, pSpeed, new Vector2(0, 0), assassinTexture);
+        player = new Player(game.getUsername(), klasse, pMaxHP, pHPRegen, pMaxMana, pManaRegen, spawnPosition, pSpeed, new Vector2(0, 0), assassinTexture, invSize);
 
         // send initial position to server
         //serverConnection.sendPlayerPosition(player.getX(), player.getY());
@@ -235,6 +235,18 @@ public class MainGameScreen implements Screen, InputProcessor {
     @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
     @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
 
+    public static int lvlToMaxHP(int lvl){
+        return 50 + 5 * lvl;
+    }
+
+    public static int lvlToMaxMana(int lvl){
+        return 25 + 5 * lvl;
+    }
+
+    public static int neededExpForLevel(int lvl){
+        return 20 + 10 * lvl;
+    }
+
     @Override
     public void dispose() {
         // end server connection
@@ -249,6 +261,27 @@ public class MainGameScreen implements Screen, InputProcessor {
         rockBlock.dispose();
         basicWoodBlock.dispose();
 
+        assetManager.dispose();
+
         // gameRenderer.dispose();
+    }
+
+    public static int get_PMaxHP(){
+        return pMaxHP;
+    }
+    public static float get_PHPRegen(){
+        return pHPRegen;
+    }
+    public static int get_PMaxMana(){
+        return pMaxMana;
+    }
+    public static float get_PManaRegen(){
+        return pManaRegen;
+    }
+    public static float get_PSpeed(){
+        return pSpeed;
+    }
+    public static float get_PInvSize(){
+        return invSize;
     }
 }

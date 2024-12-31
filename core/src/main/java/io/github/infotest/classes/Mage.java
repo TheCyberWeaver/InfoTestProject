@@ -38,4 +38,9 @@ public class Mage extends Class{
     public static float getFireballSpeed() {
         return fireballSpeed;
     }
+
+    @Override
+    public String toString() {
+        return "Mage";
+    }
 }
