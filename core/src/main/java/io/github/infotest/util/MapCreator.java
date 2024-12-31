@@ -1,15 +1,10 @@
 package io.github.infotest.util;
 
 import io.github.infotest.MainGameScreen;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.Texture;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
+import java.util.Random;
 
 public class MapCreator {
     private int seed;
@@ -18,14 +13,16 @@ public class MapCreator {
     private int mapWidth;
     private Perlin perlinClass;
     private int numOfValidTextures;
+    private Random rndm;
 
     public MapCreator(int pSeed, int width, MainGameScreen pGame, int pNumOfValidTextures) {
-        seed = 98272654;
+        seed = 123;
         mapWidth = width;
         map = new int[width][width];
         game = pGame;
         perlinClass = new Perlin();
         numOfValidTextures = pNumOfValidTextures;
+        rndm = new Random(seed);
     }
 
     public int[][] initializePerlinNoiseMap(){
@@ -115,18 +112,7 @@ public class MapCreator {
         if (y < mapWidth - 1) neighbors.add(map[y + 1][x]); // Down
 
         // Return a random neighbor
-        return neighbors.get((int) (Math.random() * neighbors.size()));
+        return neighbors.get((int) (rndm.nextFloat() * neighbors.size()));
     }
 
-
-
-
-    public int[][] initializeRandomMap(){
-        for (int y = 0; y < mapWidth; y++) {
-            for (int x = 0; x < mapWidth; x++) {
-                map[y][x] = (int) (Math.random() * 3); // 随机生成三种cell类型 // Erzeuge 3 zufällige Zellen
-            }
-        }
-        return map;
-    }
 }
