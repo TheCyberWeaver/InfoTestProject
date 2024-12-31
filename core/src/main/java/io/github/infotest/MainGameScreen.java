@@ -106,7 +106,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     @Override
     public void onSeedReceived(int seed) {
         // map initialization
-        MapCreator mapCreator = new MapCreator(globalSeed, INITIAL_SIZE, this, numOfValidTextures);
+        MapCreator mapCreator = new MapCreator(seed, INITIAL_SIZE, this, numOfValidTextures);
+        globalSeed = seed;
         map = mapCreator.initializePerlinNoiseMap();
 
         seedReceived = true;
