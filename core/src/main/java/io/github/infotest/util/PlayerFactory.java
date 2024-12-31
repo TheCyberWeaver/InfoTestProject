@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.character.Player;
 import io.github.infotest.classes.Assassin;
+import io.github.infotest.classes.Defender;
+import io.github.infotest.classes.Healer;
 import io.github.infotest.classes.Mage;
 import io.github.infotest.item.Apple;
 import io.github.infotest.item.Item;
@@ -15,6 +17,10 @@ public class PlayerFactory {
                 return new Assassin(playerName, initialPosition, texture);
             case "Mage":
                 return new Mage(playerName, initialPosition, texture);
+            case "Defender":
+                return new Defender(playerName, initialPosition, texture);
+            case "Healer":
+                return new Healer(playerName, initialPosition, texture);
             default:
                 System.out.println("[WARNING]: Unknown class: " + className+ " - Player not created");
                 return null;

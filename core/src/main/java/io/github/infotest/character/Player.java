@@ -20,9 +20,9 @@ public abstract class Player extends Actor{
 
 
 
-    public Player(String name, String className, int maxHealthPoints, Vector2 initialPosition, float speed) {
+    public Player(String name, String className, int maxHealthPoints, Vector2 initialPosition, float speed,Texture t) {
         super(name,maxHealthPoints,initialPosition,speed);
-
+        this.texture=t;
         this.className = className;
         this.level = 1;
         this.experience = 0;
