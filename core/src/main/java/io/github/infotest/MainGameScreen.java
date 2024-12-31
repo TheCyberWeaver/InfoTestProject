@@ -5,6 +5,8 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.classes.Assassin;
@@ -136,6 +138,7 @@ public class MainGameScreen implements Screen, InputProcessor {
         batch.begin();
         gameRenderer.renderMap(batch, camera.zoom, player.getPosition());
         gameRenderer.renderPlayers(batch, players,delta);
+        gameRenderer.renderAnimations(batch,delta);
         batch.end();
 
         handleInput(delta);
@@ -148,18 +151,25 @@ public class MainGameScreen implements Screen, InputProcessor {
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             player.setX(player.getX() - speed * delta);
             moved = true;
+            player.setRotation(new Vector2(-1,0));
         }
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             player.setX(player.getX() + speed * delta);
             moved = true;
+            player.setRotation(new Vector2(1,0));
         }
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             player.setY(player.getY() + speed * delta);
             moved = true;
+            player.setRotation(new Vector2(0,1));
         }
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
             player.setY(player.getY() - speed * delta);
             moved = true;
+            player.setRotation(new Vector2(0,-1));
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.E)) {
+            //TODO
         }
 
         if (moved) {
@@ -220,6 +230,8 @@ public class MainGameScreen implements Screen, InputProcessor {
         grassBlock.dispose();
         rockBlock.dispose();
         basicWoodBlock.dispose();
+
+        assetManager.dispose();
 
         // gameRenderer.dispose();
     }
