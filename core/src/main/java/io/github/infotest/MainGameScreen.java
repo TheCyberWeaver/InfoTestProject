@@ -5,13 +5,11 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import io.github.infotest.character.Assassin;
-import io.github.infotest.character.Character;
-import io.github.infotest.character.Mage;
+import io.github.infotest.classes.Assassin;
+import io.github.infotest.character.Player;
+import io.github.infotest.classes.Mage;
 import io.github.infotest.util.ServerConnection;
 import io.github.infotest.util.GameRenderer;
 import io.github.infotest.util.MapCreator;
@@ -37,13 +35,13 @@ public class MainGameScreen implements Screen, InputProcessor {
     private static int numOfValidTextures = 4;
 
     // User character
-    private Character player;
+    private Player player;
     private ServerConnection serverConnection;
     // Renderer
     private GameRenderer gameRenderer;
 
     // player list
-    private HashMap<String, Character> players = new HashMap<>();
+    private HashMap<String, Player> players = new HashMap<>();
 
     private Main game;
     public int globalSeed = 0;

@@ -1,9 +1,10 @@
-package io.github.infotest.character;
+package io.github.infotest.classes;
 
 
 import com.badlogic.gdx.math.Vector2;
+import io.github.infotest.character.Player;
 
-public class Healer extends Character {
+public class Healer extends Player {
 
     public Healer(String name, Vector2 initialPosition) {
         super(name, "Healer", 300, initialPosition, 50);

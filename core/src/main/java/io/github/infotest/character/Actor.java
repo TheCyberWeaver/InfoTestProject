@@ -1,56 +1,37 @@
 package io.github.infotest.character;
 
-
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.item.Item;
 import io.github.infotest.util.ItemFactory;
 
 import java.util.ArrayList;
 
-public abstract class Character {
+public abstract class Actor {
     // basic things
     protected String name;
-    protected String className;
     protected float healthPoints;    // current HP
     protected float maxHealthPoints; // maximum HP
-    protected int level;
-    protected float experience;
-    protected ArrayList<Item> items;
-
-    private static BitmapFont font;
-
 
     //Movement related
-    private long lastUpdateTimestamp;
+    protected long lastUpdateTimestamp;
     protected Vector2 position =new Vector2(0,0);
-    private Vector2 targetPosition;// World Position
+    protected Vector2 targetPosition;// World Position
     protected float speed;
-    private Vector2 velocity;
-    private float lerpSpeed = 10f;
+    protected Vector2 velocity;
+    protected float lerpSpeed = 10f;
 
     // LibGDX related
     protected Texture texture;     // character texture
+    protected static BitmapFont font;
 
-    public Character(String name,String className, int maxHealthPoints, Vector2 initialPosition, float speed) {
+    public Actor(String name,int maxHealthPoints, Vector2 initialPosition, float speed) {
         this.name = name;
-
-        this.className = className;
         this.maxHealthPoints = maxHealthPoints;
         this.healthPoints = maxHealthPoints; // full HP at first
-
-        this.level = 1;
-        this.experience = 0;
-        items=new ArrayList<>();
-        // use custom font
-//        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("font.ttf"));
-//        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-//        parameter.size = 16;
-//        this.font = generator.generateFont(parameter);
-//        generator.dispose();
+        this.speed = speed;
 
         //Movement related
         this.position = new Vector2(initialPosition);
@@ -62,10 +43,10 @@ public abstract class Character {
         if (font == null) {
             font = new BitmapFont(); // 只初始化一次
         }
+
     }
-
-
     public void updateTargetPosition(Vector2 newTargetPosition) {
+
         this.targetPosition.set(newTargetPosition);
     }
     public Vector2 predictPosition() {
@@ -81,25 +62,6 @@ public abstract class Character {
         position.lerp(targetPosition, lerpSpeed * deltaTime); // 线性插值
     }
 
-    public void update(float delta) {
-        //  AI logic maybe
-
-    }
-
-    public void render(Batch batch) {
-        Vector2 predictedPosition = predictPosition();
-        if (texture != null) {
-            batch.draw(texture, predictedPosition .x, predictedPosition .y,32,32);
-        }
-        //System.out.println(name);
-        //calculate name width
-
-        GlyphLayout layout = new GlyphLayout(font, name);
-        float textWidth = layout.width;
-
-        font.draw(batch, name, predictedPosition.x + 16 - (int)textWidth/2, predictedPosition.y + 40);
-    }
-
     public void takeDamage(int damage) {
         healthPoints -= damage;
         if (healthPoints < 0) {
@@ -107,7 +69,6 @@ public abstract class Character {
         }
         // 也可以在这里判断角色是否死亡
     }
-
     public void heal(int amount) {
         healthPoints += amount;
         if (healthPoints > maxHealthPoints) {
@@ -115,33 +76,14 @@ public abstract class Character {
         }
     }
 
-    public void gainExperience(int exp) {
-        experience += exp;
-        // 这里设置一个简单的升级机制，比如经验超过 100*等级 就升级
-        if (experience >= 100 * level) {
-            levelUp();
-        }
-    }
-
-    protected void levelUp() {
-        level++;
-        experience = 0; // 升级后将经验清零或其他处理
-        // 升级时也可以增加最大生命值或其他属性
-        maxHealthPoints += 10;
-        healthPoints = maxHealthPoints;
-    }
-
-    // 抽象方法：角色技能（由各个子类实现）
-    public abstract void castSkill();
+    public abstract void render(Batch batch);
 
     // Getter、Setter
     public String getName() {
         return name;
     }
 
-    public String getClassName() {
-        return className;
-    }
+
 
     public float getHealthPoints() {
         return healthPoints;
@@ -151,13 +93,7 @@ public abstract class Character {
         return maxHealthPoints;
     }
 
-    public int getLevel() {
-        return level;
-    }
 
-    public float getExperience() {
-        return experience;
-    }
 
     public float getX() {
         return position.x;
@@ -167,9 +103,10 @@ public abstract class Character {
         targetPosition.x = x;
     }
 
-    public float getY() { return position.y; }
+    public float getY() {
+        return position.y;
+    }
     public void setY(float y) {
-
         position.y = y;
         targetPosition.y=y;
     }
@@ -178,6 +115,7 @@ public abstract class Character {
     }
     public void setPosition(Vector2 position) {
         this.position = position;
+        this.targetPosition = position;
     }
 
 
@@ -185,36 +123,27 @@ public abstract class Character {
         return speed;
     }
 
-    public void setPosition(float x, float y) {
-        this.position.x = x;
-        this.position.y = y;
-    }
 
     public Texture getTexture() {
+
         return texture;
     }
 
     public void setTexture(Texture texture) {
+
         this.texture = texture;
     }
 
     public void setSpeed(int speed) {
         this.speed = speed;
     }
-    public ArrayList<Item> getItems() {
-        return items;
-    }
-    public String toString(){
-        return name+" "+className;
-    }
 
-    public void updateItemFromPlayerData(String[] playerDataItems) {
-        for (String itemName : playerDataItems) {
-            Item item = ItemFactory.createItem(itemName);
-            items.add(item);
-        }
-    }
+    public abstract String toString();
+
+
     public void updateHPFromPlayerData(float hp) {
+
         healthPoints=  hp;
     }
+
 }

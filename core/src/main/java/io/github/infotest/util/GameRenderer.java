@@ -2,15 +2,12 @@ package io.github.infotest.util;
 
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import io.github.infotest.character.Character;
+import io.github.infotest.character.Player;
 
 import java.util.HashMap;
-import java.util.Vector;
 
 
 public class GameRenderer {
@@ -60,18 +57,16 @@ public class GameRenderer {
 
     }
 
-
-    public void renderPlayers(SpriteBatch batch, HashMap<String, Character> players,float deltaTime) {
+    public void renderPlayers(SpriteBatch batch, HashMap<String, Player> players, float deltaTime) {
         if (players == null){
             System.out.println("players is null");
             return;
         }
-        for (Character player : players.values()) {
+        for (Player player : players.values()) {
             player.interpolatePosition(deltaTime);
             player.render(batch);
         }
     }
-
 
 
     public void dispose() {

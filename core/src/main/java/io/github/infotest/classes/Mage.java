@@ -1,10 +1,11 @@
-package io.github.infotest.character;
+package io.github.infotest.classes;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
+import io.github.infotest.character.Player;
 
-public class Mage extends Character {
+public class Mage extends Player {
 
     public Mage(String name, Vector2 playerPosition, Texture t) {
 
