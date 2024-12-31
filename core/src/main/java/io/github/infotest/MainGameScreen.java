@@ -132,7 +132,8 @@ public class MainGameScreen implements Screen, InputProcessor {
         batch.begin();
         gameRenderer.renderMap(batch, camera.zoom, player.getPosition());
         gameRenderer.renderPlayers(batch, players,delta);
-        gameRenderer.renderAnimations(batch,delta);
+        gameRenderer.renderAnimations(batch,delta, assassinTexture);
+        player.update(delta);
         batch.end();
 
         handleInput(delta);
@@ -163,7 +164,9 @@ public class MainGameScreen implements Screen, InputProcessor {
             player.setRotation(new Vector2(0,-1));
         }
         if (Gdx.input.isKeyPressed(Input.Keys.E)) {
+            System.out.println("Button pressed");
             player.castSkill(1);
+
         }
 
         if (moved) {

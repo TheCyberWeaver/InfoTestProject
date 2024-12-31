@@ -96,15 +96,12 @@ public class Player extends Character {
     }
 
     @Override
-    public void castSkill(){
-
-    }
-
-    //TODO player caracter system
     public void castSkill(int skillID) {
-        if (skillID == 1) {
-            timeSinceLastT1Skill = 0;
+        System.out.println("try casting skill " + skillID + "; time:" + timeSinceLastT1Skill);
+        if (skillID == 1 && timeSinceLastT1Skill >= klasse.getT1SkillCooldown()) {
             klasse.castT1Skill(position.x, position.y, rotation);
+            System.out.println("casted Skill");
+            timeSinceLastT1Skill = 0;
         }
 
     }

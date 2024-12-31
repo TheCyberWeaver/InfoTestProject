@@ -27,16 +27,16 @@ public class Mage extends Class{
 
 
 
-    public static float getFireballCost() {
+    public float getT1SkillCost() {
         return fireballCost;
     }
-    public static float getFireballDamage() {
+    public float getT1SkillDamage() {
         return fireballDamage;
     }
-    public static float getFireballCooldown() {
+    public float getT1SkillCooldown() {
         return fireballCooldown;
     }
-    public static float getFireballSpeed() {
+    public float getT1SkillSpeed() {
         return fireballSpeed;
     }
 

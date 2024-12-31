@@ -20,7 +20,7 @@ public class MapCreator {
     private int numOfValidTextures;
 
     public MapCreator(int pSeed, int width, MainGameScreen pGame, int pNumOfValidTextures) {
-        seed = pSeed;
+        seed = 123;
         mapWidth = width;
         map = new int[width][width];
         game = pGame;

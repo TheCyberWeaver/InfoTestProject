@@ -25,7 +25,7 @@ public class GameRenderer {
 
     // Fireball animation-related fields
     private Animation<TextureRegion> fireballAnimation;
-    private static ArrayList<FireballInstance> activeFireballs = new ArrayList<>();
+    private static ArrayList<FireballInstance> activeFireballs;
     private float fireballFrameDuration = 0.1f;
 
 
@@ -52,6 +52,8 @@ public class GameRenderer {
 
         fireballAnimation = new Animation<>(fireballFrameDuration, fireballFrames);
         fireballAnimation.setPlayMode(Animation.PlayMode.LOOP);
+
+        activeFireballs = new ArrayList<FireballInstance>();
 
     }
 
@@ -91,9 +93,9 @@ public class GameRenderer {
     }
 
     float time = 0;
-    public void renderAnimations(SpriteBatch batch, float deltaTime) {
+    public void renderAnimations(SpriteBatch batch, float deltaTime, Texture texture) {
         time += deltaTime;
-        renderFireballs(batch, deltaTime);
+        renderFireballs(batch, deltaTime, texture);
     }
 
 
@@ -109,7 +111,7 @@ public class GameRenderer {
 
 
     /// ANIMATION HELPER
-    private void renderFireballs(SpriteBatch batch, float deltaTime) {
+    private void renderFireballs(SpriteBatch batch, float deltaTime, Texture texture) {
         ArrayList<FireballInstance> toRemove = new ArrayList<>();
 
         for (FireballInstance fireball : activeFireballs) {
@@ -133,6 +135,7 @@ public class GameRenderer {
                     cellSize*8, cellSize*8,
                     rotation
                 );
+                System.out.print("Fireball drawn at "+fireball.x+", "+fireball.y);
             }
         }
 
@@ -178,6 +181,7 @@ public class GameRenderer {
         public void updatePosition(float deltaTime) {
             this.x += velocityX * deltaTime;
             this.y += velocityY * deltaTime;
+            System.out.println("Updated position: (" + this.x + ", " + this.y + ")");
         }
     }
 

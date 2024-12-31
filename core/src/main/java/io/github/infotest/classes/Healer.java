@@ -8,6 +8,19 @@ public class Healer extends Class{
 
     }
 
+    public float getT1SkillCost() {
+        return 0;
+    }
+    public float getT1SkillDamage() {
+        return 0;
+    }
+    public float getT1SkillCooldown() {
+        return 0;
+    }
+    public float getT1SkillSpeed() {
+        return 0;
+    }
+
     @Override
     public String toString() {
         return "Healer";

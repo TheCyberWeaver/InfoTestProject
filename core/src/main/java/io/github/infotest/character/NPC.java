@@ -14,7 +14,7 @@ public class NPC extends Character {
     }
 
     @Override
-    public void castSkill() {
+    public void castSkill(int skillID) {
 
     }
 }

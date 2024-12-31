@@ -131,7 +131,7 @@ public abstract class Character {
     }
 
     // 抽象方法：角色技能（由各个子类实现）
-    public abstract void castSkill();
+    public abstract void castSkill(int skillID);
 
 
     // Getter、Setter
