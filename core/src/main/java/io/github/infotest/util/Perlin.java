@@ -20,12 +20,12 @@ public class Perlin {
      * @return a 2D array of random float values between 0 and 1
      */
     public static float[][] GenerateWhiteNoise(int width, int height, long seed) {
-        Random random = new Random(seed); // Random seed
+        Random random = new Random(seed);
         float[][] noise = new float[width][height];
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                noise[i][j] = (float) (Math.random() % 1);
+                noise[i][j] = random.nextFloat();
             }
         }
 
