@@ -143,7 +143,7 @@ public class ServerConnection {
             } else {
                 // Old Player - update position
                 player.updateTargetPosition(new Vector2(x, y));
-                player.updateHPFromPlayerData(playerData.hp);
+                player.updateHPFromPlayerData((float)playerData.hp);
                 player.updateItemFromPlayerData(playerData.items);
             }
         }

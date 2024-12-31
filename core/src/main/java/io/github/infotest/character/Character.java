@@ -15,10 +15,10 @@ public abstract class Character {
     // basic things
     protected String name;
     protected String className;
-    protected int healthPoints;    // current HP
-    protected int maxHealthPoints; // maximum HP
+    protected float healthPoints;    // current HP
+    protected float maxHealthPoints; // maximum HP
     protected int level;
-    protected int experience;
+    protected float experience;
     protected ArrayList<Item> items;
 
     private static BitmapFont font;
@@ -214,7 +214,7 @@ public abstract class Character {
             items.add(item);
         }
     }
-    public void updateHPFromPlayerData(int hp) {
-        healthPoints= (int) hp;
+    public void updateHPFromPlayerData(float hp) {
+        healthPoints=  hp;
     }
 }
