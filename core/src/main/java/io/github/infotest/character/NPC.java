@@ -13,6 +13,10 @@ public class NPC extends Actor {
     public void render(Batch batch) {
 
     }
+    @Override
+    public void update(float delta) {
+
+    }
 
     @Override
     public String toString() {

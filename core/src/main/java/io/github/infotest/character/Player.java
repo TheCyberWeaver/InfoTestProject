@@ -18,8 +18,14 @@ public abstract class Player extends Actor{
     protected float experience;
     protected ArrayList<Item> items;
 
+    protected float mana;
+    protected float maxMana;
+    protected float manaRegen = 2f;
 
-    public Player(String name, String className, int maxHealthPoints, Vector2 initialPosition, float speed,Texture t) {
+    protected float timeSinceLastT1Skill;
+
+
+    public Player(String name, String className, int maxHealthPoints, int maxMana, Vector2 initialPosition, float speed,Texture t) {
         super(name,maxHealthPoints,initialPosition,speed);
         this.texture=t;
         this.className = className;
@@ -33,9 +39,15 @@ public abstract class Player extends Actor{
 //        this.font = generator.generateFont(parameter);
 //        generator.dispose();
 
+        this.maxMana = maxMana;
+        this.mana = maxMana;
+
+        this.timeSinceLastT1Skill = 0;
 
     }
 
+
+    /// game logic
     @Override
     public void render(Batch batch) {
         Vector2 predictedPosition = predictPosition();
@@ -51,10 +63,27 @@ public abstract class Player extends Actor{
         font.draw(batch, name, predictedPosition.x + 16 - (int)textWidth/2, predictedPosition.y + 40);
     }
 
+    @Override
     public void update(float delta){
+        if (healthPoints < maxHealthPoints) {
+            healthPoints += healthPointsRegen * delta;
+            if (healthPoints > maxHealthPoints) {
+                healthPoints = maxHealthPoints;
+            }
+        }
 
+        if (mana < maxMana) {
+            mana += manaRegen * delta;
+            if (mana > maxMana) {
+                mana = maxMana;
+            }
+        }
+
+        timeSinceLastT1Skill += delta;
     }
 
+
+    /// Abilities
     public void gainExperience(int exp) {
         experience += exp;
         // 这里设置一个简单的升级机制，比如经验超过 100*等级 就升级
@@ -72,17 +101,35 @@ public abstract class Player extends Actor{
     }
 
     // 抽象方法：角色技能（由各个子类实现）
-    public abstract void castSkill();
+    public abstract void castSkill(int skillID);
 
+
+
+
+    /// Getter / Setter
     public String getClassName() {
         return className;
     }
+
     public int getLevel() {
         return level;
     }
-
     public float getExperience() {
         return experience;
+    }
+
+    public float getMana() {
+        return mana;
+    }
+    public float getMaxMana() {
+        return maxMana;
+    }
+    public float getManaRegen() {
+        return manaRegen;
+    }
+
+    public float getTimeSinceLastT1Skill() {
+        return timeSinceLastT1Skill;
     }
 
     public ArrayList<Item> getItems() {
@@ -94,6 +141,7 @@ public abstract class Player extends Actor{
             items.add(item);
         }
     }
+
     public void setRotation(Vector2 rotation) {
         this.rotation=rotation.cpy();
     }

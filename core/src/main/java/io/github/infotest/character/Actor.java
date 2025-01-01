@@ -14,6 +14,7 @@ public abstract class Actor {
     protected String name;
     protected float healthPoints;    // current HP
     protected float maxHealthPoints; // maximum HP
+    protected float healthPointsRegen = 2f; // health regeneration per second
 
     //Movement related
     protected long lastUpdateTimestamp;
@@ -78,6 +79,7 @@ public abstract class Actor {
     }
 
     public abstract void render(Batch batch);
+    public abstract void update(float delta);
 
     // Getter、Setter
     public String getName() {
