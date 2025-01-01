@@ -102,8 +102,9 @@ public class GameRenderer {
 
     /// ANIMATIONS
     // Fireball
-    public static void fireball(float startX, float startY, float velocityX, float velocityY, Vector2 rotation) {
-        activeFireballs.add(new FireballInstance(startX, startY, velocityX, velocityY, rotation));
+    public static void fireball(float startX, float startY, float velocityX, float velocityY, Vector2 rotation, float scale) {
+        System.out.println("Added Fireball to list");
+        activeFireballs.add(new FireballInstance(startX, startY, velocityX, velocityY, rotation, scale));
     }
 
 
@@ -111,6 +112,8 @@ public class GameRenderer {
     /// ANIMATION HELPER
     private void renderFireballs(SpriteBatch batch, float deltaTime, Texture texture) {
         ArrayList<FireballInstance> toRemove = new ArrayList<>();
+        System.out.println("Rendering Fireballs");
+        System.out.println("Anzahl aktiver Fireballs: " + activeFireballs.size());
 
         for (FireballInstance fireball : activeFireballs) {
             fireball.elapsedTime += deltaTime;
@@ -120,32 +123,30 @@ public class GameRenderer {
                 toRemove.add(fireball); // Entferne abgeschlossene Animationen
             } else {
                 TextureRegion currentFrame = fireballAnimation.getKeyFrame(fireball.elapsedTime);
+                TextureRegion textureRegion = new TextureRegion(texture);
 
                 float rotation = 0; //TODO
 
                 batch.draw(
-                    currentFrame,
+                    textureRegion,
                     fireball.x+1, fireball.y+1,
                     16,
                     16,
-                    currentFrame.getRegionWidth(),
-                    currentFrame.getRegionHeight(),
-                    cellSize*8, cellSize*8,
+                    textureRegion.getRegionWidth(),
+                    textureRegion.getRegionHeight(),
+                    32*8*fireball.scale, 32*8*fireball.scale,
                     rotation
                 );
+                System.out.println("Fireball Position: x=" + fireball.x + ", y=" + fireball.y);
+                System.out.println("Fireball Scale: " + fireball.scale);
+                System.out.println("Texture Size: width=" + textureRegion.getRegionWidth() + ", height=" + textureRegion.getRegionHeight());
+                System.out.println("////////////////////////");
                 System.out.print("Fireball drawn at "+fireball.x+", "+fireball.y);
             }
         }
 
         activeFireballs.removeAll(toRemove); // Entferne abgeschlossene Fireballs
     }
-
-
-
-
-
-
-
 
 
 
@@ -157,23 +158,22 @@ public class GameRenderer {
     }
 
 
-
-
-
     /// Helper class for tracking fireball instances
     private static class FireballInstance {
         float x, y;
         float velocityX, velocityY;
         Vector2 rotation;
         float elapsedTime;
+        float scale;
 
-        FireballInstance(float x, float y, float velocityX, float velocityY, Vector2 rotation) {
+        FireballInstance(float x, float y, float velocityX, float velocityY, Vector2 rotation, float scale) {
             this.x = x;
             this.y = y;
             this.velocityX = velocityX;
             this.velocityY = velocityY;
             this.rotation = rotation;
             this.elapsedTime = 0f;
+            this.scale = scale;
         }
 
         public void updatePosition(float deltaTime) {

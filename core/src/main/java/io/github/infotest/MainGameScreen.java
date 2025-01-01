@@ -89,7 +89,7 @@ public class MainGameScreen implements Screen, InputProcessor {
 
         Vector2 spawnPosition = new Vector2(INITIAL_SIZE / 2f * CELL_SIZE, INITIAL_SIZE / 2f * CELL_SIZE);
 
-        player = PlayerFactory.createPlayer(player.getName(), player.getClassName(), spawnPosition, assassinTexture);
+        player = PlayerFactory.createPlayer(game.getUsername(), game.getPlayerClass(), spawnPosition, assassinTexture);
 
         // send initial position to server
         // serverConnection.sendPlayerPosition(player.getX(), player.getY());
@@ -125,18 +125,23 @@ public class MainGameScreen implements Screen, InputProcessor {
         batch.setProjectionMatrix(camera.combined);
 
         batch.begin();
+
         gameRenderer.renderMap(batch, camera.zoom, player.getPosition());
         gameRenderer.renderPlayers(batch, players,delta);
-        gameRenderer.renderAnimations(batch,delta, assassinTexture);
+        gameRenderer.renderAnimations(batch, delta, assassinTexture);
         player.update(delta);
+
         batch.end();
 
         handleInput(delta);
     }
 
+    float tempTime = 0;
     private void handleInput(float delta) {
         boolean moved = false;
         float speed = player.getSpeed();
+
+        tempTime += delta;
 
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             player.setX(player.getX() - speed * delta);
@@ -159,9 +164,11 @@ public class MainGameScreen implements Screen, InputProcessor {
             player.setRotation(new Vector2(0,-1));
         }
         if (Gdx.input.isKeyPressed(Input.Keys.E)) {
-            System.out.println("Button pressed");
-            player.castSkill(1);
-
+            if (tempTime > 1f) {
+                System.out.println("Button pressed");
+                player.castSkill(1);
+                tempTime = 0;
+            }
         }
 
         if (moved) {
