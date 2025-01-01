@@ -7,11 +7,11 @@ import io.github.infotest.character.Player;
 public class Defender extends Player {
 
     public Defender(String name, Vector2 initialPosition, Texture texture) {
-        super(name, "Defender", 150, initialPosition, 75,  texture);
+        super(name, "Defender", 150, 25 ,initialPosition, 75,  texture);
     }
 
     @Override
-    public void castSkill() {
+    public void castSkill(int skillID) {
 
     }
 }
