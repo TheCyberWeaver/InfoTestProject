@@ -30,7 +30,7 @@ public class GameRenderer {
         this.cellSize = cellSize;
 
         // Initialize the fireball animation
-        Texture fireballSheet = new Texture(Gdx.files.internal("fireball_sheet.png"));
+        Texture fireballSheet = fireBallTexture;
         int frameCols = 29; // Number of columns in the animation sheet
         int frameRows = 1; // Number of rows in the animation sheet
         TextureRegion[][] tempFrames = TextureRegion.split(fireballSheet,
