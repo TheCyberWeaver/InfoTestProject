@@ -51,6 +51,10 @@ public abstract class Player extends Actor{
         font.draw(batch, name, predictedPosition.x + 16 - (int)textWidth/2, predictedPosition.y + 40);
     }
 
+    public void update(float delta){
+
+    }
+
     public void gainExperience(int exp) {
         experience += exp;
         // 这里设置一个简单的升级机制，比如经验超过 100*等级 就升级

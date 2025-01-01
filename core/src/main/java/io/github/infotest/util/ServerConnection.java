@@ -141,7 +141,7 @@ public class ServerConnection {
             Player player = players.get(socketId);
             if (player == null) {
 
-                player= PlayerFactory.createPlayer(playerData.name,playerData.classtype, new Vector2(x, y), testTexture);
+                player = PlayerFactory.createPlayer(playerData.name,playerData.classtype, new Vector2(x, y), testTexture);
 
                 if(player!=null){players.put(socketId, player);}
 

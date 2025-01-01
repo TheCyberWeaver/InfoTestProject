@@ -9,9 +9,11 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import io.github.infotest.classes.Assassin;
+import io.github.infotest.character.Character;
 import io.github.infotest.character.Player;
-import io.github.infotest.classes.Mage;
+import io.github.infotest.classes.*;
+import io.github.infotest.classes.Class;
+import io.github.infotest.util.ClassFactory;
 import io.github.infotest.util.PlayerFactory;
 import io.github.infotest.util.ServerConnection;
 import io.github.infotest.util.GameRenderer;
@@ -19,7 +21,7 @@ import io.github.infotest.util.MapCreator;
 
 import java.util.HashMap;
 
-public class MainGameScreen implements Screen, InputProcessor, ServerConnection.SeedListener {
+public class MainGameScreen implements Screen, InputProcessor {
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private AssetManager assetManager; //TODO
@@ -30,14 +32,20 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     private Texture grassBlock;
     private Texture rockBlock;
     private Texture basicWoodBlock;
-    private Texture fireBallTexture;
-    private Texture[] textures;
+
     // Map data
     private int[][] map;
     private static final int CELL_SIZE = 32;
     private static final int INITIAL_SIZE = 3000;
     private static int numOfValidTextures = 4;
-    private boolean seedReceived = false;
+
+    //player stats
+    private static final int pMaxHP = 50;
+    private static final float pHPRegen = 2;
+    private static final int pMaxMana = 50;
+    private static final float pManaRegen = 2;
+    private static final float pSpeed = 1.5f;
+    private static final int invSize = 10;
 
     // User character
     private Player player;
@@ -49,7 +57,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     private HashMap<String, Player> players = new HashMap<>();
 
     private Main game;
-    public int globalSeed = 0;
+    public int globalSeed;
 
     public MainGameScreen(Game game) {
         this.game = (Main) game;
@@ -66,55 +74,44 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         grassBlock = new Texture("grass_block.jpg");
         rockBlock = new Texture("stone_block.png");
         basicWoodBlock = new Texture("basicWood.png");
-        fireBallTexture = new Texture(Gdx.files.internal("fireball_sheet.png"));
 
 
         // connect to server
         serverConnection = new ServerConnection("http://www.thomas-hub.com:9595", assassinTexture);
-        serverConnection.setSeedListener(this);
         serverConnection.connect();
 
+        // map initialization
+        MapCreator mapCreator = new MapCreator(globalSeed, INITIAL_SIZE, this, numOfValidTextures);
+        System.out.println("Seed: "+globalSeed);
+        map = mapCreator.initializePerlinNoiseMap();
 
-        textures = new Texture[numOfValidTextures];
+        Texture[] textures = new Texture[numOfValidTextures];
         textures[0] = normalBlock;
         textures[1] = grassBlock;
         textures[2] = rockBlock;
         textures[3] = basicWoodBlock;
 
-
-        Gdx.input.setInputProcessor(this);
-
-
+        gameRenderer = new GameRenderer(textures, map, CELL_SIZE);
 
         Vector2 spawnPosition = new Vector2(INITIAL_SIZE / 2f * CELL_SIZE, INITIAL_SIZE / 2f * CELL_SIZE);
-        //System.out.println("class: "+ game.getPlayerClass());
-        player= PlayerFactory.createPlayer(game.getUsername(),game.getPlayerClass(),spawnPosition,assassinTexture);
-        //System.out.println("class: "+ player.getClass());
+
+        player = PlayerFactory.createPlayer(player.getName(), player.getClassName(), spawnPosition, assassinTexture);
 
         // send initial position to server
+        // serverConnection.sendPlayerPosition(player.getX(), player.getY());
         serverConnection.sendPlayerInit(player);
 
         camera.zoom = 1f;
         camera.position.set(player.getX(), player.getY(), 0);
         camera.update();
 
+        Gdx.input.setInputProcessor(this);
+
         if(game.isDevelopmentMode){
             player.setSpeed(500);
         }
-
     }
-    @Override
-    public void onSeedReceived(int seed) {
-        // map initialization
-        MapCreator mapCreator = new MapCreator(seed, INITIAL_SIZE, this, numOfValidTextures);
-        globalSeed = seed;
-        map = mapCreator.initializePerlinNoiseMap();
 
-        seedReceived = true;
-        System.out.println("Map generated after receiving seed: " + seed);
-
-        gameRenderer = new GameRenderer(textures, map, CELL_SIZE, fireBallTexture);
-    }
     @Override
     public void render(float delta) {
 
@@ -127,20 +124,20 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        if(player!=null && gameRenderer!=null){
-            // update camera position
-            camera.position.set(player.getX(), player.getY(), 0);
-            camera.update();
-            batch.setProjectionMatrix(camera.combined);
+        // update camera position
+        camera.position.set(player.getX(), player.getY(), 0);
+        camera.update();
 
-            batch.begin();
-            gameRenderer.renderMap(batch, camera.zoom, player.getPosition());
-            gameRenderer.renderPlayers(batch, players,delta);
-            gameRenderer.renderAnimations(batch,delta);
-            batch.end();
+        batch.setProjectionMatrix(camera.combined);
 
-            handleInput(delta);
-        }
+        batch.begin();
+        gameRenderer.renderMap(batch, camera.zoom, player.getPosition());
+        gameRenderer.renderPlayers(batch, players,delta);
+        gameRenderer.renderAnimations(batch,delta, assassinTexture);
+        player.update(delta);
+        batch.end();
+
+        handleInput(delta);
     }
 
     private void handleInput(float delta) {
@@ -168,7 +165,9 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             player.setRotation(new Vector2(0,-1));
         }
         if (Gdx.input.isKeyPressed(Input.Keys.E)) {
-            //TODO
+            System.out.println("Button pressed");
+            player.castSkill(1);
+
         }
 
         if (moved) {
@@ -216,6 +215,18 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
     @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
 
+    public static int lvlToMaxHP(int lvl){
+        return 50 + 5 * lvl;
+    }
+
+    public static int lvlToMaxMana(int lvl){
+        return 25 + 5 * lvl;
+    }
+
+    public static int neededExpForLevel(int lvl){
+        return 20 + 10 * lvl;
+    }
+
     @Override
     public void dispose() {
         // end server connection
@@ -233,5 +244,24 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         assetManager.dispose();
 
         // gameRenderer.dispose();
+    }
+
+    public static int get_PMaxHP(){
+        return pMaxHP;
+    }
+    public static float get_PHPRegen(){
+        return pHPRegen;
+    }
+    public static int get_PMaxMana(){
+        return pMaxMana;
+    }
+    public static float get_PManaRegen(){
+        return pManaRegen;
+    }
+    public static float get_PSpeed(){
+        return pSpeed;
+    }
+    public static int get_PInvSize(){
+        return invSize;
     }
 }
