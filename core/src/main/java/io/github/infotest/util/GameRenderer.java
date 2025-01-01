@@ -2,8 +2,6 @@ package io.github.infotest.util;
 
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -13,7 +11,6 @@ import io.github.infotest.character.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Vector;
 
 public class GameRenderer {
 
@@ -27,18 +24,17 @@ public class GameRenderer {
     private float fireballFrameDuration = 0.1f;
 
 
-    public GameRenderer(Texture[] pTextures, int[][] map, int cellSize) {
+    public GameRenderer(Texture[] pTextures, int[][] map, int cellSize, Texture fireBallTexture) {
         textures = pTextures;
         this.map = map;
         this.cellSize = cellSize;
 
         // Initialize the fireball animation
-        Texture fireballSheet = new Texture(Gdx.files.internal("fireball_sheet.png"));
         int frameCols = 29; // Number of columns in the animation sheet
         int frameRows = 1; // Number of rows in the animation sheet
-        TextureRegion[][] tempFrames = TextureRegion.split(fireballSheet,
-            fireballSheet.getWidth() / frameCols,
-            fireballSheet.getHeight() / frameRows);
+        TextureRegion[][] tempFrames = TextureRegion.split(fireBallTexture,
+            fireBallTexture.getWidth() / frameCols,
+            fireBallTexture.getHeight() / frameRows);
 
         TextureRegion[] fireballFrames = new TextureRegion[frameCols * frameRows];
         int index = 0;
