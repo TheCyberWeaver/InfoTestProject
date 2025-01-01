@@ -1,8 +1,10 @@
 package io.github.infotest;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -73,23 +75,8 @@ public class StartScreen implements Screen {
         startButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                // 获取用户输入的名称
-                String playerName = nameTextField.getText();
-                // 获取用户选择的职业
-                String selectedRole = roleSelectBox.getSelected();
+                startGame();
 
-                // 此处可进行一些校验，如名字是否为空，或者名字长度是否合法等
-                if (playerName == null || playerName.trim().isEmpty()) {
-                    System.out.println("[WARNING]: Name cannot be empty!");
-                    return;
-                }
-
-                // 打印或保存
-                System.out.println("------Init Setup-------");
-                System.out.println("User Name:" + playerName);
-                System.out.println("Your Role:" + selectedRole);
-                // TODO: 可以在这里将玩家信息存到全局，或者切换到下一个游戏场景
-                game.startGame(playerName, selectedRole);
             }
         });
 
@@ -111,7 +98,24 @@ public class StartScreen implements Screen {
         // 把Table添加到Stage
         stage.addActor(table);
     }
+    public void startGame(){
 
+        String playerName = nameTextField.getText();
+        String selectedRole = roleSelectBox.getSelected();
+
+        // Validation
+        if (playerName == null || playerName.trim().isEmpty()) {
+            System.out.println("[WARNING]: Name cannot be empty!");
+            return;
+        }
+
+        // Log
+        System.out.println("------Init Setup-------");
+        System.out.println("User Name:" + playerName);
+        System.out.println("Your Role:" + selectedRole);
+
+        game.startGame(playerName, selectedRole);
+    }
     @Override
     public void render(float delta) {
         //System.out.println("render");
@@ -119,9 +123,16 @@ public class StartScreen implements Screen {
         Gdx.gl.glClearColor(0.439f, 0.5f, 0.5625f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        handleInput();
+
         // draw stage
         stage.act(delta);
         stage.draw();
+    }
+    public void handleInput() {
+        if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
+            startGame();
+        }
     }
 
     @Override
