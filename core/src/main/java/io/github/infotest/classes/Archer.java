@@ -5,8 +5,8 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.character.Player;
 
 public class Archer extends Player {
-    public Archer(String name, String className, int maxHealthPoints, int maxMana, Vector2 initialPosition, float speed, Texture t) {
-        super(name, className, maxHealthPoints, maxMana, initialPosition, speed, t);
+    public Archer(String name, Vector2 playerPosition, Texture t) {
+        super(name, "Archer",50, 50 ,playerPosition, 150, t);
     }
 
     @Override
