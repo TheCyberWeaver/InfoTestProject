@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import io.github.infotest.character.Gegner;
 import io.github.infotest.classes.Assassin;
 import io.github.infotest.character.Player;
 import io.github.infotest.classes.Mage;
@@ -18,6 +19,7 @@ import io.github.infotest.util.ServerConnection;
 import io.github.infotest.util.GameRenderer;
 import io.github.infotest.util.MapCreator;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MainGameScreen implements Screen, InputProcessor, ServerConnection.SeedListener {
@@ -57,6 +59,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
     // player list
     private HashMap<String, Player> players = new HashMap<>();
+    private ArrayList<Gegner> allGegner = new ArrayList<>();
 
     private Main game;
     public int globalSeed = 0;
@@ -158,11 +161,13 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
             batch.begin();
             gameRenderer.renderMap(batch, camera.zoom, player.getPosition());
-            gameRenderer.renderPlayers(batch, players,delta);
+            gameRenderer.renderPlayers(batch, players, delta);
+            gameRenderer.renderGegner(batch, allGegner, delta);
             gameRenderer.renderAnimations(batch,delta,shapeRenderer);
             batch.end();
 
             player.update(delta);
+            checkFireballCollisions();
 
             handleInput(delta);
         }
@@ -280,5 +285,33 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         assetManager.dispose();
 
         // gameRenderer.dispose();
+    }
+
+    /// GAME LOGIC
+    public void checkFireballCollisions() {
+        for (GameRenderer.FireballInstance fireball : gameRenderer.getActiveFireballs()) {
+            for (Player p : players.values()){
+                if (p.equals(player)){
+                    continue;
+                }
+                float dX = Math.abs(p.getX() - fireball.getX());
+                float dY = Math.abs(p.getY() - fireball.getY());
+
+                if (dX <= 16f && dY <= 16f && !fireball.hasHit()){
+                    p.takeDamage(fireball.getDamage());
+                    fireball.setHit();
+                }
+            }
+
+            for (Gegner gegner : allGegner){
+                float dX = Math.abs(gegner.getX() - fireball.getX());
+                float dY = Math.abs(gegner.getY() - fireball.getY());
+
+                if (dX <= 7f && dY <= 7f){
+                    gegner.takeDamage(fireball.getDamage());
+                    fireball.setHit();
+                }
+            }
+        }
     }
 }

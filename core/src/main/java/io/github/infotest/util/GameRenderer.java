@@ -9,9 +9,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import io.github.infotest.MainGameScreen;
+import io.github.infotest.character.Gegner;
 import io.github.infotest.character.Player;
 import io.github.infotest.classes.Mage;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
@@ -27,6 +30,8 @@ public class GameRenderer {
     private float fireballFrameDuration = 0.1f;
 
     private Animation<TextureRegion>[] fireballAnimations;
+
+    private MainGameScreen game;
 
 
     public GameRenderer(Texture[] pTextures, int[][] map, int cellSize) {
@@ -120,21 +125,27 @@ public class GameRenderer {
         }
     }
 
+    public void renderGegner(SpriteBatch batch, ArrayList<Gegner> allGegner, float deltaTime) {
+        if (allGegner == null){
+            System.out.println("players is null");
+            return;
+        }
+        for (Gegner gegner : allGegner) {
+            gegner.interpolatePosition(deltaTime);
+            gegner.render(batch);
+        }
+    }
+
     float time = 0;
     public void renderAnimations(SpriteBatch batch, float deltaTime, ShapeRenderer shapeRenderer) {
         time += deltaTime;
         renderFireballs(batch, deltaTime, fireballAnimations, shapeRenderer);
     }
 
-    //TODO: Scale and Rotation fix
-    //TODO: Animation fix => erste Animation ist Fireball_fly und andere Animation Fireball_Destroy
-
-
     /// ANIMATIONS
     // Fireball
-    public static void fireball(float pX, float pY, float velocityX, float velocityY, Vector2 rotation, float scale, float speed, float lt) {
-        activeFireballs.add(new FireballInstance(pX, pY, velocityX, velocityY, rotation, scale, speed, lt));
-        System.out.println(activeFireballs.size());
+    public static void fireball(float pX, float pY, float velocityX, float velocityY, Vector2 rotation, float scale,float damage, float speed, float lt) {
+        activeFireballs.add(new FireballInstance(pX, pY, velocityX, velocityY, rotation, scale, damage, speed, lt));
     }
 
 
@@ -153,7 +164,14 @@ public class GameRenderer {
             fireball.updatePosition(deltaTime);
             float rotation = fireball.rotation.angleDeg();
 
-            if (fireball.elapsedTime <= fireballAnimation_start.getAnimationDuration()){
+            if (fireball.hasHit){
+                fireball.endTimer += deltaTime;
+                TextureRegion currentFrame = fireballAnimation_endHit.getKeyFrame(fireball.endTimer);
+                drawFrame(batch, currentFrame, fireball, rotation);
+                if (fireball.endTimer > fireballAnimation_endHit.getAnimationDuration()) {
+                    toRemove.add(fireball);
+                }
+            } else if (fireball.elapsedTime <= fireballAnimation_start.getAnimationDuration()){
                 TextureRegion currentFrame = fireballAnimation_start.getKeyFrame(fireball.elapsedTime);
                 drawFrame(batch, currentFrame, fireball, rotation);
             } else if (fireball.elapsedTime < fireball.lt) {
@@ -163,8 +181,7 @@ public class GameRenderer {
                 TextureRegion currentFrame = fireballAnimation_endTime.getKeyFrame(fireball.endTimer);
                 drawFrame(batch, currentFrame, fireball, rotation);
                 fireball.endTimer += deltaTime;
-
-                if (fireball.elapsedTime > fireball.lt + fireballAnimation_endTime.getAnimationDuration()) {
+                if (fireball.endTimer > fireballAnimation_endTime.getAnimationDuration()) {
                     toRemove.add(fireball);
                 }
             }
@@ -173,8 +190,6 @@ public class GameRenderer {
     }
 
     private void drawFrame(SpriteBatch batch, TextureRegion currentFrame, FireballInstance fireball, float rotation) {
-        //float dX = fireball.x - (128 * fireball.scale) / 2 + 128*(fireball.scale/2 -0.5f)*fireball.scale+16-64*(float)(Math.pow(fireball.scale-1, 2));
-        //float dY = fireball.y - (128 * fireball.scale) / 2 + 128*(fireball.scale/2 -0.5f)*fireball.scale+16-64*(float)(Math.pow(fireball.scale-1, 2));
         float dX = fireball.x - 46f;
         float dY = fireball.y - 51f;
         batch.draw(
@@ -201,8 +216,9 @@ public class GameRenderer {
         return new Vector2(diffX + screenWidth/2, diffY + screenHeight/2);
     }
 
-
-
+    public ArrayList<FireballInstance> getActiveFireballs() {
+        return activeFireballs;
+    }
 
     public void dispose() {
         for (Texture texture : textures) {
@@ -212,18 +228,20 @@ public class GameRenderer {
 
 
     /// Helper class for tracking fireball instances
-    private static class FireballInstance {
+    public static class FireballInstance {
         private float x, y;
         float velocityX, velocityY;
         Vector2 rotation;
         float elapsedTime;
         float scale;
+        float damage;
         float lt;
         float endTimer;
+        boolean hasHit;
 
         private float speedFactor = 32f;
 
-        FireballInstance(float x, float y, float velocityX, float velocityY, Vector2 rotation, float scale, float speed, float lt) {
+        FireballInstance(float x, float y, float velocityX, float velocityY, Vector2 rotation, float scale, float damage, float speed, float lt) {
             this.x = x;
             this.y = y;
             this.velocityX = velocityX;
@@ -232,20 +250,33 @@ public class GameRenderer {
             this.elapsedTime = 0f;
             this.scale = scale;
             this.speedFactor = speedFactor * speed;
+            this.damage = damage;
             this.lt = lt;
             this.endTimer = 0f;
+            this.hasHit = false;
         }
 
         public void updatePosition(float deltaTime) {
-            this.x += velocityX * deltaTime * speedFactor;
-            this.y += velocityY * deltaTime * speedFactor;
+            if (!hasHit){
+                this.x += velocityX * deltaTime * speedFactor;
+                this.y += velocityY * deltaTime * speedFactor;
+            }
         }
 
         public float getX(){
-            return x - 155;
+            return x;
         }
         public float getY() {
-            return y - 65;
+            return y;
+        }
+        public float getDamage(){
+            return damage;
+        }
+        public void setHit(){
+            this.hasHit = true;
+        }
+        public boolean hasHit(){
+            return hasHit;
         }
     }
 

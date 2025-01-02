@@ -11,7 +11,6 @@ import java.util.ArrayList;
 
 public abstract class Actor {
     // basic things
-    protected String name;
     protected float healthPoints;    // current HP
     protected float maxHealthPoints; // maximum HP
     protected float healthPointsRegen = 2f; // health regeneration per second
@@ -22,15 +21,14 @@ public abstract class Actor {
     protected Vector2 targetPosition;// World Position
     protected float speed;
     protected Vector2 velocity;
-    protected float lerpSpeed =20f;
+    protected float lerpSpeed = 20f;
     protected Vector2 rotation;
 
     // LibGDX related
     protected Texture texture;     // character texture
     protected static BitmapFont font;
 
-    public Actor(String name,int maxHealthPoints, Vector2 initialPosition, float speed) {
-        this.name = name;
+    public Actor(int maxHealthPoints, Vector2 initialPosition, float speed, Texture texture) {
         this.maxHealthPoints = maxHealthPoints;
         this.healthPoints = maxHealthPoints; // full HP at first
         this.speed = speed;
@@ -42,6 +40,8 @@ public abstract class Actor {
         this.velocity = new Vector2(0, 0);
         this.lastUpdateTimestamp = System.currentTimeMillis();
         this.rotation = new Vector2(1, 0);
+
+        this.texture = texture;
 
         if (font == null) {
             font = new BitmapFont(); // 只初始化一次
@@ -65,12 +65,12 @@ public abstract class Actor {
         position.lerp(targetPosition, lerpSpeed * deltaTime); // 线性插值
     }
 
-    public void takeDamage(int damage) {
+    public void takeDamage(float damage) {
         healthPoints -= damage;
         if (healthPoints < 0) {
             healthPoints = 0;
         }
-        // 也可以在这里判断角色是否死亡
+        System.out.println("Actor took Damage! "+healthPoints+"/"+maxHealthPoints);
     }
     public void heal(int amount) {
         healthPoints += amount;
@@ -83,9 +83,6 @@ public abstract class Actor {
     public abstract void update(float delta);
 
     // Getter、Setter
-    public String getName() {
-        return name;
-    }
     public float getHealthPoints() {
         return healthPoints;
     }

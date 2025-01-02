@@ -34,7 +34,7 @@ public class Mage extends Player {
         playerRot.nor();
         float velocityX = 1.5f * playerRot.x;
         float velocityY = 1.5f * playerRot.y;
-        GameRenderer.fireball(x, y, velocityX, velocityY, playerRot, fireballScale, fireballSpeed, fireballLT);
+        GameRenderer.fireball(x, y, velocityX, velocityY, playerRot, fireballScale, fireballDamage, fireballSpeed, fireballLT);
 
 
     }
