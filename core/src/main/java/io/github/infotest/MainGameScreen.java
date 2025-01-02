@@ -179,11 +179,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             player.setRotation(new Vector2(0,-1));
         }
         if (Gdx.input.isKeyPressed(Input.Keys.E)) {
-            if (tempTime > 1f) {
-                System.out.println("Button pressed");
-                player.castSkill(1);
-                tempTime = 0;
-            }
+            player.castSkill(1);
         }
 
         if (moved) {

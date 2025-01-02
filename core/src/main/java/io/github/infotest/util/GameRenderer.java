@@ -95,8 +95,8 @@ public class GameRenderer {
         renderFireballs(batch, deltaTime, camera);
     }
 
-
-
+    //TODO: Scale and Rotation fix
+    //TODO: Animation fix => erste Animation ist Fireball_fly und andere Animation Fireball_Destroy
 
 
     /// ANIMATIONS

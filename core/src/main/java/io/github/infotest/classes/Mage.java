@@ -8,11 +8,11 @@ import io.github.infotest.util.GameRenderer;
 
 public class Mage extends Player {
 
-    private static float fireballCost = 4;
-    private static float fireballDamage = 3;
-    private static float fireballCooldown = 2;
+    private static float fireballCost = 4f;
+    private static float fireballDamage = 3f;
+    private static float fireballCooldown = 2f;
     private static float fireballSpeed = 3f;
-    private static float fireballScale = 1f;
+    private static float fireballScale = 4f;
 
 
     public Mage(String name, Vector2 playerPosition, Texture t) {
@@ -22,7 +22,7 @@ public class Mage extends Player {
 
     @Override
     public void castSkill(int skillID) {
-         if(skillID == 1){
+         if(skillID == 1 && timeSinceLastT1Skill >= fireballCooldown) {
              timeSinceLastT1Skill = 0;
              castFireball(position.x, position.y, rotation);
 
