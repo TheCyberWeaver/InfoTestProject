@@ -10,14 +10,13 @@ public class Mage extends Player {
 
     private static float fireballCost = 4f;
     private static float fireballDamage = 3f;
-    private static float fireballCooldown = 2f;
+    private static float fireballCooldown = 0.5f;
     private static float fireballSpeed = 3f;
     private static float fireballScale = 1f;
-    private static float fireballLT = 5f;
+    private static float fireballLT = 2f; // lifetime with 0.5 second on start and 0.7 s on hit and 0.8 on end without hit
 
 
     public Mage(String name, Vector2 playerPosition, Texture t) {
-
         super(name, "Mage",50, 150 ,playerPosition, 100,t);
     }
 
@@ -25,38 +24,19 @@ public class Mage extends Player {
     public void castSkill(int skillID) {
          if(skillID == 1 && timeSinceLastT1Skill >= fireballCooldown) {
              timeSinceLastT1Skill = 0;
-             castFireball(position.x, position.y, rotation);
+             castFireball(this.position.x, this.position.y, rotation);
 
          }}
 
 
 
-    public void castFireball(float x, float y, Vector2 playerRot) {
+    public static void castFireball(float x, float y, Vector2 playerRot) {
         playerRot.nor();
         float velocityX = 1.5f * playerRot.x;
         float velocityY = 1.5f * playerRot.y;
-
-
-        float calculatedSpeed = (float)Math.sqrt(velocityX * velocityX + velocityY * velocityY);
-            System.out.println(calculatedSpeed);
-
-
         GameRenderer.fireball(x, y, velocityX, velocityY, playerRot, fireballScale, fireballSpeed, fireballLT);
-    }
 
 
-
-    public float getT1SkillCost() {
-        return fireballCost;
-    }
-    public float getT1SkillDamage() {
-        return fireballDamage;
-    }
-    public float getT1SkillCooldown() {
-        return fireballCooldown;
-    }
-    public float getT1SkillSpeed() {
-        return fireballSpeed;
     }
 
     @Override

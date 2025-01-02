@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.classes.Assassin;
 import io.github.infotest.character.Player;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 
 public class MainGameScreen implements Screen, InputProcessor, ServerConnection.SeedListener {
     private SpriteBatch batch;
+    private ShapeRenderer shapeRenderer;
     private OrthographicCamera camera;
     private AssetManager assetManager; //TODO
 
@@ -66,6 +68,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
     public void create() {
         batch = new SpriteBatch();
+        shapeRenderer = new ShapeRenderer();
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         // load texture
@@ -156,7 +159,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             batch.begin();
             gameRenderer.renderMap(batch, camera.zoom, player.getPosition());
             gameRenderer.renderPlayers(batch, players,delta);
-            gameRenderer.renderAnimations(batch,delta);
+            gameRenderer.renderAnimations(batch,delta,shapeRenderer);
             batch.end();
 
             player.update(delta);

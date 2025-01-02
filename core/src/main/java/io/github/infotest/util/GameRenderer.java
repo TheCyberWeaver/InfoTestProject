@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.character.Player;
 import io.github.infotest.classes.Mage;
@@ -25,7 +26,7 @@ public class GameRenderer {
     private static ArrayList<FireballInstance> activeFireballs;
     private float fireballFrameDuration = 0.1f;
 
-    private Animation[] fireballAnimations;
+    private Animation<TextureRegion>[] fireballAnimations;
 
 
     public GameRenderer(Texture[] pTextures, int[][] map, int cellSize) {
@@ -50,18 +51,22 @@ public class GameRenderer {
         // init fireball_sheet_start
         frameCols = 5;
         fireballAnimations[0] = sheetsToAnimation(frameCols, frameRows, fireball_sheet_start, fireballFrameDuration);
+        fireballAnimations[0].setPlayMode(Animation.PlayMode.NORMAL);
 
         //init fireball_sheet_fly
         frameCols = 9;
         fireballAnimations[1] = sheetsToAnimation(frameCols, frameRows, fireball_sheet_fly, fireballFrameDuration);
+        fireballAnimations[1].setPlayMode(Animation.PlayMode.LOOP);
 
         //init fireball_sheets_endTime
         frameCols = 8;
         fireballAnimations[2] = sheetsToAnimation(frameCols, frameRows, fireball_sheet_endTime, fireballFrameDuration);
+        fireballAnimations[2].setPlayMode(Animation.PlayMode.NORMAL);
 
         //init fireball_sheets_endHit
         frameCols = 7;
         fireballAnimations[3] = sheetsToAnimation(frameCols, frameRows, fireball_sheet_endHit, fireballFrameDuration);
+        fireballAnimations[3].setPlayMode(Animation.PlayMode.NORMAL);
     }
 
     private static Animation<TextureRegion> sheetsToAnimation(int frameCols, int frameRows, Texture fireball_sheet, float frameDuration) {
@@ -77,7 +82,6 @@ public class GameRenderer {
             }
         }
         Animation<TextureRegion> fireballAnimation = new Animation<>(frameDuration, temp_fireball_sheet);
-        fireballAnimation.setPlayMode(Animation.PlayMode.LOOP);
         return fireballAnimation;
     }
 
@@ -117,9 +121,9 @@ public class GameRenderer {
     }
 
     float time = 0;
-    public void renderAnimations(SpriteBatch batch, float deltaTime) {
+    public void renderAnimations(SpriteBatch batch, float deltaTime, ShapeRenderer shapeRenderer) {
         time += deltaTime;
-        renderFireballs(batch, deltaTime, fireballAnimations);
+        renderFireballs(batch, deltaTime, fireballAnimations, shapeRenderer);
     }
 
     //TODO: Scale and Rotation fix
@@ -128,54 +132,68 @@ public class GameRenderer {
 
     /// ANIMATIONS
     // Fireball
-    public static void fireball(float screenX, float screenY, float velocityX, float velocityY, Vector2 rotation, float scale, float speed, float lt) {
-        System.out.println("Added Fireball to list");
-        activeFireballs.add(new FireballInstance(screenX, screenY, velocityX, velocityY, rotation, scale, speed, lt));
+    public static void fireball(float pX, float pY, float velocityX, float velocityY, Vector2 rotation, float scale, float speed, float lt) {
+        activeFireballs.add(new FireballInstance(pX, pY, velocityX, velocityY, rotation, scale, speed, lt));
+        System.out.println(activeFireballs.size());
     }
 
 
 
     /// ANIMATION HELPER
-    private void renderFireballs(SpriteBatch batch, float deltaTime, Animation[] fireballAnimations ) {
+    private void renderFireballs(SpriteBatch batch, float deltaTime, Animation<TextureRegion>[] fireballAnimations, ShapeRenderer shapeRenderer) {
         ArrayList<FireballInstance> toRemove = new ArrayList<>();
+
+        Animation<TextureRegion> fireballAnimation_start = fireballAnimations[0];
+        Animation<TextureRegion> fireballAnimation_fly = fireballAnimations[1];
+        Animation<TextureRegion> fireballAnimation_endTime = fireballAnimations[2];
+        Animation<TextureRegion> fireballAnimation_endHit = fireballAnimations[3];
 
         for (FireballInstance fireball : activeFireballs) {
             fireball.elapsedTime += deltaTime;
             fireball.updatePosition(deltaTime);
+            float rotation = fireball.rotation.angleDeg();
 
-            if (fireball.elapsedTime <= )
+            if (fireball.elapsedTime <= fireballAnimation_start.getAnimationDuration()){
+                TextureRegion currentFrame = fireballAnimation_start.getKeyFrame(fireball.elapsedTime);
+                drawFrame(batch, currentFrame, fireball, rotation);
+            } else if (fireball.elapsedTime < fireball.lt) {
+                TextureRegion currentFrame = fireballAnimation_fly.getKeyFrame(fireball.elapsedTime-fireballAnimation_start.getAnimationDuration());
+                drawFrame(batch, currentFrame, fireball, rotation);
+            } else if (fireball.elapsedTime > fireball.lt) {
+                TextureRegion currentFrame = fireballAnimation_endTime.getKeyFrame(fireball.endTimer);
+                drawFrame(batch, currentFrame, fireball, rotation);
+                fireball.endTimer += deltaTime;
 
-
-
-            if (fireball.elapsedTime > fireballAnimation.getAnimationDuration()) {
-                toRemove.add(fireball); // Entferne abgeschlossene Animationen
-                time = 0;
-            } else {
-                TextureRegion currentFrame = fireballAnimation.getKeyFrame(fireball.elapsedTime);
-
-                float rotation = fireball.rotation.angleDeg();
-
-                batch.draw(
-                    currentFrame,
-                    fireball.x - (310 * fireball.scale) / 2,
-                    fireball.y - (128 * fireball.scale) / 2,
-                    (345 * fireball.scale) / 2,
-                    (158 * fireball.scale) / 2,
-                    256,
-                    256,
-                    fireball.scale,
-                    fireball.scale,
-                    rotation
-                );
+                if (fireball.elapsedTime > fireball.lt + fireballAnimation_endTime.getAnimationDuration()) {
+                    toRemove.add(fireball);
+                }
             }
         }
-
-        activeFireballs.removeAll(toRemove); // Entferne abgeschlossene Fireballs
+        activeFireballs.removeAll(toRemove);
     }
 
-    public static Vector2 worldPosToScreenPos(Player player, float screenWidth, float screenHeight, float fX, float fY) {
-        float pX = player.getX();
-        float pY = player.getY();
+    private void drawFrame(SpriteBatch batch, TextureRegion currentFrame, FireballInstance fireball, float rotation) {
+        //float dX = fireball.x - (128 * fireball.scale) / 2 + 128*(fireball.scale/2 -0.5f)*fireball.scale+16-64*(float)(Math.pow(fireball.scale-1, 2));
+        //float dY = fireball.y - (128 * fireball.scale) / 2 + 128*(fireball.scale/2 -0.5f)*fireball.scale+16-64*(float)(Math.pow(fireball.scale-1, 2));
+        float dX = fireball.x - 46f;
+        float dY = fireball.y - 51f;
+        batch.draw(
+            currentFrame,
+            dX,
+            dY,
+            64,
+            64,
+            currentFrame.getRegionWidth(),
+            currentFrame.getRegionWidth(),
+            fireball.scale,
+            fireball.scale,
+            rotation
+        );
+    }
+
+    public static Vector2 worldPosToScreenPos(Vector2 worldCords, float screenWidth, float screenHeight, float fX, float fY) {
+        float pX = worldCords.x;
+        float pY = worldCords.y;
 
         float diffX = fX - pX;
         float diffY = fY - pY;
@@ -201,6 +219,7 @@ public class GameRenderer {
         float elapsedTime;
         float scale;
         float lt;
+        float endTimer;
 
         private float speedFactor = 32f;
 
@@ -214,6 +233,7 @@ public class GameRenderer {
             this.scale = scale;
             this.speedFactor = speedFactor * speed;
             this.lt = lt;
+            this.endTimer = 0f;
         }
 
         public void updatePosition(float deltaTime) {
