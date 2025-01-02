@@ -137,7 +137,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             batch.begin();
             gameRenderer.renderMap(batch, camera.zoom, player.getPosition());
             gameRenderer.renderPlayers(batch, players,delta);
-            gameRenderer.renderAnimations(batch,delta,fireBallTexture);
+            gameRenderer.renderAnimations(batch,delta,camera);
             batch.end();
 
             handleInput(delta);

@@ -11,7 +11,7 @@ public class Mage extends Player {
     private static float fireballCost = 4;
     private static float fireballDamage = 3;
     private static float fireballCooldown = 2;
-    private static float fireballSpeed = 1.5f;
+    private static float fireballSpeed = 3f;
     private static float fireballScale = 1f;
 
 
@@ -35,14 +35,12 @@ public class Mage extends Player {
         float velocityX = 1.5f * playerRot.x;
         float velocityY = 1.5f * playerRot.y;
 
-        System.out.println("Casted first skill");
 
         float calculatedSpeed = (float)Math.sqrt(velocityX * velocityX + velocityY * velocityY);
-        if (calculatedSpeed != fireballSpeed) {
-            System.out.println(calculatedSpeed + " ist ungleich 1.5");
-        }
+            System.out.println(calculatedSpeed);
 
-        GameRenderer.fireball(x, y, velocityX, velocityY, playerRot, fireballScale);
+
+        GameRenderer.fireball(x, y, velocityX, velocityY, playerRot, fireballScale, fireballSpeed);
     }
 
 
