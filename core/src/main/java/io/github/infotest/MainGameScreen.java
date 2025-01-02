@@ -181,7 +181,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         if (moved) {
             // update position
-            serverConnection.sendPlayerPosition(player.getX(), player.getY());
+            serverConnection.sendPlayerPosition(player.getX(), player.getY(),player.getRotation().x,player.getRotation().y);
         }
     }
 

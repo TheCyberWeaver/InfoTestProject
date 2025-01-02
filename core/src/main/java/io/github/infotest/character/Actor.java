@@ -18,12 +18,12 @@ public abstract class Actor {
 
     //Movement related
     protected long lastUpdateTimestamp;
-    protected Vector2 position =new Vector2(0,0);
+    protected Vector2 position ;
     protected Vector2 targetPosition;// World Position
     protected float speed;
     protected Vector2 velocity;
     protected float lerpSpeed = 10f;
-    protected Vector2 rotation = new Vector2(0,0);
+    protected Vector2 rotation ;
 
     // LibGDX related
     protected Texture texture;     // character texture
@@ -41,6 +41,7 @@ public abstract class Actor {
         this.speed = speed;
         this.velocity = new Vector2(0, 0);
         this.lastUpdateTimestamp = System.currentTimeMillis();
+        this.rotation = new Vector2(0, 0);
 
         if (font == null) {
             font = new BitmapFont(); // 只初始化一次
@@ -97,7 +98,9 @@ public abstract class Actor {
     }
 
 
-
+    public Vector2 getRotation() {
+        return rotation;
+    }
     public float getX() {
         return position.x;
     }

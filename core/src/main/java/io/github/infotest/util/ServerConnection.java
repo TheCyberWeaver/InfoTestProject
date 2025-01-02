@@ -156,12 +156,14 @@ public class ServerConnection {
 
 
 
-    public void sendPlayerPosition(float x, float y) {
+    public void sendPlayerPosition(float x, float y, float Rx, float Ry) {
         //if (socket == null || !socket.connected()) return;
         JSONObject pos = new JSONObject();
         try {
             pos.put("x", x);
             pos.put("y", y);
+            pos.put("Rx", Rx);
+            pos.put("Ry", Ry);
             socket.emit("updatePosition", pos);
             //System.out.println("Updated position: " + pos);
         } catch (JSONException e) {
