@@ -5,10 +5,9 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.character.Player;
 
 public class Paladin extends Player {
-    public Paladin(String name, String className, int maxHealthPoints, int maxMana, Vector2 initialPosition, float speed, Texture t) {
-        super(name, className, maxHealthPoints, maxMana, initialPosition, speed, t);
+    public Paladin(String name, Vector2 playerPosition, Texture t) {
+        super(name, "Paladin",50, 50 ,playerPosition, 150, t);
     }
-
     @Override
     public void castSkill(int skillID) {
 

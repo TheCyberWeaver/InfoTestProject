@@ -92,7 +92,6 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         //System.out.println("class: "+ player.getClass());
 
         // send initial position to server
-        // serverConnection.sendPlayerPosition(player.getX(), player.getY());
         serverConnection.sendPlayerInit(player);
 
         camera.zoom = 1f;
@@ -112,9 +111,10 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         map = mapCreator.initializePerlinNoiseMap();
 
         seedReceived = true;
-        System.out.println("Map generated after receiving seed: " + seed);
 
         gameRenderer = new GameRenderer(textures, map, CELL_SIZE, fireBallTexture);
+
+        System.out.println("Map generated after receiving seed: " + seed);
     }
     @Override
     public void render(float delta) {
@@ -141,6 +141,13 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             batch.end();
 
             handleInput(delta);
+        }
+        else{
+            batch.begin();
+            batch.draw(assassinTexture,
+                0, 0,
+                Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+            batch.end();
         }
     }
 

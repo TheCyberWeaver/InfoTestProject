@@ -13,6 +13,7 @@ import io.github.infotest.classes.Mage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 
 public class GameRenderer {
 
