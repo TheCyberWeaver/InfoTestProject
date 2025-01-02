@@ -22,8 +22,8 @@ public abstract class Actor {
     protected Vector2 targetPosition;// World Position
     protected float speed;
     protected Vector2 velocity;
-    protected float lerpSpeed = 10f;
-    protected Vector2 rotation ;
+    protected float lerpSpeed =20f;
+    protected Vector2 rotation;
 
     // LibGDX related
     protected Texture texture;     // character texture
@@ -86,13 +86,9 @@ public abstract class Actor {
     public String getName() {
         return name;
     }
-
-
-
     public float getHealthPoints() {
         return healthPoints;
     }
-
     public float getMaxHealthPoints() {
         return maxHealthPoints;
     }
@@ -108,7 +104,6 @@ public abstract class Actor {
         position.x = x;
         targetPosition.x = x;
     }
-
     public float getY() {
         return position.y;
     }
@@ -123,30 +118,21 @@ public abstract class Actor {
         this.position = position;
         this.targetPosition = position;
     }
-
-
     public float getSpeed() {
         return speed;
     }
-
-
     public Texture getTexture() {
 
         return texture;
     }
-
     public void setTexture(Texture texture) {
 
         this.texture = texture;
     }
-
     public void setSpeed(int speed) {
         this.speed = speed;
     }
-
     public abstract String toString();
-
-
     public void updateHPFromPlayerData(float hp) {
 
         healthPoints=  hp;

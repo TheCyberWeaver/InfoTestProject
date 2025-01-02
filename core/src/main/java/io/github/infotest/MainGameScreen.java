@@ -137,7 +137,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             batch.begin();
             gameRenderer.renderMap(batch, camera.zoom, player.getPosition());
             gameRenderer.renderPlayers(batch, players,delta);
-            gameRenderer.renderAnimations(batch,delta,fireBallTexture);
+            gameRenderer.renderAnimations(batch,delta,camera);
             batch.end();
 
             handleInput(delta);
@@ -151,9 +151,12 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         }
     }
 
+    float tempTime = 0;
     private void handleInput(float delta) {
         boolean moved = false;
         float speed = player.getSpeed();
+
+        tempTime += delta;
 
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             player.setX(player.getX() - speed * delta);
@@ -176,7 +179,11 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             player.setRotation(new Vector2(0,-1));
         }
         if (Gdx.input.isKeyPressed(Input.Keys.E)) {
-            //TODO
+            if (tempTime > 1f) {
+                System.out.println("Button pressed");
+                player.castSkill(1);
+                tempTime = 0;
+            }
         }
 
         if (moved) {
@@ -223,6 +230,18 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     @Override public boolean touchCancelled(int i, int i1, int i2, int i3) {return false;}
     @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
     @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
+
+    public static int lvlToMaxHP(int lvl){
+        return 50 + 5 * lvl;
+    }
+
+    public static int lvlToMaxMana(int lvl){
+        return 25 + 5 * lvl;
+    }
+
+    public static int neededExpForLevel(int lvl){
+        return 20 + 10 * lvl;
+    }
 
     @Override
     public void dispose() {

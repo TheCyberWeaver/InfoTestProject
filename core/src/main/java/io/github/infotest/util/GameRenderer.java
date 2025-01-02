@@ -2,15 +2,18 @@ package io.github.infotest.util;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.character.Player;
+import io.github.infotest.classes.Mage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 
 public class GameRenderer {
 
@@ -30,12 +33,11 @@ public class GameRenderer {
         this.cellSize = cellSize;
 
         // Initialize the fireball animation
-        Texture fireballSheet = fireBallTexture;
         int frameCols = 29; // Number of columns in the animation sheet
         int frameRows = 1; // Number of rows in the animation sheet
-        TextureRegion[][] tempFrames = TextureRegion.split(fireballSheet,
-            fireballSheet.getWidth() / frameCols,
-            fireballSheet.getHeight() / frameRows);
+        TextureRegion[][] tempFrames = TextureRegion.split(fireBallTexture,
+            fireBallTexture.getWidth() / frameCols,
+            fireBallTexture.getHeight() / frameRows);
 
         TextureRegion[] fireballFrames = new TextureRegion[frameCols * frameRows];
         int index = 0;
@@ -88,9 +90,9 @@ public class GameRenderer {
     }
 
     float time = 0;
-    public void renderAnimations(SpriteBatch batch, float deltaTime, Texture texture) {
+    public void renderAnimations(SpriteBatch batch, float deltaTime, Camera camera) {
         time += deltaTime;
-        renderFireballs(batch, deltaTime, texture);
+        renderFireballs(batch, deltaTime, camera);
     }
 
 
@@ -99,50 +101,57 @@ public class GameRenderer {
 
     /// ANIMATIONS
     // Fireball
-    public static void fireball(float startX, float startY, float velocityX, float velocityY, Vector2 rotation) {
-        activeFireballs.add(new FireballInstance(startX, startY, velocityX, velocityY, rotation));
+    public static void fireball(float screenX, float screenY, float velocityX, float velocityY, Vector2 rotation, float scale, float speed) {
+        System.out.println("Added Fireball to list");
+        activeFireballs.add(new FireballInstance(screenX, screenY, velocityX, velocityY, rotation, scale, speed));
     }
 
 
 
     /// ANIMATION HELPER
-    private void renderFireballs(SpriteBatch batch, float deltaTime, Texture texture) {
+    private void renderFireballs(SpriteBatch batch, float deltaTime, Camera camera) {
         ArrayList<FireballInstance> toRemove = new ArrayList<>();
 
         for (FireballInstance fireball : activeFireballs) {
             fireball.elapsedTime += deltaTime;
-            fireball.updatePosition(deltaTime);  // Bewege den Feuerball
+            fireball.updatePosition(deltaTime);
+
 
             if (fireball.elapsedTime > fireballAnimation.getAnimationDuration()) {
                 toRemove.add(fireball); // Entferne abgeschlossene Animationen
+                time = 0;
             } else {
                 TextureRegion currentFrame = fireballAnimation.getKeyFrame(fireball.elapsedTime);
 
-                float rotation = 0; //TODO
+                float rotation = fireball.rotation.angleDeg();
 
                 batch.draw(
                     currentFrame,
-                    fireball.x+1, fireball.y+1,
-                    16,
-                    16,
-                    currentFrame.getRegionWidth(),
-                    currentFrame.getRegionHeight(),
-                    cellSize*8, cellSize*8,
+                    fireball.x - (310 * fireball.scale) / 2,
+                    fireball.y - (128 * fireball.scale) / 2,
+                    (345 * fireball.scale) / 2,
+                    (158 * fireball.scale) / 2,
+                    256,
+                    256,
+                    fireball.scale,
+                    fireball.scale,
                     rotation
                 );
-                System.out.print("Fireball drawn at "+fireball.x+", "+fireball.y);
             }
         }
 
         activeFireballs.removeAll(toRemove); // Entferne abgeschlossene Fireballs
     }
 
+    public static Vector2 worldPosToScreenPos(Player player, float screenWidth, float screenHeight, float fX, float fY) {
+        float pX = player.getX();
+        float pY = player.getY();
 
+        float diffX = fX - pX;
+        float diffY = fY - pY;
 
-
-
-
-
+        return new Vector2(diffX + screenWidth/2, diffY + screenHeight/2);
+    }
 
 
 
@@ -154,29 +163,37 @@ public class GameRenderer {
     }
 
 
-
-
-
     /// Helper class for tracking fireball instances
     private static class FireballInstance {
-        float x, y;
+        private float x, y;
         float velocityX, velocityY;
         Vector2 rotation;
         float elapsedTime;
+        float scale;
 
-        FireballInstance(float x, float y, float velocityX, float velocityY, Vector2 rotation) {
+        private float speedFactor = 32f;
+
+        FireballInstance(float x, float y, float velocityX, float velocityY, Vector2 rotation, float scale, float speed) {
             this.x = x;
             this.y = y;
             this.velocityX = velocityX;
             this.velocityY = velocityY;
             this.rotation = rotation;
             this.elapsedTime = 0f;
+            this.scale = scale;
+            this.speedFactor = speedFactor * speed;
         }
 
         public void updatePosition(float deltaTime) {
-            this.x += velocityX * deltaTime;
-            this.y += velocityY * deltaTime;
-            System.out.println("Updated position: (" + this.x + ", " + this.y + ")");
+            this.x += velocityX * deltaTime * speedFactor;
+            this.y += velocityY * deltaTime * speedFactor;
+        }
+
+        public float getX(){
+            return x - 155;
+        }
+        public float getY() {
+            return y - 65;
         }
     }
 
