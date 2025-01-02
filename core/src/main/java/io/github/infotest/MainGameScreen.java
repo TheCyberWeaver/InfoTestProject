@@ -30,8 +30,16 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     private Texture grassBlock;
     private Texture rockBlock;
     private Texture basicWoodBlock;
-    private Texture fireBallTexture;
+
+    private Texture fireball_sheet_start;
+    private Texture fireball_sheet_fly;
+    private Texture fireball_sheet_endTime;
+    private Texture fireball_sheet_endHit;
+    private Texture[] fireball_sheets;
+
     private Texture[] textures;
+
+
     // Map data
     private int[][] map;
     private static final int CELL_SIZE = 32;
@@ -66,7 +74,17 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         grassBlock = new Texture("grass_block.jpg");
         rockBlock = new Texture("stone_block.png");
         basicWoodBlock = new Texture("basicWood.png");
-        fireBallTexture = new Texture(Gdx.files.internal("fireball_sheet.png"));
+
+        fireball_sheets = new Texture[4];
+        fireball_sheet_start = new Texture(Gdx.files.internal("fireball_sheet_start.png"));
+        fireball_sheet_fly = new Texture(Gdx.files.internal("fireball_sheet_fly.png"));
+        fireball_sheet_endTime = new Texture(Gdx.files.internal("fireball_sheet_endTime.png"));
+        fireball_sheet_endHit = new Texture(Gdx.files.internal("fireball_sheet_endHit.png"));
+
+        fireball_sheets[0] = fireball_sheet_start;
+        fireball_sheets[1] = fireball_sheet_fly;
+        fireball_sheets[2] = fireball_sheet_endTime;
+        fireball_sheets[3] = fireball_sheet_endHit;
 
 
         // connect to server
@@ -112,7 +130,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         seedReceived = true;
 
-        gameRenderer = new GameRenderer(textures, map, CELL_SIZE, fireBallTexture);
+        gameRenderer = new GameRenderer(textures, map, CELL_SIZE);
+        gameRenderer.initAnimations(fireball_sheets);
 
         System.out.println("Map generated after receiving seed: " + seed);
     }
@@ -137,7 +156,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             batch.begin();
             gameRenderer.renderMap(batch, camera.zoom, player.getPosition());
             gameRenderer.renderPlayers(batch, players,delta);
-            gameRenderer.renderAnimations(batch,delta,camera);
+            gameRenderer.renderAnimations(batch,delta);
             batch.end();
 
             player.update(delta);

@@ -22,36 +22,63 @@ public class GameRenderer {
     private final int cellSize;
 
     // Fireball animation-related fields
-    private Animation<TextureRegion> fireballAnimation;
     private static ArrayList<FireballInstance> activeFireballs;
     private float fireballFrameDuration = 0.1f;
 
+    private Animation[] fireballAnimations;
 
-    public GameRenderer(Texture[] pTextures, int[][] map, int cellSize, Texture fireBallTexture) {
+
+    public GameRenderer(Texture[] pTextures, int[][] map, int cellSize) {
         textures = pTextures;
         this.map = map;
         this.cellSize = cellSize;
 
-        // Initialize the fireball animation
-        int frameCols = 29; // Number of columns in the animation sheet
-        int frameRows = 1; // Number of rows in the animation sheet
-        TextureRegion[][] tempFrames = TextureRegion.split(fireBallTexture,
-            fireBallTexture.getWidth() / frameCols,
-            fireBallTexture.getHeight() / frameRows);
+        activeFireballs = new ArrayList<FireballInstance>();
 
-        TextureRegion[] fireballFrames = new TextureRegion[frameCols * frameRows];
+    }
+
+    public void initAnimations(Texture[] fireball_sheets){
+        fireballAnimations = new Animation[fireball_sheets.length];
+        int frameCols;
+        int frameRows = 1;
+
+        Texture fireball_sheet_start = fireball_sheets[0];
+        Texture fireball_sheet_fly = fireball_sheets[1];
+        Texture fireball_sheet_endTime = fireball_sheets[2];
+        Texture fireball_sheet_endHit = fireball_sheets[3];
+
+        // init fireball_sheet_start
+        frameCols = 5;
+        fireballAnimations[0] = sheetsToAnimation(frameCols, frameRows, fireball_sheet_start, fireballFrameDuration);
+
+        //init fireball_sheet_fly
+        frameCols = 9;
+        fireballAnimations[1] = sheetsToAnimation(frameCols, frameRows, fireball_sheet_fly, fireballFrameDuration);
+
+        //init fireball_sheets_endTime
+        frameCols = 8;
+        fireballAnimations[2] = sheetsToAnimation(frameCols, frameRows, fireball_sheet_endTime, fireballFrameDuration);
+
+        //init fireball_sheets_endHit
+        frameCols = 7;
+        fireballAnimations[3] = sheetsToAnimation(frameCols, frameRows, fireball_sheet_endHit, fireballFrameDuration);
+    }
+
+    private static Animation<TextureRegion> sheetsToAnimation(int frameCols, int frameRows, Texture fireball_sheet, float frameDuration) {
+        TextureRegion[][] tempFrames2 = TextureRegion.split(fireball_sheet,
+            fireball_sheet.getWidth() / frameCols,
+            fireball_sheet.getHeight() / frameRows);
+
+        TextureRegion[] temp_fireball_sheet = new TextureRegion[frameCols * frameRows];
         int index = 0;
         for (int i = 0; i < frameRows; i++) {
             for (int j = 0; j < frameCols; j++) {
-                fireballFrames[index++] = tempFrames[i][j];
+                temp_fireball_sheet[index++] = tempFrames2[i][j];
             }
         }
-
-        fireballAnimation = new Animation<>(fireballFrameDuration, fireballFrames);
+        Animation<TextureRegion> fireballAnimation = new Animation<>(frameDuration, temp_fireball_sheet);
         fireballAnimation.setPlayMode(Animation.PlayMode.LOOP);
-
-        activeFireballs = new ArrayList<FireballInstance>();
-
+        return fireballAnimation;
     }
 
 
@@ -90,9 +117,9 @@ public class GameRenderer {
     }
 
     float time = 0;
-    public void renderAnimations(SpriteBatch batch, float deltaTime, Camera camera) {
+    public void renderAnimations(SpriteBatch batch, float deltaTime) {
         time += deltaTime;
-        renderFireballs(batch, deltaTime, camera);
+        renderFireballs(batch, deltaTime, fireballAnimations);
     }
 
     //TODO: Scale and Rotation fix
@@ -101,20 +128,23 @@ public class GameRenderer {
 
     /// ANIMATIONS
     // Fireball
-    public static void fireball(float screenX, float screenY, float velocityX, float velocityY, Vector2 rotation, float scale, float speed) {
+    public static void fireball(float screenX, float screenY, float velocityX, float velocityY, Vector2 rotation, float scale, float speed, float lt) {
         System.out.println("Added Fireball to list");
-        activeFireballs.add(new FireballInstance(screenX, screenY, velocityX, velocityY, rotation, scale, speed));
+        activeFireballs.add(new FireballInstance(screenX, screenY, velocityX, velocityY, rotation, scale, speed, lt));
     }
 
 
 
     /// ANIMATION HELPER
-    private void renderFireballs(SpriteBatch batch, float deltaTime, Camera camera) {
+    private void renderFireballs(SpriteBatch batch, float deltaTime, Animation[] fireballAnimations ) {
         ArrayList<FireballInstance> toRemove = new ArrayList<>();
 
         for (FireballInstance fireball : activeFireballs) {
             fireball.elapsedTime += deltaTime;
             fireball.updatePosition(deltaTime);
+
+            if (fireball.elapsedTime <= )
+
 
 
             if (fireball.elapsedTime > fireballAnimation.getAnimationDuration()) {
@@ -170,10 +200,11 @@ public class GameRenderer {
         Vector2 rotation;
         float elapsedTime;
         float scale;
+        float lt;
 
         private float speedFactor = 32f;
 
-        FireballInstance(float x, float y, float velocityX, float velocityY, Vector2 rotation, float scale, float speed) {
+        FireballInstance(float x, float y, float velocityX, float velocityY, Vector2 rotation, float scale, float speed, float lt) {
             this.x = x;
             this.y = y;
             this.velocityX = velocityX;
@@ -182,6 +213,7 @@ public class GameRenderer {
             this.elapsedTime = 0f;
             this.scale = scale;
             this.speedFactor = speedFactor * speed;
+            this.lt = lt;
         }
 
         public void updatePosition(float deltaTime) {

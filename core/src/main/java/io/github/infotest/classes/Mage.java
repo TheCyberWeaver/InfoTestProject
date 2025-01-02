@@ -13,6 +13,7 @@ public class Mage extends Player {
     private static float fireballCooldown = 2f;
     private static float fireballSpeed = 3f;
     private static float fireballScale = 1f;
+    private static float fireballLT = 5f;
 
 
     public Mage(String name, Vector2 playerPosition, Texture t) {
@@ -40,7 +41,7 @@ public class Mage extends Player {
             System.out.println(calculatedSpeed);
 
 
-        GameRenderer.fireball(x, y, velocityX, velocityY, playerRot, fireballScale, fireballSpeed);
+        GameRenderer.fireball(x, y, velocityX, velocityY, playerRot, fireballScale, fireballSpeed, fireballLT);
     }
 
 
