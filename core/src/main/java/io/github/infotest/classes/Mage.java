@@ -12,7 +12,7 @@ public class Mage extends Player {
     private static float fireballDamage = 3f;
     private static float fireballCooldown = 2f;
     private static float fireballSpeed = 3f;
-    private static float fireballScale = 4f;
+    private static float fireballScale = 1f;
 
 
     public Mage(String name, Vector2 playerPosition, Texture t) {
