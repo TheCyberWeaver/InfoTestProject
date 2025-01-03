@@ -8,7 +8,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import io.github.infotest.character.Gegner;
 import io.github.infotest.classes.Assassin;
 import io.github.infotest.character.Player;
 import io.github.infotest.classes.Mage;
@@ -17,10 +21,12 @@ import io.github.infotest.util.ServerConnection;
 import io.github.infotest.util.GameRenderer;
 import io.github.infotest.util.MapCreator;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MainGameScreen implements Screen, InputProcessor, ServerConnection.SeedListener {
     private SpriteBatch batch;
+    private ShapeRenderer shapeRenderer;
     private OrthographicCamera camera;
     private AssetManager assetManager; //TODO
 
@@ -30,8 +36,17 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     private Texture grassBlock;
     private Texture rockBlock;
     private Texture basicWoodBlock;
-    private Texture fireBallTexture;
+
+    private Texture fireball_sheet_start;
+    private Texture fireball_sheet_fly;
+    private Texture fireball_sheet_endTime;
+    private Texture fireball_sheet_endHit;
+    private Texture[] fireball_sheets;
+    private Texture[] healthbar;
+
     private Texture[] textures;
+
+
     // Map data
     private int[][] map;
     private static final int CELL_SIZE = 32;
@@ -47,6 +62,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
     // player list
     private HashMap<String, Player> players = new HashMap<>();
+    private ArrayList<Gegner> allGegner = new ArrayList<>();
 
     private Main game;
     public int globalSeed = 0;
@@ -58,6 +74,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
     public void create() {
         batch = new SpriteBatch();
+        shapeRenderer = new ShapeRenderer();
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         // load texture
@@ -66,8 +83,25 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         grassBlock = new Texture("grass_block.jpg");
         rockBlock = new Texture("stone_block.png");
         basicWoodBlock = new Texture("basicWood.png");
-        fireBallTexture = new Texture(Gdx.files.internal("fireball_sheet.png"));
 
+        fireball_sheets = new Texture[4];
+        fireball_sheet_start = new Texture(Gdx.files.internal("fireball_sheet_start.png"));
+        fireball_sheet_fly = new Texture(Gdx.files.internal("fireball_sheet_fly.png"));
+        fireball_sheet_endTime = new Texture(Gdx.files.internal("fireball_sheet_endTime.png"));
+        fireball_sheet_endHit = new Texture(Gdx.files.internal("fireball_sheet_endHit.png"));
+
+        fireball_sheets[0] = fireball_sheet_start;
+        fireball_sheets[1] = fireball_sheet_fly;
+        fireball_sheets[2] = fireball_sheet_endTime;
+        fireball_sheets[3] = fireball_sheet_endHit;
+
+        healthbar = new Texture[6];
+        healthbar[0] = new Texture(Gdx.files.internal("healthbar_start.png"));
+        healthbar[1] = new Texture(Gdx.files.internal("healthbar_start_full.png"));
+        healthbar[2] = new Texture(Gdx.files.internal("healthbar_middle.png"));
+        healthbar[3] = new Texture(Gdx.files.internal("healthbar_middle_full.png"));
+        healthbar[4] = new Texture(Gdx.files.internal("healthbar_ende.png"));
+        healthbar[5] = new Texture(Gdx.files.internal("healthbar_ende_full.png"));
 
         // connect to server
         serverConnection = new ServerConnection("http://www.thomas-hub.com:9595", assassinTexture);
@@ -112,7 +146,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         seedReceived = true;
 
-        gameRenderer = new GameRenderer(textures, map, CELL_SIZE, fireBallTexture);
+        gameRenderer = new GameRenderer(textures, map, CELL_SIZE);
+        gameRenderer.initAnimations(fireball_sheets);
 
         System.out.println("Map generated after receiving seed: " + seed);
     }
@@ -136,9 +171,15 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
             batch.begin();
             gameRenderer.renderMap(batch, camera.zoom, player.getPosition());
-            gameRenderer.renderPlayers(batch, players,delta);
-            gameRenderer.renderAnimations(batch,delta,camera);
+            gameRenderer.renderPlayers(batch, players, delta);
+            gameRenderer.renderGegner(batch, allGegner, delta);
+            gameRenderer.renderAnimations(batch,delta,shapeRenderer);
+            gameRenderer.renderBar(batch, camera, healthbar, player.getMaxHealthPoints(), camera.viewportHeight*1/5);
+            gameRenderer.fillBar(batch,camera, healthbar, player.getHealthPoints(), player.getMaxHealthPoints(), camera.viewportHeight*1/5-11);
             batch.end();
+
+            player.update(delta);
+            checkFireballCollisions();
 
             handleInput(delta);
         }
@@ -179,11 +220,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             player.setRotation(new Vector2(0,-1));
         }
         if (Gdx.input.isKeyPressed(Input.Keys.E)) {
-            if (tempTime > 1f) {
-                System.out.println("Button pressed");
-                player.castSkill(1);
-                tempTime = 0;
-            }
+            player.castSkill(1);
         }
 
         if (moved) {
@@ -260,5 +297,34 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         assetManager.dispose();
 
         // gameRenderer.dispose();
+    }
+
+    /// GAME LOGIC
+    public void checkFireballCollisions() {
+        for (GameRenderer.FireballInstance fireball : gameRenderer.getActiveFireballs()) {
+            for (Player p : players.values()){
+                if (p.equals(player)){
+                    continue;
+                }
+
+                float dX = Math.abs(p.getX() - fireball.getX());
+                float dY = Math.abs(p.getY() - fireball.getY());
+
+                if (dX <= 16f && dY <= 16f && !fireball.hasHit()){
+                    p.takeDamage(fireball.getDamage());
+                    fireball.setHit();
+                }
+            }
+
+            for (Gegner gegner : allGegner){
+                float dX = Math.abs(gegner.getX() - fireball.getX());
+                float dY = Math.abs(gegner.getY() - fireball.getY());
+
+                if (dX <= 7f && dY <= 7f){
+                    gegner.takeDamage(fireball.getDamage());
+                    fireball.setHit();
+                }
+            }
+        }
     }
 }

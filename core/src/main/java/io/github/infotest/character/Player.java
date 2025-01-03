@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 public abstract class Player extends Actor{
     // basic things
+    protected String name;
     protected String className;
     protected int level;
     protected float experience;
@@ -25,19 +26,19 @@ public abstract class Player extends Actor{
     protected float timeSinceLastT1Skill;
 
 
-    public Player(String name, String className, int maxHealthPoints, int maxMana, Vector2 initialPosition, float speed,Texture t) {
-        super(name,maxHealthPoints,initialPosition,speed);
-        this.texture=t;
+    public Player(String name, String className, int maxHealthPoints, int maxMana, Vector2 initialPosition, float speed, Texture t) {
+        super(maxHealthPoints,initialPosition,speed, t);
+        this.name = name;
         this.className = className;
         this.level = 1;
         this.experience = 0;
         items=new ArrayList<>();
         // use custom font
-//        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("font.ttf"));
-//        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-//        parameter.size = 16;
-//        this.font = generator.generateFont(parameter);
-//        generator.dispose();
+        // FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("font.ttf"));
+        // FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        // parameter.size = 16;
+        // this.font = generator.generateFont(parameter);
+        // generator.dispose();
 
         this.maxMana = maxMana;
         this.mana = maxMana;
@@ -84,7 +85,7 @@ public abstract class Player extends Actor{
 
 
     /// Abilities
-    public void gainExperience(int exp) {
+    public void gainExperience(float exp) {
         experience += exp;
         // 这里设置一个简单的升级机制，比如经验超过 100*等级 就升级
         if (experience >= 100 * level) {
@@ -110,7 +111,9 @@ public abstract class Player extends Actor{
     public String getClassName() {
         return className;
     }
-
+    public String getName(){
+        return name;
+    }
     public int getLevel() {
         return level;
     }
