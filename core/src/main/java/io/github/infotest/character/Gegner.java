@@ -5,8 +5,12 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 
 public class Gegner extends  Actor{
-    public Gegner(int maxHealthPoints, Vector2 initialPosition, float speed, Texture texture) {
+
+    float killXP;
+
+    public Gegner(int maxHealthPoints, Vector2 initialPosition, float speed, Texture texture, float exp) {
         super(maxHealthPoints, initialPosition, speed, texture);
+        this.killXP = exp;
     }
 
     @Override
@@ -15,6 +19,10 @@ public class Gegner extends  Actor{
         if (texture != null) {
             batch.draw(texture, predictedPosition.x, predictedPosition.y);
         }
+    }
+
+    public void getKilled(Player p){
+        p.gainExperience(killXP);
     }
 
     @Override

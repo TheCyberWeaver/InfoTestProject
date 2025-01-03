@@ -85,7 +85,7 @@ public abstract class Player extends Actor{
 
 
     /// Abilities
-    public void gainExperience(int exp) {
+    public void gainExperience(float exp) {
         experience += exp;
         // 这里设置一个简单的升级机制，比如经验超过 100*等级 就升级
         if (experience >= 100 * level) {

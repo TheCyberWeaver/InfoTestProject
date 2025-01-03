@@ -8,8 +8,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import io.github.infotest.character.Gegner;
 import io.github.infotest.classes.Assassin;
 import io.github.infotest.character.Player;
@@ -40,6 +42,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     private Texture fireball_sheet_endTime;
     private Texture fireball_sheet_endHit;
     private Texture[] fireball_sheets;
+    private Texture[] healthbar;
 
     private Texture[] textures;
 
@@ -92,6 +95,13 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         fireball_sheets[2] = fireball_sheet_endTime;
         fireball_sheets[3] = fireball_sheet_endHit;
 
+        healthbar = new Texture[6];
+        healthbar[0] = new Texture(Gdx.files.internal("healthbar_start.png"));
+        healthbar[1] = new Texture(Gdx.files.internal("healthbar_start_full.png"));
+        healthbar[2] = new Texture(Gdx.files.internal("healthbar_middle.png"));
+        healthbar[3] = new Texture(Gdx.files.internal("healthbar_middle_full.png"));
+        healthbar[4] = new Texture(Gdx.files.internal("healthbar_ende.png"));
+        healthbar[5] = new Texture(Gdx.files.internal("healthbar_ende_full.png"));
 
         // connect to server
         serverConnection = new ServerConnection("http://www.thomas-hub.com:9595", assassinTexture);
@@ -164,6 +174,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             gameRenderer.renderPlayers(batch, players, delta);
             gameRenderer.renderGegner(batch, allGegner, delta);
             gameRenderer.renderAnimations(batch,delta,shapeRenderer);
+            gameRenderer.renderBar(batch, camera, healthbar, player.getMaxHealthPoints(), camera.viewportHeight*1/5);
+            gameRenderer.fillBar(batch,camera, healthbar, player.getHealthPoints(), player.getMaxHealthPoints(), camera.viewportHeight*1/5-11);
             batch.end();
 
             player.update(delta);
@@ -294,6 +306,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                 if (p.equals(player)){
                     continue;
                 }
+
                 float dX = Math.abs(p.getX() - fireball.getX());
                 float dY = Math.abs(p.getY() - fireball.getY());
 

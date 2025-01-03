@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import io.github.infotest.MainGameScreen;
 import io.github.infotest.character.Gegner;
 import io.github.infotest.character.Player;
@@ -141,6 +142,68 @@ public class GameRenderer {
         time += deltaTime;
         renderFireballs(batch, deltaTime, fireballAnimations, shapeRenderer);
     }
+
+    public void renderBar(SpriteBatch batch, Camera cam, Texture[] bar, float maxValue, float y) {
+        float endX = cam.viewportWidth - 100; // Position of the rightmost part of the bar
+        float segmentWidth = 32; // Width of a single bar segment
+
+        // Calculate number of middle segments based on value
+        int numSegments = (int)(maxValue / 10);
+
+        // Convert positions to world coordinates
+        Vector3 endCoords = cam.unproject(new Vector3(endX, y, 0));
+        Vector3 startCoords = cam.unproject(new Vector3(endX - segmentWidth * (numSegments + 1), y, 0));
+
+        // Draw end of the bar
+        batch.draw(bar[4], endCoords.x, endCoords.y);
+
+        // Draw middle segments
+        for (int i = 0; i < numSegments; i++) {
+            Vector3 middleCoords = cam.unproject(new Vector3(endX - segmentWidth * (i + 1), y, 0));
+            batch.draw(bar[2], middleCoords.x, middleCoords.y);
+        }
+
+        // Draw start of the bar
+        batch.draw(bar[0], startCoords.x, startCoords.y);
+    }
+
+    //TODO fix fill bar
+
+    public void fillBar(SpriteBatch batch, Camera cam, Texture[] bar, float value, float maxValue, float y) {
+        float segmentWidth = bar[3].getWidth(); // Breite eines Mittelsegments
+        float endX = cam.viewportWidth - 100 + 11; // Position des rechten Endes der Leiste
+
+        // Berechnung der gefüllten Teile
+        int fullSlots = (int)(value / 2)-2; // Ganze Teile, die in die Segmente passen
+        float remainingWidth = (value % 2) * (segmentWidth / 2); // Breite eines halben Segments, falls nötig
+
+        // Zeichne den End-Slot (bar[5])
+        Vector3 endCoords = cam.unproject(new Vector3(endX, y, 0));
+        batch.draw(bar[5], endCoords.x, endCoords.y);
+
+        // Zeichne die mittleren Slots (bar[3])
+        for (int i = 0; i < fullSlots; i++) {
+            Vector3 middleCoords = cam.unproject(new Vector3(endX - segmentWidth * (i + 1), y, 0));
+            batch.draw(bar[3], middleCoords.x, middleCoords.y);
+        }
+
+        // Zeichne den Start-Slot (bar[1])
+        Vector3 startCoords = cam.unproject(new Vector3(endX - segmentWidth * (fullSlots + 1), y, 0));
+        batch.draw(bar[1], startCoords.x, startCoords.y);
+
+        // Zeichne den Rest, falls nur ein halbes Segment gefüllt ist
+        if (remainingWidth > 0) {
+            Vector3 partialCoords = cam.unproject(new Vector3(endX - segmentWidth * (fullSlots + 1), y, 0));
+            batch.draw(bar[3], partialCoords.x, partialCoords.y, remainingWidth, segmentWidth);
+        }
+    }
+
+
+
+
+
+
+
 
     /// ANIMATIONS
     // Fireball
