@@ -116,6 +116,15 @@ public class ServerConnection {
                         }
                     }
                 }
+            }).on("loggingINFO", new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    if (args.length > 0 && args[0] instanceof String) {
+                        String text = (String) args[0];
+                        System.out.println("[Server Warning]: " + text);
+                        //TODO: Write server warnings into a logging file
+                    }
+                }
             });
 
             socket.connect();

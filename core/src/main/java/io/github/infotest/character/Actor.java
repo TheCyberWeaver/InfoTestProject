@@ -70,7 +70,6 @@ public abstract class Actor {
         if (healthPoints < 0) {
             healthPoints = 0;
         }
-        // 也可以在这里判断角色是否死亡
     }
     public void heal(int amount) {
         healthPoints += amount;

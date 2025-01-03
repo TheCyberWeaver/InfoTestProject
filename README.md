@@ -1,8 +1,31 @@
-# InfoTestProject
+# Become A Endless Fighter
 
-A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/libgdx/gdx-liftoff).
+A student project made by the members of Info class of Privates Gymnasium Schloss Torgelow
+## Project Demo
+![img.png](img.png)
 
-This project was generated with a template including simple application launchers and an `ApplicationAdapter` extension that draws libGDX logo.
+## Install the Game
+
+Coming Soon in Release page. We are now in developing phase.
+
+
+## Setting Up for Contributors
+If you want to contribute to this project:
+
+- Email us and become a contributor (3318193092@qq.com).
+- Install and open IntelliJ IDE. (You can use your own code editor, as long as you are familiar with Git)
+- In tab **Getting Start with VCS**.
+![img_3.png](img_3.png)
+- Login with your GitHub account. You should be able to see the name of this project
+![img_4.png](img_4.png)
+- Clone this project to your local device following the instructions from IntelliJ.
+- Click on Edit Configuration.
+![img_1.png](img_1.png)
+- Configure as the followings.
+![img_2.png](img_2.png)
+- Congratulations, now you can run and test the game as you want. (click the green triangle on the top right of the screen to run the program)
+- We suggest committing your code into a separate branch.
+
 
 ## Platforms
 
@@ -10,24 +33,10 @@ This project was generated with a template including simple application launcher
 - `lwjgl3`: Primary desktop platform using LWJGL3; was called 'desktop' in older docs.
 
 ## Gradle
-
 This project uses [Gradle](https://gradle.org/) to manage dependencies.
 The Gradle wrapper was included, so you can run Gradle tasks using `gradlew.bat` or `./gradlew` commands.
 Useful Gradle tasks and flags:
 
-- `--continue`: when using this flag, errors will not stop the tasks from running.
-- `--daemon`: thanks to this flag, Gradle daemon will be used to run chosen tasks.
-- `--offline`: when using this flag, cached dependency archives will be used.
-- `--refresh-dependencies`: this flag forces validation of all dependencies. Useful for snapshot versions.
 - `build`: builds sources and archives of every project.
-- `cleanEclipse`: removes Eclipse project data.
-- `cleanIdea`: removes IntelliJ project data.
-- `clean`: removes `build` folders, which store compiled classes and built archives.
-- `eclipse`: generates Eclipse project data.
-- `idea`: generates IntelliJ project data.
 - `lwjgl3:jar`: builds application's runnable jar, which can be found at `lwjgl3/build/libs`.
-- `lwjgl3:run`: starts the application.
-- `test`: runs unit tests (if any).
-
-Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
-For example, `core:clean` removes `build` folder only from the `core` project.
+- `lwjgl3:run`: starts the application. (<- Use this one)

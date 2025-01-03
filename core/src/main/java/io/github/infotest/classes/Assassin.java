@@ -13,8 +13,6 @@ public class Assassin extends Player {
 
     @Override
     public void castSkill(int skillID) {
-        // 刺客技能示例：瞬步或背刺
-        System.out.println(name + "进行了背刺！");
     }
 
     @Override
