@@ -6,7 +6,7 @@ import io.github.infotest.character.Player;
 
 public class Archer extends Player {
     public Archer(String name, Vector2 playerPosition, Texture t) {
-        super(name, "Archer",50, 50 ,playerPosition, 150, t);
+        super(name, "Archer",100, 50 ,playerPosition, 150, t);
     }
 
     @Override

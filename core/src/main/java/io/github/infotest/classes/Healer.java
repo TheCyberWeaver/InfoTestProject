@@ -8,7 +8,7 @@ import io.github.infotest.character.Player;
 public class Healer extends Player {
 
     public Healer(String name, Vector2 initialPosition, Texture texture) {
-        super(name, "Healer", 300, 100 ,initialPosition, 50, texture);
+        super(name, "Healer", 100, 100 ,initialPosition, 50, texture);
     }
 
     @Override

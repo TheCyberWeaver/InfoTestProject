@@ -157,8 +157,10 @@ public class GameRenderer {
         spriteEnd.draw(batch);
 
         int segments = (int) Math.ceil(maxValue/10);
+        float tempMax = maxValue;
         for (int i=0;i<segments;i++){
-            if (value >= maxValue-10*(i+2)) {
+            tempMax -= 10;
+            if (value >= tempMax-9) {
                 spriteMiddle = new Sprite(bar[2]);
             } else {
                 spriteMiddle = new Sprite(bar[3]);
@@ -178,42 +180,6 @@ public class GameRenderer {
         spriteStart.setScale(scaleX,scaleY);
         spriteStart.draw(batch);
     }
-
-    //TODO fix fill bar
-
-    public static void fillBar(SpriteBatch batch, Camera cam, Texture[] bar, float value, float maxValue, float y) {
-        float segmentWidth = bar[3].getWidth(); // Breite eines Mittelsegments
-        float endX = cam.viewportWidth - 100 + 11; // Position des rechten Endes der Leiste
-
-        // Berechnung der gefüllten Teile
-        int fullSlots = (int)(value / 2)-2; // Ganze Teile, die in die Segmente passen
-        float remainingWidth = (value % 2) * (segmentWidth / 2); // Breite eines halben Segments, falls nötig
-
-        // Zeichne den End-Slot (bar[5])
-        Vector3 endCoords = cam.unproject(new Vector3(endX, y, 0));
-        batch.draw(bar[5], endCoords.x, endCoords.y);
-
-        // Zeichne die mittleren Slots (bar[3])
-        for (int i = 0; i < fullSlots; i++) {
-            Vector3 middleCoords = cam.unproject(new Vector3(endX - segmentWidth * (i + 1), y, 0));
-            batch.draw(bar[3], middleCoords.x, middleCoords.y);
-        }
-
-        // Zeichne den Start-Slot (bar[1])
-        Vector3 startCoords = cam.unproject(new Vector3(endX - segmentWidth * (fullSlots + 1), y, 0));
-        batch.draw(bar[1], startCoords.x, startCoords.y);
-
-        // Zeichne den Rest, falls nur ein halbes Segment gefüllt ist
-        if (remainingWidth > 0) {
-            Vector3 partialCoords = cam.unproject(new Vector3(endX - segmentWidth * (fullSlots + 1), y, 0));
-            batch.draw(bar[3], partialCoords.x, partialCoords.y, remainingWidth, segmentWidth);
-        }
-    }
-
-
-
-
-
 
 
 
