@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 public abstract class Player extends Actor{
     // basic things
+    public String id;
     protected String name;
     protected String className;
     protected int level;
@@ -27,8 +28,9 @@ public abstract class Player extends Actor{
     protected float timeSinceLastT1Skill;
 
 
-    public Player(String name, String className, int maxHealthPoints, int maxMana, Vector2 initialPosition, float speed, Texture t) {
+    public Player(String id, String name, String className, int maxHealthPoints, int maxMana, Vector2 initialPosition, float speed, Texture t) {
         super(maxHealthPoints,initialPosition,speed, t);
+        this.id = id;
         this.name = name;
         this.className = className;
         this.level = 1;
@@ -67,12 +69,6 @@ public abstract class Player extends Actor{
 
     @Override
     public void update(float delta){
-        if (healthPoints < maxHealthPoints) {
-            healthPoints += healthPointsRegen * delta;
-            if (healthPoints > maxHealthPoints) {
-                healthPoints = maxHealthPoints;
-            }
-        }
 
         if (mana < maxMana) {
             mana += manaRegen * delta;
@@ -106,8 +102,15 @@ public abstract class Player extends Actor{
     public abstract void castSkill(int skillID,ServerConnection serverConnection);
 
     @Override
+    public void takeDamage(float damage, ServerConnection serverConnection) {
+        takeDamage(damage);
+        serverConnection.sendTakeDamage(this,damage);
+
+    }
+    @Override
     public void takeDamage(float damage) {
         super.takeDamage(damage);
+
         System.out.println("Player ["+this.name+"] took Damage! "+healthPoints+"/"+maxHealthPoints);
     }
 
@@ -143,6 +146,11 @@ public abstract class Player extends Actor{
     public ArrayList<Item> getItems() {
         return items;
     }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public void updateItemFromPlayerData(String[] playerDataItems) {
         for (String itemName : playerDataItems) {
             Item item = ItemFactory.createItem(itemName);

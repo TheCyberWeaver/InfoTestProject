@@ -8,8 +8,8 @@ import io.github.infotest.util.ServerConnection;
 
 public class Assassin extends Player {
 
-    public Assassin(String name, Vector2 playerPosition, Texture t) {
-        super(name, "Assassin",50, 50 ,playerPosition, 150, t);
+    public Assassin(String id,String name, Vector2 playerPosition, Texture t) {
+        super(id,name, "Assassin",50, 50 ,playerPosition, 150, t);
     }
 
     @Override

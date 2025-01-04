@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.item.Item;
 import io.github.infotest.util.ItemFactory;
+import io.github.infotest.util.ServerConnection;
 
 import java.util.ArrayList;
 
@@ -65,6 +66,9 @@ public abstract class Actor {
         position.lerp(targetPosition, lerpSpeed * deltaTime); // 线性插值
     }
 
+    public void takeDamage(float damage, ServerConnection serverConnection) {
+        takeDamage(damage);
+    }
     public void takeDamage(float damage) {
         healthPoints -= damage;
         if (healthPoints < 0) {

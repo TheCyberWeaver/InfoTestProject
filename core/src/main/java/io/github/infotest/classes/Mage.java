@@ -18,8 +18,8 @@ public class Mage extends Player {
 
 
 
-    public Mage(String name, Vector2 playerPosition, Texture t) {
-        super(name, "Mage",50, 150 ,playerPosition, 100,t);
+    public Mage(String id, String name, Vector2 playerPosition, Texture t) {
+        super(id, name, "Mage",50, 150 ,playerPosition, 100,t);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class Mage extends Player {
                     timeSinceLastT1Skill = 0;
                     castFireball(this.position.x, this.position.y, rotation);
                     if(localPlayer==this){
-                        serverConnection.sendCastSkill(this);
+                        serverConnection.sendCastSkill(this, "Fireball");
                     }
                 }
                 break;

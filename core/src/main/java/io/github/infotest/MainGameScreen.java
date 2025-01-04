@@ -111,7 +111,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         Vector2 spawnPosition = new Vector2(INITIAL_SIZE / 2f * CELL_SIZE, INITIAL_SIZE / 2f * CELL_SIZE);
         //System.out.println("class: "+ game.getPlayerClass());
-        player = PlayerFactory.createPlayer(game.getUsername(),game.getPlayerClass(),spawnPosition,assassinTexture);
+        player = PlayerFactory.createPlayer(serverConnection.getMySocketId(),game.getUsername(),game.getPlayerClass(),spawnPosition,assassinTexture);
         //System.out.println("class: "+ player.getClass());
 
         // send initial position to server
@@ -305,7 +305,9 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                 float dY = Math.abs(p.getY() - fireball.getY());
 
                 if (dX <= 16f && dY <= 16f && !fireball.hasHit()){
-                    p.takeDamage(fireball.getDamage());
+                    //p.takeDamage(fireball.getDamage(),serverConnection);
+                    p.takeDamage(1,serverConnection);
+
                     fireball.setHit();
                 }
             }
@@ -315,7 +317,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                 float dY = Math.abs(gegner.getY() - fireball.getY());
 
                 if (dX <= 7f && dY <= 7f){
-                    gegner.takeDamage(fireball.getDamage());
+                    gegner.takeDamage(fireball.getDamage(),serverConnection);
                     fireball.setHit();
                 }
             }
