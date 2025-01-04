@@ -13,12 +13,9 @@ import com.badlogic.gdx.math.Vector3;
 import io.github.infotest.MainGameScreen;
 import io.github.infotest.character.Gegner;
 import io.github.infotest.character.Player;
-import io.github.infotest.classes.Mage;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Vector;
 
 public class GameRenderer {
 
@@ -143,7 +140,7 @@ public class GameRenderer {
         renderFireballs(batch, deltaTime, fireballAnimations, shapeRenderer);
     }
 
-    public void renderBar(SpriteBatch batch, Camera cam, Texture[] bar, float maxValue, float y) {
+    public static void renderBar(SpriteBatch batch, Camera cam, Texture[] bar, float maxValue, float y) {
         float endX = cam.viewportWidth - 100; // Position of the rightmost part of the bar
         float segmentWidth = 32; // Width of a single bar segment
 
@@ -169,7 +166,7 @@ public class GameRenderer {
 
     //TODO fix fill bar
 
-    public void fillBar(SpriteBatch batch, Camera cam, Texture[] bar, float value, float maxValue, float y) {
+    public static void fillBar(SpriteBatch batch, Camera cam, Texture[] bar, float value, float maxValue, float y) {
         float segmentWidth = bar[3].getWidth(); // Breite eines Mittelsegments
         float endX = cam.viewportWidth - 100 + 11; // Position des rechten Endes der Leiste
 
@@ -207,8 +204,8 @@ public class GameRenderer {
 
     /// ANIMATIONS
     // Fireball
-    public static void fireball(float pX, float pY, float velocityX, float velocityY, Vector2 rotation, float scale,float damage, float speed, float lt) {
-        activeFireballs.add(new FireballInstance(pX, pY, velocityX, velocityY, rotation, scale, damage, speed, lt));
+    public static void fireball(float pX, float pY, float velocityX, float velocityY, Vector2 rotation, float scale,float damage, float speed, float lt, Player player) {
+        activeFireballs.add(new FireballInstance(pX, pY, velocityX, velocityY, rotation, scale, damage, speed, lt, player));
     }
 
 
@@ -301,10 +298,11 @@ public class GameRenderer {
         float lt;
         float endTimer;
         boolean hasHit;
+        Player owner;
 
         private float speedFactor = 32f;
 
-        FireballInstance(float x, float y, float velocityX, float velocityY, Vector2 rotation, float scale, float damage, float speed, float lt) {
+        FireballInstance(float x, float y, float velocityX, float velocityY, Vector2 rotation, float scale, float damage, float speed, float lt, Player player) {
             this.x = x;
             this.y = y;
             this.velocityX = velocityX;
@@ -317,6 +315,7 @@ public class GameRenderer {
             this.lt = lt;
             this.endTimer = 0f;
             this.hasHit = false;
+            this.owner = player;
         }
 
         public void updatePosition(float deltaTime) {
@@ -340,6 +339,9 @@ public class GameRenderer {
         }
         public boolean hasHit(){
             return hasHit;
+        }
+        public Player getOwner(){
+            return owner;
         }
     }
 
