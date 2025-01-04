@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class StartScreen implements Screen {
 
@@ -19,6 +20,7 @@ public class StartScreen implements Screen {
     private TextField nameTextField;     // 姓名输入框
     private SelectBox<String> roleSelectBox; // 职业选择下拉框
     private CheckBox devModeCheckBox;
+    private Viewport viewport;
 
     // 构造函数，传入主游戏对象
     public StartScreen(Main game) {
@@ -29,7 +31,8 @@ public class StartScreen implements Screen {
     public void show() {
         System.out.println("[StartScreen] StartScreen started");
         // 初始化场景
-        stage = new Stage(new ScreenViewport());
+        viewport = new ScreenViewport();
+        stage = new Stage(viewport);
         // 设置输入处理给 stage，这样我们可以捕捉UI事件
         Gdx.input.setInputProcessor(stage);
 

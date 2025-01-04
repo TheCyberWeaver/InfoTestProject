@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -140,28 +141,42 @@ public class GameRenderer {
         renderFireballs(batch, deltaTime, fireballAnimations, shapeRenderer);
     }
 
-    public static void renderBar(SpriteBatch batch, Camera cam, Texture[] bar, float maxValue, float y) {
-        float endX = cam.viewportWidth - 100; // Position of the rightmost part of the bar
-        float segmentWidth = 32; // Width of a single bar segment
+    public static void renderBar(SpriteBatch batch, Texture[] bar, float value, float maxValue, float x, float y, float scaleX, float scaleY) {
+        Sprite spriteEnd;
+        Sprite spriteMiddle;
+        Sprite spriteStart;
 
-        // Calculate number of middle segments based on value
-        int numSegments = (int)(maxValue / 10);
-
-        // Convert positions to world coordinates
-        Vector3 endCoords = cam.unproject(new Vector3(endX, y, 0));
-        Vector3 startCoords = cam.unproject(new Vector3(endX - segmentWidth * (numSegments + 1), y, 0));
-
-        // Draw end of the bar
-        batch.draw(bar[4], endCoords.x, endCoords.y);
-
-        // Draw middle segments
-        for (int i = 0; i < numSegments; i++) {
-            Vector3 middleCoords = cam.unproject(new Vector3(endX - segmentWidth * (i + 1), y, 0));
-            batch.draw(bar[2], middleCoords.x, middleCoords.y);
+        if (value >= maxValue-9) {
+            spriteEnd = new Sprite(bar[0]);
+        } else {
+            spriteEnd = new Sprite(bar[1]);
         }
+        spriteEnd.flip(true, false);
+        spriteEnd.setPosition(x, y);
+        spriteEnd.setScale(scaleX,scaleY);
+        spriteEnd.draw(batch);
 
-        // Draw start of the bar
-        batch.draw(bar[0], startCoords.x, startCoords.y);
+        int segments = (int) Math.ceil(maxValue/10);
+        for (int i=0;i<segments;i++){
+            if (value >= maxValue-10*(i+2)) {
+                spriteMiddle = new Sprite(bar[2]);
+            } else {
+                spriteMiddle = new Sprite(bar[3]);
+            }
+            spriteMiddle.setScale(scaleX,scaleY);
+            spriteMiddle.setPosition(x - (spriteMiddle.getWidth()* (i + 1f))*scaleX+(scaleX-1)*(-6), y);
+            spriteMiddle.draw(batch);
+        }
+        spriteMiddle = new Sprite(bar[2]);
+
+        if (value >= 1) {
+            spriteStart = new Sprite(bar[0]);
+        } else {
+            spriteStart = new Sprite(bar[1]);
+        }
+        spriteStart.setPosition(x-segments*spriteMiddle.getWidth()*scaleX-scaleX*20, y);
+        spriteStart.setScale(scaleX,scaleY);
+        spriteStart.draw(batch);
     }
 
     //TODO fix fill bar
