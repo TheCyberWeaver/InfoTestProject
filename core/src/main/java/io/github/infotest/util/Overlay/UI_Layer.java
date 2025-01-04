@@ -6,6 +6,9 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.viewport.*;
 import io.github.infotest.MainGameScreen;
 import io.github.infotest.character.Player;
 import io.github.infotest.util.GameRenderer;
@@ -15,25 +18,24 @@ public class UI_Layer implements ApplicationListener {
     SpriteBatch batch;
     Camera uiCamera; // UI-specific camera
     Player player;
+    Viewport viewport;
+    ShapeRenderer shapeRenderer;
+    Vector2 windowSize;
 
     private Texture[] healthbar;
+    private Texture testTexture;
 
     public UI_Layer(MainGameScreen mainScreen) {
         this.mainScreen = mainScreen;
         this.uiCamera = new OrthographicCamera(); // Create a new OrthographicCamera for UI
+        viewport = new ScreenViewport(uiCamera);
+        windowSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         create();
     }
 
     public void create() {
         this.batch = new SpriteBatch();
-
-        healthbar = new Texture[6];
-        healthbar[0] = new Texture(Gdx.files.internal("healthbar_start.png"));
-        healthbar[1] = new Texture(Gdx.files.internal("healthbar_start_full.png"));
-        healthbar[2] = new Texture(Gdx.files.internal("healthbar_middle.png"));
-        healthbar[3] = new Texture(Gdx.files.internal("healthbar_middle_full.png"));
-        healthbar[4] = new Texture(Gdx.files.internal("healthbar_ende.png"));
-        healthbar[5] = new Texture(Gdx.files.internal("healthbar_ende_full.png"));
+        this.shapeRenderer = new ShapeRenderer();
     }
 
     @Override
@@ -44,20 +46,21 @@ public class UI_Layer implements ApplicationListener {
     }
 
     public void render() {
-        // Apply UI camera and render
-        batch.setProjectionMatrix(uiCamera.combined);
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(0, 1, 0, 1); // Red
+        shapeRenderer.rect(0, 0, 32, 32); // Mark the origin
+        shapeRenderer.end();
+
+        float screenScaleX = windowSize.x/Gdx.graphics.getWidth();
+        float screenScaleY = windowSize.y/Gdx.graphics.getHeight();
+        float nScale = 0.75f;
 
         batch.begin();
-        // Health bar at the top-right of the screen
-        GameRenderer.renderBar(batch, uiCamera, healthbar, player.getMaxHealthPoints(),
-            uiCamera.viewportWidth - 200,
-            uiCamera.viewportHeight - 50);
-
-        // Optionally, render a player health bar above the player's position
-        GameRenderer.renderBar(batch, uiCamera, healthbar, player.getMaxHealthPoints(),
-            player.getX(),
-            player.getY() + 50);
-
+        GameRenderer.renderBar(batch, healthbar, player.getHealthPoints() ,player.getMaxHealthPoints(),
+            viewport.getWorldWidth()+1250,
+            viewport.getWorldHeight()+800,
+            nScale*screenScaleX, nScale*screenScaleY);
         batch.end();
     }
 
@@ -77,6 +80,12 @@ public class UI_Layer implements ApplicationListener {
 
     public void setPlayer(Player player) {
         this.player = player;
+    }
+    public void setHealthbar(Texture[] healthbar) {
+        this.healthbar = healthbar;
+    }
+    public void setTestTexture(Texture texture) {
+        this.testTexture = texture;
     }
 }
 

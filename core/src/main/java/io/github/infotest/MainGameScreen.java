@@ -34,13 +34,11 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     private Texture rockBlock;
     private Texture basicWoodBlock;
 
-    private Texture fireball_sheet_start;
-    private Texture fireball_sheet_fly;
-    private Texture fireball_sheet_endTime;
-    private Texture fireball_sheet_endHit;
     private Texture[] fireball_sheets;
 
     private Texture[] textures;
+
+    private Texture[] healthbar;
 
 
     // Map data
@@ -82,15 +80,22 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         basicWoodBlock = new Texture("basicWood.png");
 
         fireball_sheets = new Texture[4];
-        fireball_sheet_start = new Texture(Gdx.files.internal("fireball_sheet_start.png"));
-        fireball_sheet_fly = new Texture(Gdx.files.internal("fireball_sheet_fly.png"));
-        fireball_sheet_endTime = new Texture(Gdx.files.internal("fireball_sheet_endTime.png"));
-        fireball_sheet_endHit = new Texture(Gdx.files.internal("fireball_sheet_endHit.png"));
+        fireball_sheets[0] = new Texture(Gdx.files.internal("fireball_sheet_start.png"));;
+        fireball_sheets[1] = new Texture(Gdx.files.internal("fireball_sheet_fly.png"));;
+        fireball_sheets[2] = new Texture(Gdx.files.internal("fireball_sheet_endTime.png"));;
+        fireball_sheets[3] = new Texture(Gdx.files.internal("fireball_sheet_endHit.png"));;
 
-        fireball_sheets[0] = fireball_sheet_start;
-        fireball_sheets[1] = fireball_sheet_fly;
-        fireball_sheets[2] = fireball_sheet_endTime;
-        fireball_sheets[3] = fireball_sheet_endHit;
+        healthbar = new Texture[4];
+//        healthbar[0] = new Texture("healthbar_start.png");
+//        healthbar[1] = new Texture("healthbar_start_full.png");
+//        healthbar[2] = new Texture("healthbar_middle.png");
+//        healthbar[3] = new Texture("healthbar_middle_full.png");
+//        healthbar[4] = new Texture("healthbar_ende.png");
+//        healthbar[5] = new Texture("healthbar_ende_full.png");
+        healthbar[0] = new Texture(Gdx.files.internal("full_start.png"));
+        healthbar[1] = new Texture(Gdx.files.internal("empty_start.png"));
+        healthbar[2] = new Texture(Gdx.files.internal("full_middle.png"));
+        healthbar[3] = new Texture(Gdx.files.internal("empty_middle.png"));
 
         // connect to server
         serverConnection = new ServerConnection("http://www.thomas-hub.com:9595", assassinTexture);
@@ -125,6 +130,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             player.setSpeed(500);
         }
 
+        uiLayer.setHealthbar(healthbar);
+        uiLayer.setTestTexture(assassinTexture);
     }
     @Override
     public void onSeedReceived(int seed) {
@@ -165,6 +172,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             gameRenderer.renderPlayers(batch, players, delta);
             gameRenderer.renderGegner(batch, allGegner, delta);
             gameRenderer.renderAnimations(batch,delta,shapeRenderer);
+            batch.draw(assassinTexture, 0, 0, 0, 0, assassinTexture.getWidth(), assassinTexture.getWidth(), 32, 32);
             batch.end();
 
             player.update(delta);

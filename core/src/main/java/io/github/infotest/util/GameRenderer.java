@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -140,18 +141,42 @@ public class GameRenderer {
         renderFireballs(batch, deltaTime, fireballAnimations, shapeRenderer);
     }
 
-    public static void renderBar(SpriteBatch batch, Camera cam, Texture[] bar, float maxValue, float x, float y) {
-        batch.draw(bar[4], x, y);
+    public static void renderBar(SpriteBatch batch, Texture[] bar, float value, float maxValue, float x, float y, float scaleX, float scaleY) {
+        Sprite spriteEnd;
+        Sprite spriteMiddle;
+        Sprite spriteStart;
 
-        int segments = Math.max(0, (int) Math.floor(maxValue / 10) - 2);
-
-        float tempX = x;
-        for(int i=0;i<segments;i++){
-            tempX += 32;
-            batch.draw(bar[2], tempX, y);
+        if (value >= maxValue-9) {
+            spriteEnd = new Sprite(bar[0]);
+        } else {
+            spriteEnd = new Sprite(bar[1]);
         }
-        float finalSegmentX = x + (segments * 32);
-        batch.draw(bar[0], finalSegmentX, y);
+        spriteEnd.flip(true, false);
+        spriteEnd.setPosition(x, y);
+        spriteEnd.setScale(scaleX,scaleY);
+        spriteEnd.draw(batch);
+
+        int segments = (int) Math.ceil(maxValue/10);
+        for (int i=0;i<segments;i++){
+            if (value >= maxValue-10*(i+2)) {
+                spriteMiddle = new Sprite(bar[2]);
+            } else {
+                spriteMiddle = new Sprite(bar[3]);
+            }
+            spriteMiddle.setScale(scaleX,scaleY);
+            spriteMiddle.setPosition(x - (spriteMiddle.getWidth()* (i + 1f))*scaleX+(scaleX-1)*(-6), y);
+            spriteMiddle.draw(batch);
+        }
+        spriteMiddle = new Sprite(bar[2]);
+
+        if (value >= 1) {
+            spriteStart = new Sprite(bar[0]);
+        } else {
+            spriteStart = new Sprite(bar[1]);
+        }
+        spriteStart.setPosition(x-segments*spriteMiddle.getWidth()*scaleX-scaleX*20, y);
+        spriteStart.setScale(scaleX,scaleY);
+        spriteStart.draw(batch);
     }
 
     //TODO fix fill bar
