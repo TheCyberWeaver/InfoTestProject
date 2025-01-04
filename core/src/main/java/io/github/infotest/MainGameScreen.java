@@ -149,7 +149,6 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         //System.out.println(player);
 
         uiLayer.setPlayer(player);
-        uiLayer.render();
 
         // clear screen
         Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -180,6 +179,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             batch.end();
         }
+        uiLayer.render();
     }
 
     float tempTime = 0;

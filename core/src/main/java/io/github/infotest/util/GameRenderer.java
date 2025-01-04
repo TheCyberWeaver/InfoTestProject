@@ -140,28 +140,18 @@ public class GameRenderer {
         renderFireballs(batch, deltaTime, fireballAnimations, shapeRenderer);
     }
 
-    public static void renderBar(SpriteBatch batch, Camera cam, Texture[] bar, float maxValue, float y) {
-        float endX = cam.viewportWidth - 100; // Position of the rightmost part of the bar
-        float segmentWidth = 32; // Width of a single bar segment
+    public static void renderBar(SpriteBatch batch, Camera cam, Texture[] bar, float maxValue, float x, float y) {
+        batch.draw(bar[4], x, y);
 
-        // Calculate number of middle segments based on value
-        int numSegments = (int)(maxValue / 10);
+        int segments = Math.max(0, (int) Math.floor(maxValue / 10) - 2);
 
-        // Convert positions to world coordinates
-        Vector3 endCoords = cam.unproject(new Vector3(endX, y, 0));
-        Vector3 startCoords = cam.unproject(new Vector3(endX - segmentWidth * (numSegments + 1), y, 0));
-
-        // Draw end of the bar
-        batch.draw(bar[4], endCoords.x, endCoords.y);
-
-        // Draw middle segments
-        for (int i = 0; i < numSegments; i++) {
-            Vector3 middleCoords = cam.unproject(new Vector3(endX - segmentWidth * (i + 1), y, 0));
-            batch.draw(bar[2], middleCoords.x, middleCoords.y);
+        float tempX = x;
+        for(int i=0;i<segments;i++){
+            tempX += 32;
+            batch.draw(bar[2], tempX, y);
         }
-
-        // Draw start of the bar
-        batch.draw(bar[0], startCoords.x, startCoords.y);
+        float finalSegmentX = x + (segments * 32);
+        batch.draw(bar[0], finalSegmentX, y);
     }
 
     //TODO fix fill bar
