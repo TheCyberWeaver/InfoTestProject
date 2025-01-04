@@ -8,8 +8,8 @@ import io.github.infotest.util.ServerConnection;
 
 public class Healer extends Player {
 
-    public Healer(String name, Vector2 initialPosition, Texture texture) {
-        super(name, "Healer", 100, 100 ,initialPosition, 50, texture);
+    public Healer(String id, String name, Vector2 initialPosition, Texture texture) {
+        super(id, name, "Healer", 100, 100 ,initialPosition, 50, texture);
     }
 
     @Override

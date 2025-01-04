@@ -17,8 +17,8 @@ public class Mage extends Player {
     private static float fireballLT = 2f; // lifetime with 0.5 second on start and 0.7 s on hit and 0.8 on end without hit
 
 
-    public Mage(String name, Vector2 playerPosition, Texture t) {
-        super(name, "Mage",60, 150 ,playerPosition, 100,t);
+    public Mage(String id, String name, Vector2 playerPosition, Texture t) {
+        super(id, name, "Mage",60, 150 ,playerPosition, 100,t);
     }
 
     @Override

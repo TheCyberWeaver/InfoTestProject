@@ -52,6 +52,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     // User character
     private Player player;
     private ServerConnection serverConnection;
+    private boolean seedReceived = false;
     // Renderer
     private GameRenderer gameRenderer;
 
@@ -142,6 +143,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         MapCreator mapCreator = new MapCreator(seed, INITIAL_SIZE, this, numOfValidTextures);
         globalSeed = seed;
         map = mapCreator.initializePerlinNoiseMap();
+
+        seedReceived = true;
 
         gameRenderer = new GameRenderer(textures, map, CELL_SIZE);
         gameRenderer.initAnimations(fireball_sheets);

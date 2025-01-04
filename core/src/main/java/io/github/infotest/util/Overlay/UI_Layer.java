@@ -55,22 +55,17 @@ public class UI_Layer implements ApplicationListener {
 
         if (mainScreen.hasSeedReceived()) {
             batch.begin();
-            GameRenderer.renderBar(batch, healthbar, player.getMaxHealthPoints(), player.getMaxHealthPoints(),
+            GameRenderer.renderBar(batch, healthbar, player.getHealthPoints(), player.getMaxHealthPoints(),
                 1250,
                 900,
                 nScale * screenScaleX, nScale * screenScaleY);
-            System.out.println("Healthbar");
             GameRenderer.renderBar(batch, manabar, player.getMana(), player.getMaxMana(),
                 1250,
                 850,
                 nScale * screenScaleX, nScale * screenScaleY);
-            System.out.println("Manabar");
-
             batch.end();
         }
     }
-
-    //TODO healthbar update
 
     @Override
     public void pause() {}
