@@ -24,7 +24,7 @@ public class Mage extends Player {
 
     @Override
     public void castSkill(int skillID,ServerConnection serverConnection) {
-        System.out.println(serverConnection.getPlayers().get(serverConnection.getMySocketId()).getName()+" "+this.getName());
+        //System.out.println(serverConnection.getPlayers().get(serverConnection.getMySocketId()).getName()+" "+this.getName());
          if(skillID == 1 && timeSinceLastT1Skill >= fireballCooldown) {
              timeSinceLastT1Skill = 0;
              castFireball(this.position.x, this.position.y, rotation);
@@ -33,7 +33,7 @@ public class Mage extends Player {
                  serverConnection.sendCastSkill(this);
              }
              else{
-                 System.out.println("cast skill");
+                 //System.out.println("cast skill");
              }
          }
     }

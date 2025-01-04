@@ -134,5 +134,8 @@ public abstract class Actor {
 
         healthPoints=  hp;
     }
+    public void updateRotationFromPlayerData(double Rx, double Ry) {
+        this.rotation = new Vector2((float)Rx,(float)Ry);
+    }
 
 }

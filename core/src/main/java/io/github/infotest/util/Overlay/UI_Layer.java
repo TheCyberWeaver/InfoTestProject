@@ -47,9 +47,9 @@ public class UI_Layer implements ApplicationListener {
 
     public void render() {
         batch.begin();
-        System.out.println("Rendering Bar");
+        //System.out.println("Rendering Bar");
         GameRenderer.renderBar(batch, camera, healthbar, player.getMaxHealthPoints(), camera.viewportHeight*1/5);
-        System.out.println("Filling Bar");
+        //System.out.println("Filling Bar");
         GameRenderer.fillBar(batch,camera, healthbar, player.getHealthPoints(), player.getMaxHealthPoints(), camera.viewportHeight*1/5-11);
         batch.end();
     }

@@ -156,7 +156,7 @@ public class ServerConnection {
             switch (actionType) {
                 case "Fireball":
                     player.castSkill(1, this);
-                    System.out.println("[INFO]: Fireball triggered"+player.getName());
+                    //System.out.println("[INFO]: Fireball triggered"+player.getName());
             }
         }
 
@@ -187,6 +187,8 @@ public class ServerConnection {
                 player.updateTargetPosition(new Vector2(x, y));
                 player.updateHPFromPlayerData((float)playerData.hp);
                 player.updateItemFromPlayerData(playerData.items);
+                player.updateRotationFromPlayerData(playerData.rotation.x,playerData.rotation.y);
+                //System.out.println("[INFO]: Player Rotation update " + playerData.rotation.x+" "+playerData.rotation.y);
             }
         }
     }
