@@ -138,7 +138,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         gameRenderer = new GameRenderer(textures, map, CELL_SIZE);
         gameRenderer.initAnimations(fireball_sheets);
 
-        System.out.println("Map generated after receiving seed: " + seed);
+        System.out.println("[MainGameScreen INFO]: Map generated after receiving seed: " + seed);
     }
     @Override
     public void render(float delta) {

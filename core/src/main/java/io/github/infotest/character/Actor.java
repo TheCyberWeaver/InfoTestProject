@@ -70,7 +70,6 @@ public abstract class Actor {
         if (healthPoints < 0) {
             healthPoints = 0;
         }
-        System.out.println("Actor took Damage! "+healthPoints+"/"+maxHealthPoints);
     }
     public void heal(int amount) {
         healthPoints += amount;

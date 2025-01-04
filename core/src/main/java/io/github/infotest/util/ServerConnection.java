@@ -58,14 +58,14 @@ public class ServerConnection {
             socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    System.out.println("[INFO]: Connected to server");
+                    System.out.println("[ServerConnection INFO]: Connected to server");
                 }
             }).on("yourId", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
                     if (args.length > 0 && args[0] instanceof String) {
                         mySocketId = (String) args[0];
-                        System.out.println("[INFO]: My socket ID: " + mySocketId);
+                        System.out.println("[ServerConnection INFO]: My socket ID: " + mySocketId);
                     }
                 }
             }).on("init", new Emitter.Listener() {
@@ -122,7 +122,7 @@ public class ServerConnection {
                     if (args.length > 0 && args[0] instanceof JSONObject) {
                         JSONObject data = (JSONObject) args[0];
                         try {
-                            System.out.println("[INFO]: " + data.toString());
+                            //System.out.println("[ServerConnection INFO]: " + data.toString());
                             String actionType = data.getString("actionType");
                             String playerID   = data.getString("playerID");
 
@@ -219,8 +219,8 @@ public class ServerConnection {
             initData.put("hp",player.getHealthPoints());
             initData.put("classtype",player.getClassName());
             initData.put("items",player.getItems());
-            System.out.println("----------");
-            System.out.println(initData.toString());
+
+            System.out.println("[ServerConnection INFO]: Init Data: "+initData.toString());
 
             socket.emit("init", initData);
             //System.out.println("Updated position: " + pos);

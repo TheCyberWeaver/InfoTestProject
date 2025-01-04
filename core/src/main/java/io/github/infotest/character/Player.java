@@ -105,7 +105,11 @@ public abstract class Player extends Actor{
     // 抽象方法：角色技能（由各个子类实现）
     public abstract void castSkill(int skillID,ServerConnection serverConnection);
 
-
+    @Override
+    public void takeDamage(float damage) {
+        super.takeDamage(damage);
+        System.out.println("Player ["+this.name+"] took Damage! "+healthPoints+"/"+maxHealthPoints);
+    }
 
 
     /// Getter / Setter

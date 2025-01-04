@@ -27,7 +27,7 @@ public class StartScreen implements Screen {
 
     @Override
     public void show() {
-        System.out.println("StartScreen.show()");
+        System.out.println("[StartScreen] StartScreen started");
         // 初始化场景
         stage = new Stage(new ScreenViewport());
         // 设置输入处理给 stage，这样我们可以捕捉UI事件
@@ -105,14 +105,15 @@ public class StartScreen implements Screen {
 
         // Validation
         if (playerName == null || playerName.trim().isEmpty()) {
-            System.out.println("[WARNING]: Name cannot be empty!");
+            System.out.println("[StartScreen WARNING]: Name cannot be empty!");
             return;
         }
 
         // Log
-        System.out.println("------Init Setup-------");
+        System.out.println("-------Init Setup-------");
         System.out.println("User Name:" + playerName);
         System.out.println("Your Role:" + selectedRole);
+        System.out.println("-------Init Setup-------");
 
         game.startGame(playerName, selectedRole);
     }
