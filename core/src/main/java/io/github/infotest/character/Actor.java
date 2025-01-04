@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.item.Item;
 import io.github.infotest.util.ItemFactory;
+import io.github.infotest.util.ServerConnection;
 
 import java.util.ArrayList;
 
@@ -17,7 +18,7 @@ public abstract class Actor {
 
     //Movement related
     protected long lastUpdateTimestamp;
-    protected Vector2 position =new Vector2(0,0);
+    protected Vector2 position ;
     protected Vector2 targetPosition;// World Position
     protected float speed;
     protected Vector2 velocity;
@@ -65,12 +66,14 @@ public abstract class Actor {
         position.lerp(targetPosition, lerpSpeed * deltaTime); // 线性插值
     }
 
+    public void takeDamage(float damage, ServerConnection serverConnection) {
+        takeDamage(damage);
+    }
     public void takeDamage(float damage) {
         healthPoints -= damage;
         if (healthPoints < 0) {
             healthPoints = 0;
         }
-        System.out.println("Actor took Damage! "+healthPoints+"/"+maxHealthPoints);
     }
     public void heal(int amount) {
         healthPoints += amount;
@@ -88,6 +91,11 @@ public abstract class Actor {
     }
     public float getMaxHealthPoints() {
         return maxHealthPoints;
+    }
+
+
+    public Vector2 getRotation() {
+        return rotation;
     }
     public float getX() {
         return position.x;
@@ -128,6 +136,9 @@ public abstract class Actor {
     public void updateHPFromPlayerData(float hp) {
 
         healthPoints=  hp;
+    }
+    public void updateRotationFromPlayerData(double Rx, double Ry) {
+        this.rotation = new Vector2((float)Rx,(float)Ry);
     }
 
 }

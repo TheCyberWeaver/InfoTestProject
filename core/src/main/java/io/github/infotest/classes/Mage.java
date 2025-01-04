@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.character.Player;
 import io.github.infotest.util.GameRenderer;
+import io.github.infotest.util.ServerConnection;
 
 public class Mage extends Player {
 
@@ -21,12 +22,26 @@ public class Mage extends Player {
     }
 
     @Override
-    public void castSkill(int skillID) {
-         if(skillID == 1 && timeSinceLastT1Skill >= fireballCooldown) {
-             timeSinceLastT1Skill = 0;
-             castFireball(this.position.x, this.position.y, rotation);
+    public void castSkill(int skillID,ServerConnection serverConnection) {
+        Player localPlayer=serverConnection.getPlayers().get(serverConnection.getMySocketId());
+        switch(skillID) {
+            case 1:
+                if(timeSinceLastT1Skill >= fireballCooldown ||  localPlayer!=this) {
+                    System.out.println("[Mage INFO]: Player ["+this.getName()+"] casts skill "+skillID);
+                    timeSinceLastT1Skill = 0;
+                    castFireball(this.position.x, this.position.y, rotation);
+                    if(localPlayer==this){
+                        serverConnection.sendCastSkill(this, "Fireball");
+                    }
+                }
+                break;
+            case 2:
+                break;
+            default:
+                break;
+        }
 
-         }}
+    }
 
 
 

@@ -8,11 +8,13 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.item.Item;
 import io.github.infotest.util.ItemFactory;
+import io.github.infotest.util.ServerConnection;
 
 import java.util.ArrayList;
 
 public abstract class Player extends Actor{
     // basic things
+    public String id;
     protected String name;
     protected String className;
     protected int level;
@@ -26,8 +28,9 @@ public abstract class Player extends Actor{
     protected float timeSinceLastT1Skill;
 
 
-    public Player(String name, String className, int maxHealthPoints, int maxMana, Vector2 initialPosition, float speed, Texture t) {
+    public Player(String id, String name, String className, int maxHealthPoints, int maxMana, Vector2 initialPosition, float speed, Texture t) {
         super(maxHealthPoints,initialPosition,speed, t);
+        this.id = id;
         this.name = name;
         this.className = className;
         this.level = 1;
@@ -66,12 +69,6 @@ public abstract class Player extends Actor{
 
     @Override
     public void update(float delta){
-        if (healthPoints < maxHealthPoints) {
-            healthPoints += healthPointsRegen * delta;
-            if (healthPoints > maxHealthPoints) {
-                healthPoints = maxHealthPoints;
-            }
-        }
 
         if (mana < maxMana) {
             mana += manaRegen * delta;
@@ -95,16 +92,25 @@ public abstract class Player extends Actor{
 
     protected void levelUp() {
         level++;
-        experience = 0; // 升级后将经验清零或其他处理
-        // 升级时也可以增加最大生命值或其他属性
+        experience = 0;
         maxHealthPoints += 10;
         healthPoints = maxHealthPoints;
     }
 
-    // 抽象方法：角色技能（由各个子类实现）
-    public abstract void castSkill(int skillID);
+    public abstract void castSkill(int skillID,ServerConnection serverConnection);
 
+    @Override
+    public void takeDamage(float damage, ServerConnection serverConnection) {
+        takeDamage(damage);
+        serverConnection.sendTakeDamage(this,damage);
 
+    }
+    @Override
+    public void takeDamage(float damage) {
+        super.takeDamage(damage);
+
+        System.out.println("[Player INFO]: Player ["+this.name+"] took Damage! "+healthPoints+"/"+maxHealthPoints);
+    }
 
 
     /// Getter / Setter
@@ -138,6 +144,11 @@ public abstract class Player extends Actor{
     public ArrayList<Item> getItems() {
         return items;
     }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public void updateItemFromPlayerData(String[] playerDataItems) {
         for (String itemName : playerDataItems) {
             Item item = ItemFactory.createItem(itemName);

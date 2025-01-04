@@ -4,17 +4,16 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.character.Player;
+import io.github.infotest.util.ServerConnection;
 
 public class Assassin extends Player {
 
-    public Assassin(String name, Vector2 playerPosition, Texture t) {
-        super(name, "Assassin",50, 50 ,playerPosition, 150, t);
+    public Assassin(String id,String name, Vector2 playerPosition, Texture t) {
+        super(id,name, "Assassin",50, 50 ,playerPosition, 150, t);
     }
 
     @Override
-    public void castSkill(int skillID) {
-        // 刺客技能示例：瞬步或背刺
-        System.out.println(name + "进行了背刺！");
+    public void castSkill(int skillID, ServerConnection serverConnection) {
     }
 
     @Override

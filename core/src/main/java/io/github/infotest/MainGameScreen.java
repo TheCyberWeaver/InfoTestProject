@@ -19,6 +19,7 @@ import io.github.infotest.util.MapCreator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class MainGameScreen implements Screen, InputProcessor, ServerConnection.SeedListener {
     private SpriteBatch batch;
@@ -47,7 +48,6 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     private static final int CELL_SIZE = 32;
     private static final int INITIAL_SIZE = 3000;
     private static int numOfValidTextures = 4;
-    private boolean seedReceived = false;
 
     // User character
     private Player player;
@@ -61,6 +61,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
     private Main game;
     public int globalSeed = 0;
+
+    private float debugTimer=0;
 
     public MainGameScreen(Game game) {
         this.game = (Main) game;
@@ -117,7 +119,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         Vector2 spawnPosition = new Vector2(INITIAL_SIZE / 2f * CELL_SIZE, INITIAL_SIZE / 2f * CELL_SIZE);
         //System.out.println("class: "+ game.getPlayerClass());
-        player = PlayerFactory.createPlayer(game.getUsername(),game.getPlayerClass(),spawnPosition,assassinTexture);
+        player = PlayerFactory.createPlayer(serverConnection.getMySocketId(),game.getUsername(),game.getPlayerClass(),spawnPosition,assassinTexture);
         //System.out.println("class: "+ player.getClass());
 
         // send initial position to server
@@ -141,19 +143,20 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         globalSeed = seed;
         map = mapCreator.initializePerlinNoiseMap();
 
-        seedReceived = true;
-
         gameRenderer = new GameRenderer(textures, map, CELL_SIZE);
         gameRenderer.initAnimations(fireball_sheets);
 
-        System.out.println("Map generated after receiving seed: " + seed);
+        System.out.println("[MainGameScreen INFO]: Map generated after receiving seed: " + seed);
     }
     @Override
     public void render(float delta) {
 
         // update player list
         this.players = serverConnection.getPlayers();
-        this.players.put(serverConnection.getMySocketId(), player);
+        if(serverConnection.getMySocketId()!=""){
+            this.players.put(serverConnection.getMySocketId(), player);
+        }
+
         //System.out.println(player);
 
         uiLayer.setPlayer(player);
@@ -176,7 +179,10 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             batch.draw(assassinTexture, 0, 0, 0, 0, assassinTexture.getWidth(), assassinTexture.getWidth(), 32, 32);
             batch.end();
 
-            player.update(delta);
+            for(Player p: players.values()){
+                p.update(delta);
+            }
+            //player.update(delta);
             checkFireballCollisions();
 
             handleInput(delta);
@@ -188,6 +194,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             batch.end();
         }
+        debugTimer+=delta;
         uiLayer.render();
     }
 
@@ -219,12 +226,23 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             player.setRotation(new Vector2(0,-1));
         }
         if (Gdx.input.isKeyPressed(Input.Keys.E)) {
-            player.castSkill(1);
+            player.castSkill(1,serverConnection);
+
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.P) && game.isDevelopmentMode && debugTimer>=1){
+
+            System.out.println("----------");
+            for (Map.Entry<String, Player> stringPlayerEntry : players.entrySet()) {
+                Player tmpPlayer=stringPlayerEntry.getValue();
+                System.out.println(stringPlayerEntry.getKey()+" "+tmpPlayer.getName()+" "+tmpPlayer.getHealthPoints());
+            }
+            System.out.println("----------");
+            debugTimer=0;
         }
 
         if (moved) {
             // update position
-            serverConnection.sendPlayerPosition(player.getX(), player.getY());
+            serverConnection.sendPlayerPosition(player.getX(), player.getY(),player.getRotation().x,player.getRotation().y);
         }
     }
 
@@ -310,7 +328,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                 float dY = Math.abs(p.getY() - fireball.getY());
 
                 if (dX <= 16f && dY <= 16f && !fireball.hasHit()){
-                    p.takeDamage(fireball.getDamage());
+                    p.takeDamage(fireball.getDamage(),serverConnection);
+
                     fireball.setHit();
                 }
             }
@@ -320,7 +339,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                 float dY = Math.abs(gegner.getY() - fireball.getY());
 
                 if (dX <= 7f && dY <= 7f){
-                    gegner.takeDamage(fireball.getDamage());
+                    gegner.takeDamage(fireball.getDamage(),serverConnection);
                     fireball.setHit();
                 }
             }
