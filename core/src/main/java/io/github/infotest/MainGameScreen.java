@@ -19,6 +19,7 @@ import io.github.infotest.util.MapCreator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class MainGameScreen implements Screen, InputProcessor, ServerConnection.SeedListener {
     private SpriteBatch batch;
@@ -215,6 +216,14 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         if (Gdx.input.isKeyPressed(Input.Keys.E)) {
             player.castSkill(1,serverConnection);
 
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.P) && game.isDevelopmentMode){
+            System.out.println("----------");
+            for (Map.Entry<String, Player> stringPlayerEntry : players.entrySet()) {
+                Player tmpPlayer=stringPlayerEntry.getValue();
+                System.out.println(stringPlayerEntry.getKey()+" "+tmpPlayer.getName()+" "+tmpPlayer.getHealthPoints());
+            }
+            System.out.println("----------");
         }
 
         if (moved) {
