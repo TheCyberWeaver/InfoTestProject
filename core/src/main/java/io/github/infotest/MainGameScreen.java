@@ -2,20 +2,16 @@ package io.github.infotest;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import io.github.infotest.character.Gegner;
-import io.github.infotest.classes.Assassin;
 import io.github.infotest.character.Player;
-import io.github.infotest.classes.Mage;
+import io.github.infotest.util.Overlay.UI_Layer;
 import io.github.infotest.util.PlayerFactory;
 import io.github.infotest.util.ServerConnection;
 import io.github.infotest.util.GameRenderer;
@@ -28,6 +24,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
     private OrthographicCamera camera;
+    private UI_Layer uiLayer;
     private AssetManager assetManager; //TODO
 
     // texture needed
@@ -42,7 +39,6 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     private Texture fireball_sheet_endTime;
     private Texture fireball_sheet_endHit;
     private Texture[] fireball_sheets;
-    private Texture[] healthbar;
 
     private Texture[] textures;
 
@@ -69,13 +65,14 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
     public MainGameScreen(Game game) {
         this.game = (Main) game;
+        camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        this.uiLayer = new UI_Layer(this);
         create();
     }
 
     public void create() {
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
-        camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         // load texture
         assassinTexture = new Texture("assassin.png");
@@ -94,14 +91,6 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         fireball_sheets[1] = fireball_sheet_fly;
         fireball_sheets[2] = fireball_sheet_endTime;
         fireball_sheets[3] = fireball_sheet_endHit;
-
-        healthbar = new Texture[6];
-        healthbar[0] = new Texture(Gdx.files.internal("healthbar_start.png"));
-        healthbar[1] = new Texture(Gdx.files.internal("healthbar_start_full.png"));
-        healthbar[2] = new Texture(Gdx.files.internal("healthbar_middle.png"));
-        healthbar[3] = new Texture(Gdx.files.internal("healthbar_middle_full.png"));
-        healthbar[4] = new Texture(Gdx.files.internal("healthbar_ende.png"));
-        healthbar[5] = new Texture(Gdx.files.internal("healthbar_ende_full.png"));
 
         // connect to server
         serverConnection = new ServerConnection("http://www.thomas-hub.com:9595", assassinTexture);
@@ -122,7 +111,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         Vector2 spawnPosition = new Vector2(INITIAL_SIZE / 2f * CELL_SIZE, INITIAL_SIZE / 2f * CELL_SIZE);
         //System.out.println("class: "+ game.getPlayerClass());
-        player= PlayerFactory.createPlayer(game.getUsername(),game.getPlayerClass(),spawnPosition,assassinTexture);
+        player = PlayerFactory.createPlayer(game.getUsername(),game.getPlayerClass(),spawnPosition,assassinTexture);
         //System.out.println("class: "+ player.getClass());
 
         // send initial position to server
@@ -159,6 +148,9 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         this.players.put(serverConnection.getMySocketId(), player);
         //System.out.println(player);
 
+        uiLayer.setPlayer(player);
+        uiLayer.render();
+
         // clear screen
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -174,8 +166,6 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             gameRenderer.renderPlayers(batch, players, delta);
             gameRenderer.renderGegner(batch, allGegner, delta);
             gameRenderer.renderAnimations(batch,delta,shapeRenderer);
-            gameRenderer.renderBar(batch, camera, healthbar, player.getMaxHealthPoints(), camera.viewportHeight*1/5);
-            gameRenderer.fillBar(batch,camera, healthbar, player.getHealthPoints(), player.getMaxHealthPoints(), camera.viewportHeight*1/5-11);
             batch.end();
 
             player.update(delta);
@@ -303,7 +293,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     public void checkFireballCollisions() {
         for (GameRenderer.FireballInstance fireball : gameRenderer.getActiveFireballs()) {
             for (Player p : players.values()){
-                if (p.equals(player)){
+                if (p.equals(fireball.getOwner())){
                     continue;
                 }
 
@@ -326,5 +316,10 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                 }
             }
         }
+    }
+
+    /// GETTER / SETTER
+    public Camera getCamera() {
+        return camera;
     }
 }

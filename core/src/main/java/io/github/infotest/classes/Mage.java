@@ -30,11 +30,11 @@ public class Mage extends Player {
 
 
 
-    public static void castFireball(float x, float y, Vector2 playerRot) {
+    public void castFireball(float x, float y, Vector2 playerRot) {
         playerRot.nor();
         float velocityX = 1.5f * playerRot.x;
         float velocityY = 1.5f * playerRot.y;
-        GameRenderer.fireball(x, y, velocityX, velocityY, playerRot, fireballScale, fireballDamage, fireballSpeed, fireballLT);
+        GameRenderer.fireball(x, y, velocityX, velocityY, playerRot, fireballScale, fireballDamage, fireballSpeed, fireballLT, this);
 
 
     }
