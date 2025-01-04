@@ -49,7 +49,6 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     private static final int CELL_SIZE = 32;
     private static final int INITIAL_SIZE = 3000;
     private static int numOfValidTextures = 4;
-    private boolean seedReceived = false;
 
     // User character
     private Player player;
@@ -63,6 +62,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
     private Main game;
     public int globalSeed = 0;
+
+    private float debugTimer=0;
 
     public MainGameScreen(Game game) {
         this.game = (Main) game;
@@ -134,8 +135,6 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         globalSeed = seed;
         map = mapCreator.initializePerlinNoiseMap();
 
-        seedReceived = true;
-
         gameRenderer = new GameRenderer(textures, map, CELL_SIZE);
         gameRenderer.initAnimations(fireball_sheets);
 
@@ -146,7 +145,10 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         // update player list
         this.players = serverConnection.getPlayers();
-        this.players.put(serverConnection.getMySocketId(), player);
+        if(serverConnection.getMySocketId()!=""){
+            this.players.put(serverConnection.getMySocketId(), player);
+        }
+
         //System.out.println(player);
 
         uiLayer.setPlayer(player);
@@ -184,6 +186,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             batch.end();
         }
+        debugTimer+=delta;
     }
 
     float tempTime = 0;
@@ -217,13 +220,15 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             player.castSkill(1,serverConnection);
 
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.P) && game.isDevelopmentMode){
+        if(Gdx.input.isKeyPressed(Input.Keys.P) && game.isDevelopmentMode && debugTimer>=1){
+
             System.out.println("----------");
             for (Map.Entry<String, Player> stringPlayerEntry : players.entrySet()) {
                 Player tmpPlayer=stringPlayerEntry.getValue();
                 System.out.println(stringPlayerEntry.getKey()+" "+tmpPlayer.getName()+" "+tmpPlayer.getHealthPoints());
             }
             System.out.println("----------");
+            debugTimer=0;
         }
 
         if (moved) {
@@ -314,8 +319,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                 float dY = Math.abs(p.getY() - fireball.getY());
 
                 if (dX <= 16f && dY <= 16f && !fireball.hasHit()){
-                    //p.takeDamage(fireball.getDamage(),serverConnection);
-                    p.takeDamage(1,serverConnection);
+                    p.takeDamage(fireball.getDamage(),serverConnection);
 
                     fireball.setHit();
                 }

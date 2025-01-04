@@ -92,13 +92,11 @@ public abstract class Player extends Actor{
 
     protected void levelUp() {
         level++;
-        experience = 0; // 升级后将经验清零或其他处理
-        // 升级时也可以增加最大生命值或其他属性
+        experience = 0;
         maxHealthPoints += 10;
         healthPoints = maxHealthPoints;
     }
 
-    // 抽象方法：角色技能（由各个子类实现）
     public abstract void castSkill(int skillID,ServerConnection serverConnection);
 
     @Override
@@ -111,7 +109,7 @@ public abstract class Player extends Actor{
     public void takeDamage(float damage) {
         super.takeDamage(damage);
 
-        System.out.println("Player ["+this.name+"] took Damage! "+healthPoints+"/"+maxHealthPoints);
+        System.out.println("[Player INFO]: Player ["+this.name+"] took Damage! "+healthPoints+"/"+maxHealthPoints);
     }
 
 
