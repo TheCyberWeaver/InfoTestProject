@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.item.Item;
 import io.github.infotest.util.ItemFactory;
+import io.github.infotest.util.ServerConnection;
 
 import java.util.ArrayList;
 
@@ -102,7 +103,7 @@ public abstract class Player extends Actor{
     }
 
     // 抽象方法：角色技能（由各个子类实现）
-    public abstract void castSkill(int skillID);
+    public abstract void castSkill(int skillID,ServerConnection serverConnection);
 
 
 

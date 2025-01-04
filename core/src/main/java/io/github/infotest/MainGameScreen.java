@@ -178,7 +178,10 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             gameRenderer.fillBar(batch,camera, healthbar, player.getHealthPoints(), player.getMaxHealthPoints(), camera.viewportHeight*1/5-11);
             batch.end();
 
-            player.update(delta);
+            for(Player p: players.values()){
+                p.update(delta);
+            }
+            //player.update(delta);
             checkFireballCollisions();
 
             handleInput(delta);
@@ -220,7 +223,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             player.setRotation(new Vector2(0,-1));
         }
         if (Gdx.input.isKeyPressed(Input.Keys.E)) {
-            player.castSkill(1);
+            player.castSkill(1,serverConnection);
+
         }
 
         if (moved) {

@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.character.Player;
 import io.github.infotest.util.GameRenderer;
+import io.github.infotest.util.ServerConnection;
 
 public class Mage extends Player {
 
@@ -16,17 +17,26 @@ public class Mage extends Player {
     private static float fireballLT = 2f; // lifetime with 0.5 second on start and 0.7 s on hit and 0.8 on end without hit
 
 
+
     public Mage(String name, Vector2 playerPosition, Texture t) {
         super(name, "Mage",50, 150 ,playerPosition, 100,t);
     }
 
     @Override
-    public void castSkill(int skillID) {
+    public void castSkill(int skillID,ServerConnection serverConnection) {
+        System.out.println(serverConnection.getPlayers().get(serverConnection.getMySocketId()).getName()+" "+this.getName());
          if(skillID == 1 && timeSinceLastT1Skill >= fireballCooldown) {
              timeSinceLastT1Skill = 0;
              castFireball(this.position.x, this.position.y, rotation);
+             if(serverConnection.getPlayers().get(serverConnection.getMySocketId())==this){
 
-         }}
+                 serverConnection.sendCastSkill(this);
+             }
+             else{
+                 System.out.println("cast skill");
+             }
+         }
+    }
 
 
 

@@ -116,6 +116,23 @@ public class ServerConnection {
                         }
                     }
                 }
+            }).on("playerAction", new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    if (args.length > 0 && args[0] instanceof JSONObject) {
+                        JSONObject data = (JSONObject) args[0];
+                        try {
+                            System.out.println("[INFO]: " + data.toString());
+                            String actionType = data.getString("actionType");
+                            String playerID   = data.getString("playerID");
+
+                            doPlayerAction(actionType,playerID);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }).on("loggingINFO", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
@@ -132,6 +149,17 @@ public class ServerConnection {
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
+    }
+    private void doPlayerAction(String actionType, String playerID) {
+        Player player = players.get(playerID);
+        if(player != null && !playerID.equals(mySocketId)) {
+            switch (actionType) {
+                case "Fireball":
+                    player.castSkill(1, this);
+                    System.out.println("[INFO]: Fireball triggered"+player.getName());
+            }
+        }
+
     }
 
     private void updatePlayers(Map<String, PlayerData> playersMap){
@@ -198,7 +226,20 @@ public class ServerConnection {
             e.printStackTrace();
         }
     }
+    public void sendCastSkill(Player player){
+        JSONObject skillData = new JSONObject();
+        try {
+            skillData.put("attackType", "Fireball");
+            skillData.put("targetId", "");
+            skillData.put("damage", 10);
 
+
+            socket.emit("playerAttack", skillData);
+            //System.out.println("Updated position: " + pos);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void disconnect() {
         if (socket != null) {
