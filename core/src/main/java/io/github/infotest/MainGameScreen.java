@@ -42,6 +42,9 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     private Texture[] healthbar;
     private Texture[] manabar;
 
+    //Settings
+    private boolean keepInventory;
+
 
     // Map data
     private int[][] map;
@@ -116,7 +119,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         Gdx.input.setInputProcessor(this);
 
-
+        //Settings
+        keepInventory = true;
 
         Vector2 spawnPosition = new Vector2(INITIAL_SIZE / 2f * CELL_SIZE, INITIAL_SIZE / 2f * CELL_SIZE);
         //System.out.println("class: "+ game.getPlayerClass());
@@ -133,6 +137,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         if(game.isDevelopmentMode){
             player.setSpeed(500);
         }
+        player.setMainScreen(this);
 
         uiLayer.setHealthbar(healthbar);
         uiLayer.setManabar(manabar);
@@ -184,6 +189,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
             for(Player p: players.values()){
                 p.update(delta);
+                p.check();
             }
             //player.update(delta);
             checkFireballCollisions();
@@ -352,5 +358,9 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     /// GETTER / SETTER
     public boolean hasSeedReceived(){
         return seedReceived;
+    }
+
+    public boolean isKeepInventory(){
+        return keepInventory;
     }
 }

@@ -9,7 +9,7 @@ import io.github.infotest.util.ServerConnection;
 
 public class Mage extends Player {
 
-    private static float fireballCost = 4f;
+    private static float fireballCost = 5f;
     private static float fireballDamage = 3f;
     private static float fireballCooldown = 0.5f;
     private static float fireballSpeed = 3f;
@@ -18,7 +18,7 @@ public class Mage extends Player {
 
 
     public Mage(String id, String name, Vector2 playerPosition, Texture t) {
-        super(id, name, "Mage",60, 150 ,playerPosition, 100,t);
+        super(id, name, "Mage",60, 125 ,playerPosition, 100,t);
     }
 
     @Override
@@ -26,7 +26,7 @@ public class Mage extends Player {
         Player localPlayer=serverConnection.getPlayers().get(serverConnection.getMySocketId());
         switch(skillID) {
             case 1:
-                if(timeSinceLastT1Skill >= fireballCooldown ||  localPlayer!=this) {
+                if(timeSinceLastT1Skill >= fireballCooldown && drainMana(fireballCost) ||  localPlayer!=this) {
                     System.out.println("[Mage INFO]: Player ["+this.getName()+"] casts skill "+skillID);
                     timeSinceLastT1Skill = 0;
                     castFireball(this.position.x, this.position.y, rotation);
@@ -34,6 +34,7 @@ public class Mage extends Player {
                         serverConnection.sendCastSkill(this, "Fireball");
                     }
                 }
+                System.out.println(mana+"/"+maxMana);
                 break;
             case 2:
                 break;

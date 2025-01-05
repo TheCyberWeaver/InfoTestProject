@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
+import io.github.infotest.MainGameScreen;
 import io.github.infotest.item.Item;
 import io.github.infotest.util.ItemFactory;
 import io.github.infotest.util.ServerConnection;
@@ -11,10 +12,14 @@ import io.github.infotest.util.ServerConnection;
 import java.util.ArrayList;
 
 public abstract class Actor {
+
+    protected MainGameScreen mainScreen;
+
     // basic things
     protected float healthPoints;    // current HP
     protected float maxHealthPoints; // maximum HP
     protected float healthPointsRegen = 2f; // health regeneration per second
+    protected boolean isAlive;
 
     //Movement related
     protected long lastUpdateTimestamp;
@@ -32,6 +37,7 @@ public abstract class Actor {
     public Actor(int maxHealthPoints, Vector2 initialPosition, float speed, Texture texture) {
         this.maxHealthPoints = maxHealthPoints;
         this.healthPoints = maxHealthPoints; // full HP at first
+        this.isAlive = true;
         this.speed = speed;
 
         //Movement related
@@ -85,15 +91,23 @@ public abstract class Actor {
     public abstract void render(Batch batch);
     public abstract void update(float delta);
 
-    // Getter、Setter
+    public void check(){
+        if (healthPoints <= 0) {
+            kill();
+        }
+    }
+
+    public void kill(){
+        isAlive = false;
+    }
+
+    /// Getter / Setter
     public float getHealthPoints() {
         return healthPoints;
     }
     public float getMaxHealthPoints() {
         return maxHealthPoints;
     }
-
-
     public Vector2 getRotation() {
         return rotation;
     }
@@ -140,5 +154,7 @@ public abstract class Actor {
     public void updateRotationFromPlayerData(double Rx, double Ry) {
         this.rotation = new Vector2((float)Rx,(float)Ry);
     }
-
+    public void setMainScreen(MainGameScreen mainScreen) {
+        this.mainScreen = mainScreen;
+    }
 }

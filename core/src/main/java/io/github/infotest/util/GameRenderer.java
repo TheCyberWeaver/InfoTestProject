@@ -156,7 +156,7 @@ public class GameRenderer {
         spriteEnd.setScale(scaleX,scaleY);
         spriteEnd.draw(batch);
 
-        int segments = (int) Math.ceil(maxValue/10);
+        int segments = (int) Math.ceil(maxValue/10)-2;
         float tempMax = maxValue;
         for (int i=0;i<segments;i++){
             tempMax -= 10;
