@@ -112,7 +112,9 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         ausdauerbar[3] = new Texture(Gdx.files.internal("ausdauerbar_empty_middle.png"));
 
         // connect to server
-        serverConnection = new ServerConnection("http://www.thomas-hub.com:9595", assassinTexture);
+        //serverConnection = new ServerConnection("http://www.thomas-hub.com:9595", assassinTexture);
+        serverConnection = new ServerConnection(game.getServerUrl(), assassinTexture);
+
         serverConnection.setSeedListener(this);
         serverConnection.connect();
 

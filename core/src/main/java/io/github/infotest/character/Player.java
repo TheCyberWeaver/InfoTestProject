@@ -111,7 +111,7 @@ public abstract class Player extends Actor{
     @Override
     public void kill(){
         this.isAlive = false;
-        respawn();
+        //respawn();
     }
 
     public void respawn(){
