@@ -106,7 +106,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         // connect to server
         //serverConnection = new ServerConnection("http://www.thomas-hub.com:9595", assassinTexture);
-        serverConnection = new ServerConnection("http://localhost:9595", assassinTexture);
+        serverConnection = new ServerConnection(game.getServerUrl(), assassinTexture);
+
         serverConnection.setSeedListener(this);
         serverConnection.connect();
 

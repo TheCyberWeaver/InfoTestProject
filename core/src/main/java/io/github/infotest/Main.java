@@ -27,5 +27,9 @@ public class Main extends Game {
     public String getPlayerClass() {
         return playerClass;
     }
+
+    public String getServerUrl() {
+        return serverUrl;
+    }
 }
 
