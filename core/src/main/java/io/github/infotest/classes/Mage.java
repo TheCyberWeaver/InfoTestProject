@@ -18,7 +18,7 @@ public class Mage extends Player {
 
 
     public Mage(String id, String name, Vector2 playerPosition, Texture t) {
-        super(id, name, "Mage",60, 125 ,playerPosition, 100,t);
+        super(id, name, "Mage",60, 125, 50, playerPosition, 100,t);
     }
 
     @Override

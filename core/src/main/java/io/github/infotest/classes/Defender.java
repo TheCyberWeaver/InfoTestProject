@@ -8,7 +8,7 @@ import io.github.infotest.util.ServerConnection;
 public class Defender extends Player {
 
     public Defender(String id, String name, Vector2 initialPosition, Texture texture) {
-        super(id, name, "Defender", 250, 25 ,initialPosition, 75,  texture);
+        super(id, name, "Defender", 250, 25, 100, initialPosition, 75,  texture);
     }
 
     @Override

@@ -26,13 +26,17 @@ public abstract class Player extends Actor{
     protected float maxMana;
     protected float manaRegen = 2f;
 
+    protected float ausdauer;
+    protected float maxAusdauer;
+    protected float ausdauerRegen = 3f;
+
     protected Vector2 spawnpoint;
     protected Vector2 lastDeathPos;
 
     protected float timeSinceLastT1Skill;
 
 
-    public Player(String id, String name, String className, int maxHealthPoints, int maxMana, Vector2 initialPosition, float speed, Texture t) {
+    public Player(String id, String name, String className, int maxHealthPoints, int maxMana, int maxAusdauer, Vector2 initialPosition, float speed, Texture t) {
         super(maxHealthPoints,initialPosition,speed, t);
         this.id = id;
         this.name = name;
@@ -49,6 +53,8 @@ public abstract class Player extends Actor{
 
         this.maxMana = maxMana;
         this.mana = maxMana;
+        this.maxAusdauer = maxAusdauer;
+        this.ausdauer = maxAusdauer;
 
         this.spawnpoint = initialPosition;
 
@@ -81,6 +87,13 @@ public abstract class Player extends Actor{
 //                mana = maxMana;
 //            }
 //        }
+
+        if (ausdauer < maxAusdauer) {
+            ausdauer += ausdauer*delta;
+            if (ausdauer > maxAusdauer) {
+                ausdauer = maxAusdauer;
+            }
+        }
 
         timeSinceLastT1Skill += delta;
     }
@@ -176,6 +189,15 @@ public abstract class Player extends Actor{
     }
     public float getManaRegen() {
         return manaRegen;
+    }
+    public float getAusdauer() {
+        return ausdauer;
+    }
+    public float getMaxAusdauer() {
+        return maxAusdauer;
+    }
+    public float getAusdauerRegen() {
+        return ausdauerRegen;
     }
 
     public float getTimeSinceLastT1Skill() {

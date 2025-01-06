@@ -41,6 +41,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
     private Texture[] healthbar;
     private Texture[] manabar;
+    private Texture[] ausdauerbar;
 
     //Settings
     private boolean keepInventory;
@@ -104,6 +105,12 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         manabar[2] = new Texture(Gdx.files.internal("manabar_full_middle.png"));
         manabar[3] = new Texture(Gdx.files.internal("manabar_empty_middle.png"));
 
+        ausdauerbar = new Texture[4];
+        ausdauerbar[0] = new Texture(Gdx.files.internal("ausdauerbar_full_start.png"));
+        ausdauerbar[1] = new Texture(Gdx.files.internal("ausdauerbar_empty_start.png"));
+        ausdauerbar[2] = new Texture(Gdx.files.internal("ausdauerbar_full_middle.png"));
+        ausdauerbar[3] = new Texture(Gdx.files.internal("ausdauerbar_empty_middle.png"));
+
         // connect to server
         serverConnection = new ServerConnection("http://www.thomas-hub.com:9595", assassinTexture);
         serverConnection.setSeedListener(this);
@@ -141,6 +148,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         uiLayer.setHealthbar(healthbar);
         uiLayer.setManabar(manabar);
+        uiLayer.setAusdauerbar(ausdauerbar);
     }
     @Override
     public void onSeedReceived(int seed) {

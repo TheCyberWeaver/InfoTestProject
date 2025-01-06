@@ -7,7 +7,7 @@ import io.github.infotest.util.ServerConnection;
 
 public class Archer extends Player {
     public Archer(String id,String name, Vector2 playerPosition, Texture t) {
-        super(id, name, "Archer",100, 50 ,playerPosition, 150, t);
+        super(id, name, "Archer",100, 50, 50, playerPosition, 150, t);
     }
 
     @Override

@@ -26,6 +26,7 @@ public class UI_Layer implements ApplicationListener {
 
     private Texture[] healthbar;
     private Texture[] manabar;
+    private Texture[] ausdauerbar;
 
     public UI_Layer(MainGameScreen mainScreen) {
         this.mainScreen = mainScreen;
@@ -63,6 +64,10 @@ public class UI_Layer implements ApplicationListener {
                 1250,
                 850,
                 nScale * screenScaleX, nScale * screenScaleY);
+            GameRenderer.renderBar(batch, ausdauerbar, player.getAusdauer(), player.getMaxAusdauer(),
+                1250,
+                800,
+                nScale * screenScaleX, screenScaleY);
             batch.end();
         }
     }
@@ -89,6 +94,9 @@ public class UI_Layer implements ApplicationListener {
     }
     public void setManabar(Texture[] manabar) {
         this.manabar = manabar;
+    }
+    public void setAusdauerbar(Texture[] ausdauerbar) {
+        this.ausdauerbar = ausdauerbar;
     }
 }
 
