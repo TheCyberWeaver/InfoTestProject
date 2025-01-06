@@ -3,11 +3,10 @@ package io.github.infotest.character;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.item.Item;
-import io.github.infotest.util.ItemFactory;
+import io.github.infotest.util.Factory.ItemFactory;
 import io.github.infotest.util.ServerConnection;
 
 import java.util.ArrayList;

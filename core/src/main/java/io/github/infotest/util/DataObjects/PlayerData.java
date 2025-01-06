@@ -1,5 +1,8 @@
 package io.github.infotest.util.DataObjects;
-
+/*
+PlayerData should only be used when receiving or sending player information to server
+The name of the variables here rely on the protocol, und thus should not be edited unless the server protocol is updated.
+ */
 public class PlayerData {
     public String id;
     public String name;

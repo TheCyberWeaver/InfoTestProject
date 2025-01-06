@@ -1,4 +1,4 @@
-package io.github.infotest.util;
+package io.github.infotest.util.Factory;
 
 import io.github.infotest.item.Apple;
 import io.github.infotest.item.Item;
@@ -16,7 +16,6 @@ public class ItemFactory {
         switch (itemName) {
             case "Apple":
                 return new Apple();
-            // 如果有更多类型，继续加 case ...
             default:
                 throw new IllegalArgumentException("Unknown item: " + itemName);
         }

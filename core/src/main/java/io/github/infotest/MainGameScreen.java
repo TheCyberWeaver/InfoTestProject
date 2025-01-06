@@ -2,7 +2,6 @@ package io.github.infotest;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -12,7 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.character.Gegner;
 import io.github.infotest.character.Player;
 import io.github.infotest.util.Overlay.UI_Layer;
-import io.github.infotest.util.PlayerFactory;
+import io.github.infotest.util.Factory.PlayerFactory;
 import io.github.infotest.util.ServerConnection;
 import io.github.infotest.util.GameRenderer;
 import io.github.infotest.util.MapCreator;

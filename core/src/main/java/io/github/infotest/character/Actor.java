@@ -5,11 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.MainGameScreen;
-import io.github.infotest.item.Item;
-import io.github.infotest.util.ItemFactory;
 import io.github.infotest.util.ServerConnection;
-
-import java.util.ArrayList;
 
 public abstract class Actor {
 

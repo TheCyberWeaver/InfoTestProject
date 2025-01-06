@@ -1,4 +1,4 @@
-package io.github.infotest.util;
+package io.github.infotest.util.Factory;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
@@ -7,8 +7,6 @@ import io.github.infotest.classes.Assassin;
 import io.github.infotest.classes.Defender;
 import io.github.infotest.classes.Healer;
 import io.github.infotest.classes.Mage;
-import io.github.infotest.item.Apple;
-import io.github.infotest.item.Item;
 
 public class PlayerFactory {
     public static Player createPlayer(String id, String playerName, String className, Vector2 initialPosition, Texture texture) {

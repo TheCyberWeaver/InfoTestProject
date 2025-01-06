@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.character.Player;
 import io.github.infotest.util.DataObjects.PlayerData;
+import io.github.infotest.util.Factory.PlayerFactory;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
