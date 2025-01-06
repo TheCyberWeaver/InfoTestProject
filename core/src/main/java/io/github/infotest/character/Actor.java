@@ -151,7 +151,4 @@ public abstract class Actor {
     public void updateRotationFromPlayerData(double Rx, double Ry) {
         this.rotation = new Vector2((float)Rx,(float)Ry);
     }
-    public void setMainScreen(MainGameScreen mainScreen) {
-        this.mainScreen = mainScreen;
-    }
 }

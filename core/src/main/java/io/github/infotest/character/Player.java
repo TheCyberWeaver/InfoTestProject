@@ -22,6 +22,8 @@ public abstract class Player extends Actor{
     protected float experience;
     protected ArrayList<Item> items;
 
+    protected boolean devMode;
+
     protected float mana;
     protected float maxMana;
     protected float manaRegen = 2f;
@@ -29,7 +31,7 @@ public abstract class Player extends Actor{
     protected float ausdauer;
     protected float maxAusdauer;
     protected float ausdauerRegen = 3f;
-    protected float ausdauerCost = 5f; //Ausdauer kosten pro Sekunde
+    protected float ausdauerCost = 10f; //Ausdauer kosten pro Sekunde
     protected boolean isSprinting;
     protected float sprintingSpeed = speed*7/4;
     protected float normalSpeed;
@@ -83,7 +85,7 @@ public abstract class Player extends Actor{
         GlyphLayout layout = new GlyphLayout(font, name);
         float textWidth = layout.width;
 
-        font.draw(batch, name, predictedPosition.x + 16 - (int)textWidth/2, predictedPosition.y + 40);
+        font.draw(batch, name, predictedPosition.x + 16 - (int)textWidth/2f, predictedPosition.y + 40);
     }
 
     @Override
@@ -96,8 +98,8 @@ public abstract class Player extends Actor{
 //            }
 //        }
 
-        if (ausdauer < maxAusdauer) {
-            ausdauer += ausdauer*delta;
+        if (ausdauer < maxAusdauer && !isSprinting) {
+            ausdauer += ausdauerRegen*delta;
             if (ausdauer > maxAusdauer) {
                 ausdauer = maxAusdauer;
             }
@@ -106,15 +108,28 @@ public abstract class Player extends Actor{
         timeSinceLastT1Skill += delta;
     }
 
-    public void sprint(float delta){
-        this.isSprinting = true;
-        this.ausdauer -= ausdauerCost*delta;
-        this.speed = this.sprintingSpeed;
-    }
+    public void sprint(float delta, boolean isDevelopmentMode){
+        devMode = isDevelopmentMode;
+        if (ausdauer > 1f) {
+            this.isSprinting = true;
+            if (!devMode) {
+                this.ausdauer -= ausdauerCost * delta;
+            }
+            this.speed = this.sprintingSpeed;
+            if (devMode) {
+                this.speed = 750f;
+            }
+        } else {
+            stopSprint();
+        }
 
+    }
     public void stopSprint(){
         this.isSprinting = false;
         this.speed = this.normalSpeed;
+        if (devMode) {
+            this.speed = 500f;
+        }
     }
 
 
