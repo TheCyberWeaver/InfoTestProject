@@ -31,7 +31,7 @@ public abstract class Player extends Actor{
     protected float ausdauerRegen = 3f;
     protected float ausdauerCost = 5f; //Ausdauer kosten pro Sekunde
     protected boolean isSprinting;
-    protected float sprintingSpeed = 10;
+    protected float sprintingSpeed = speed*7/4;
     protected float normalSpeed;
 
     protected Vector2 spawnpoint;

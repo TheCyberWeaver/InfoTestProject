@@ -14,7 +14,7 @@ public class Main extends Game {
     public void startGame(String username, String playerClass) {
         this.username = username;
         this.playerClass = playerClass;
-        this.isDevelopmentMode=true;
+        this.isDevelopmentMode = ;
 
         // switch to gaming screen
         setScreen(new MainGameScreen(this));
