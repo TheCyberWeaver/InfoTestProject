@@ -29,6 +29,10 @@ public abstract class Player extends Actor{
     protected float ausdauer;
     protected float maxAusdauer;
     protected float ausdauerRegen = 3f;
+    protected float ausdauerCost = 5f; //Ausdauer kosten pro Sekunde
+    protected boolean isSprinting;
+    protected float sprintingSpeed = 10;
+    protected float normalSpeed;
 
     protected Vector2 spawnpoint;
     protected Vector2 lastDeathPos;
@@ -53,8 +57,12 @@ public abstract class Player extends Actor{
 
         this.maxMana = maxMana;
         this.mana = maxMana;
+
         this.maxAusdauer = maxAusdauer;
         this.ausdauer = maxAusdauer;
+
+        this.isSprinting = false;
+        this.normalSpeed = speed;
 
         this.spawnpoint = initialPosition;
 
@@ -124,6 +132,17 @@ public abstract class Player extends Actor{
         }
     }
 
+    public void sprint(float delta){
+        this.isSprinting = true;
+        this.ausdauer -= ausdauerCost*delta;
+        this.speed = this.sprintingSpeed;
+    }
+
+    public void stopSprint(){
+        this.isSprinting = false;
+        this.speed = this.normalSpeed;
+    }
+
 
     /// Abilities
     public void gainExperience(float exp) {
@@ -180,7 +199,6 @@ public abstract class Player extends Actor{
     public float getExperience() {
         return experience;
     }
-
     public float getMana() {
         return mana;
     }
@@ -199,26 +217,21 @@ public abstract class Player extends Actor{
     public float getAusdauerRegen() {
         return ausdauerRegen;
     }
-
     public float getTimeSinceLastT1Skill() {
         return timeSinceLastT1Skill;
     }
-
     public ArrayList<Item> getItems() {
         return items;
     }
-
     public void setId(String id) {
         this.id = id;
     }
-
     public void updateItemFromPlayerData(String[] playerDataItems) {
         for (String itemName : playerDataItems) {
             Item item = ItemFactory.createItem(itemName);
             items.add(item);
         }
     }
-
     public void setRotation(Vector2 rotation) {
         this.rotation=rotation.cpy();
     }
@@ -226,5 +239,7 @@ public abstract class Player extends Actor{
     public String toString(){
         return name+" "+className;
     }
-
+    public boolean isSprinting() {
+        return isSprinting;
+    }
 }
