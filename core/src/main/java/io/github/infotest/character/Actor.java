@@ -91,12 +91,6 @@ public abstract class Actor {
     public abstract void render(Batch batch);
     public abstract void update(float delta);
 
-    public void check(){
-        if (healthPoints <= 0) {
-            kill();
-        }
-    }
-
     public void kill(){
         isAlive = false;
     }
@@ -104,6 +98,9 @@ public abstract class Actor {
     /// Getter / Setter
     public float getHealthPoints() {
         return healthPoints;
+    }
+    public void setHealthPoints(float healthPoints) {
+        this.healthPoints = healthPoints;
     }
     public float getMaxHealthPoints() {
         return maxHealthPoints;

@@ -106,32 +106,6 @@ public abstract class Player extends Actor{
         timeSinceLastT1Skill += delta;
     }
 
-    //TODO respawn
-
-    @Override
-    public void kill(){
-        this.isAlive = false;
-        //respawn();
-    }
-
-    public void respawn(){
-        this.lastDeathPos = position;
-        this.position = new Vector2(spawnpoint.x, spawnpoint.y);
-        this.isAlive = true;
-
-        this.healthPoints = maxHealthPoints;
-        this.mana = maxMana;
-
-        this.timeSinceLastT1Skill = 0;
-
-        if (!mainScreen.isKeepInventory()){
-            for (Item i : items){
-                i.drop(lastDeathPos.x,lastDeathPos.y);
-            }
-            items.clear();
-        }
-    }
-
     public void sprint(float delta){
         this.isSprinting = true;
         this.ausdauer -= ausdauerCost*delta;
@@ -202,6 +176,9 @@ public abstract class Player extends Actor{
     public float getMana() {
         return mana;
     }
+    public void setMana(float mana) {
+        this.mana = mana;
+    }
     public float getMaxMana() {
         return maxMana;
     }
@@ -223,6 +200,9 @@ public abstract class Player extends Actor{
     public ArrayList<Item> getItems() {
         return items;
     }
+    public void clearInv(){
+        items.clear();
+    }
     public void setId(String id) {
         this.id = id;
     }
@@ -241,5 +221,20 @@ public abstract class Player extends Actor{
     }
     public boolean isSprinting() {
         return isSprinting;
+    }
+    public Vector2 getLastDeathPos(){
+        return lastDeathPos;
+    }
+    public void setLastDeathPos(Vector2 lastDeathPos) {
+        this.lastDeathPos = lastDeathPos;
+    }
+    public Vector2 getSpawnpoint(){
+        return spawnpoint;
+    }
+    public void setAlive(){
+        isAlive = true;
+    }
+    public void resetT1Timer(){
+        timeSinceLastT1Skill = 0;
     }
 }

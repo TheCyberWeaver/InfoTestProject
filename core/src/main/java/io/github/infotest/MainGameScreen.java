@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.character.Gegner;
 import io.github.infotest.character.Player;
+import io.github.infotest.item.Item;
 import io.github.infotest.util.Overlay.UI_Layer;
 import io.github.infotest.util.PlayerFactory;
 import io.github.infotest.util.ServerConnection;
@@ -146,7 +147,9 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         if(game.isDevelopmentMode){
             player.setSpeed(500);
         }
-        player.setMainScreen(this);
+        if (player.getHealthPoints() <= player.getMaxHealthPoints()) {
+
+        }
 
         uiLayer.setHealthbar(healthbar);
         uiLayer.setManabar(manabar);
@@ -199,12 +202,16 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
             for(Player p: players.values()){
                 p.update(delta);
-                p.check();
             }
             //player.update(delta);
             checkFireballCollisions();
 
             handleInput(delta);
+
+            if (player.getHealthPoints() <= 0) {
+                player.kill();
+                respawn(player);
+            }
         }
         else{
             batch.begin();
@@ -366,6 +373,24 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                     fireball.setHit();
                 }
             }
+        }
+    }
+    public void respawn(Player p){
+        p.setLastDeathPos(p.getPosition());
+        Vector2 spawnpoint = p.getSpawnpoint();
+        p.setPosition(new Vector2(spawnpoint.x, spawnpoint.y));
+        p.setAlive();
+
+        p.setHealthPoints(p.getMaxHealthPoints());
+        p.setMana(p.getMaxMana());
+
+        p.resetT1Timer();
+
+        if (!keepInventory){
+            for (Item i : p.getItems()){
+                i.drop(p.getLastDeathPos().x,p.getLastDeathPos().y);
+            }
+            p.clearInv();
         }
     }
 
