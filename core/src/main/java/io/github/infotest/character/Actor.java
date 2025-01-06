@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public abstract class Actor {
 
-    protected MainGameScreen mainScreen;
+    protected MainGameScreen mainScreen; //TODO: implement this using other ways, Maingamescreen should not be written in actor
 
     // basic things
     protected float healthPoints;    // current HP

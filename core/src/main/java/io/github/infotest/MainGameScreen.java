@@ -105,8 +105,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         manabar[3] = new Texture(Gdx.files.internal("manabar_empty_middle.png"));
 
         // connect to server
-        serverConnection = new ServerConnection("http://www.thomas-hub.com:9595", assassinTexture);
-        //serverConnection = new ServerConnection("http://localhost:9595", assassinTexture);
+        //serverConnection = new ServerConnection("http://www.thomas-hub.com:9595", assassinTexture);
+        serverConnection = new ServerConnection("http://localhost:9595", assassinTexture);
         serverConnection.setSeedListener(this);
         serverConnection.connect();
 

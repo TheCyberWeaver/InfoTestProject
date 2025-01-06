@@ -5,17 +5,17 @@ import com.badlogic.gdx.Game;
 public class Main extends Game {
     private String username;
     private String playerClass;
-    public boolean isDevelopmentMode;
+    private String serverUrl;
+    public boolean isDevelopmentMode=true;
     @Override
     public void create() {
         setScreen(new StartScreen(this)); //set to start screen
     }
 
-    public void startGame(String username, String playerClass) {
+    public void startGame(String username, String playerClass,String selectedServerUrl) {
         this.username = username;
         this.playerClass = playerClass;
-        this.isDevelopmentMode=true;
-
+        this.serverUrl=selectedServerUrl;
         // switch to gaming screen
         setScreen(new MainGameScreen(this));
     }

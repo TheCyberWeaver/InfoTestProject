@@ -34,7 +34,7 @@ public class Mage extends Player {
                         serverConnection.sendCastSkill(this, "Fireball");
                     }
                 }
-                System.out.println(mana+"/"+maxMana);
+                //System.out.println(mana+"/"+maxMana);
                 break;
             case 2:
                 break;

@@ -1,5 +1,7 @@
 package io.github.infotest;
 
+//ChatGPT
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -19,6 +21,7 @@ public class StartScreen implements Screen {
     private Stage stage;           // 场景，用于摆放UI控件
     private TextField nameTextField;     // 姓名输入框
     private SelectBox<String> roleSelectBox; // 职业选择下拉框
+    private SelectBox<String> serverSelectBox;
     private CheckBox devModeCheckBox;
     private Viewport viewport;
 
@@ -64,6 +67,16 @@ public class StartScreen implements Screen {
             }
         });
 
+        serverSelectBox = new SelectBox<>(skin);
+        serverSelectBox.setItems("Thomas' Server", "Local Server"); // 设置选项
+        serverSelectBox.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+
+
+            }
+        });
+
         devModeCheckBox = new CheckBox("Dev Mode", skin);
         devModeCheckBox.setChecked(true);
         devModeCheckBox.addListener(new ChangeListener() {
@@ -94,6 +107,8 @@ public class StartScreen implements Screen {
         table.add(nameTextField).width(200).row();
         table.add(new Label("Role:", skin));
         table.add(roleSelectBox).width(150).row();
+        table.add(new Label("Server:", skin));
+        table.add(serverSelectBox).width(150).row();
         table.add(startButton).colspan(2);
         table.add(devModeCheckBox).width(200).row();
 
@@ -105,20 +120,33 @@ public class StartScreen implements Screen {
 
         String playerName = nameTextField.getText();
         String selectedRole = roleSelectBox.getSelected();
-
+        String selectedServer = serverSelectBox.getSelected();
         // Validation
         if (playerName == null || playerName.trim().isEmpty()) {
             System.out.println("[StartScreen WARNING]: Name cannot be empty!");
             return;
         }
 
+        String selectedServerUrl="";
+        switch (selectedServer){
+            case "Thomas' Server":
+                selectedServerUrl="http://www.thomas-hub.com:9595";
+                break;
+            case "Local Server":
+                selectedServerUrl="http://localhost:9595";
+                break;
+            default:
+                selectedServerUrl="http://www.thomas-hub.com:9595";
+                break;
+        }
         // Log
         System.out.println("-------Init Setup-------");
         System.out.println("User Name:" + playerName);
         System.out.println("Your Role:" + selectedRole);
+        System.out.println("Your Server:" + selectedServerUrl);
         System.out.println("-------Init Setup-------");
 
-        game.startGame(playerName, selectedRole);
+        game.startGame(playerName, selectedRole,selectedServerUrl);
     }
     @Override
     public void render(float delta) {
