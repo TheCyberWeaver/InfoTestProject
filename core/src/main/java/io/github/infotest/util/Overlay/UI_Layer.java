@@ -3,8 +3,10 @@ package io.github.infotest.util.Overlay;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -23,7 +25,7 @@ public class UI_Layer implements ApplicationListener {
     Vector2 windowSize;
 
     private Texture[] healthbar;
-    private Texture testTexture;
+    private Texture[] manabar;
 
     public UI_Layer(MainGameScreen mainScreen) {
         this.mainScreen = mainScreen;
@@ -47,21 +49,22 @@ public class UI_Layer implements ApplicationListener {
 
     public void render() {
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(0, 1, 0, 1); // Red
-        shapeRenderer.rect(0, 0, 32, 32); // Mark the origin
-        shapeRenderer.end();
-
         float screenScaleX = windowSize.x/Gdx.graphics.getWidth();
         float screenScaleY = windowSize.y/Gdx.graphics.getHeight();
         float nScale = 0.75f;
 
-        batch.begin();
-        GameRenderer.renderBar(batch, healthbar, player.getHealthPoints() ,player.getMaxHealthPoints(),
-            viewport.getWorldWidth()+1250,
-            viewport.getWorldHeight()+800,
-            nScale*screenScaleX, nScale*screenScaleY);
-        batch.end();
+        if (mainScreen.hasSeedReceived()) {
+            batch.begin();
+            GameRenderer.renderBar(batch, healthbar, player.getHealthPoints(), player.getMaxHealthPoints(),
+                1250,
+                900,
+                nScale * screenScaleX, nScale * screenScaleY);
+            GameRenderer.renderBar(batch, manabar, player.getMana(), player.getMaxMana(),
+                1250,
+                850,
+                nScale * screenScaleX, nScale * screenScaleY);
+            batch.end();
+        }
     }
 
     @Override
@@ -84,8 +87,8 @@ public class UI_Layer implements ApplicationListener {
     public void setHealthbar(Texture[] healthbar) {
         this.healthbar = healthbar;
     }
-    public void setTestTexture(Texture texture) {
-        this.testTexture = texture;
+    public void setManabar(Texture[] manabar) {
+        this.manabar = manabar;
     }
 }
 

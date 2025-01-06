@@ -40,6 +40,10 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     private Texture[] textures;
 
     private Texture[] healthbar;
+    private Texture[] manabar;
+
+    //Settings
+    private boolean keepInventory;
 
 
     // Map data
@@ -51,6 +55,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     // User character
     private Player player;
     private ServerConnection serverConnection;
+    private boolean seedReceived = false;
     // Renderer
     private GameRenderer gameRenderer;
 
@@ -88,16 +93,16 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         fireball_sheets[3] = new Texture(Gdx.files.internal("fireball_sheet_endHit.png"));;
 
         healthbar = new Texture[4];
-//        healthbar[0] = new Texture("healthbar_start.png");
-//        healthbar[1] = new Texture("healthbar_start_full.png");
-//        healthbar[2] = new Texture("healthbar_middle.png");
-//        healthbar[3] = new Texture("healthbar_middle_full.png");
-//        healthbar[4] = new Texture("healthbar_ende.png");
-//        healthbar[5] = new Texture("healthbar_ende_full.png");
-        healthbar[0] = new Texture(Gdx.files.internal("full_start.png"));
-        healthbar[1] = new Texture(Gdx.files.internal("empty_start.png"));
-        healthbar[2] = new Texture(Gdx.files.internal("full_middle.png"));
-        healthbar[3] = new Texture(Gdx.files.internal("empty_middle.png"));
+        healthbar[0] = new Texture(Gdx.files.internal("healthbar_full_start.png"));
+        healthbar[1] = new Texture(Gdx.files.internal("healthbar_empty_start.png"));
+        healthbar[2] = new Texture(Gdx.files.internal("healthbar_full_middle.png"));
+        healthbar[3] = new Texture(Gdx.files.internal("healthbar_empty_middle.png"));
+
+        manabar = new Texture[4];
+        manabar[0] = new Texture(Gdx.files.internal("manabar_full_start.png"));
+        manabar[1] = new Texture(Gdx.files.internal("manabar_empty_start.png"));
+        manabar[2] = new Texture(Gdx.files.internal("manabar_full_middle.png"));
+        manabar[3] = new Texture(Gdx.files.internal("manabar_empty_middle.png"));
 
         // connect to server
         serverConnection = new ServerConnection("http://www.thomas-hub.com:9595", assassinTexture);
@@ -115,7 +120,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         Gdx.input.setInputProcessor(this);
 
-
+        //Settings
+        keepInventory = true;
 
         Vector2 spawnPosition = new Vector2(INITIAL_SIZE / 2f * CELL_SIZE, INITIAL_SIZE / 2f * CELL_SIZE);
         //System.out.println("class: "+ game.getPlayerClass());
@@ -132,9 +138,10 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         if(game.isDevelopmentMode){
             player.setSpeed(500);
         }
+        player.setMainScreen(this);
 
         uiLayer.setHealthbar(healthbar);
-        uiLayer.setTestTexture(assassinTexture);
+        uiLayer.setManabar(manabar);
     }
     @Override
     public void onSeedReceived(int seed) {
@@ -142,6 +149,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         MapCreator mapCreator = new MapCreator(seed, INITIAL_SIZE, this, numOfValidTextures);
         globalSeed = seed;
         map = mapCreator.initializePerlinNoiseMap();
+
+        seedReceived = true;
 
         gameRenderer = new GameRenderer(textures, map, CELL_SIZE);
         gameRenderer.initAnimations(fireball_sheets);
@@ -181,6 +190,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
             for(Player p: players.values()){
                 p.update(delta);
+                p.check();
             }
             //player.update(delta);
             checkFireballCollisions();
@@ -347,7 +357,11 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     }
 
     /// GETTER / SETTER
-    public Camera getCamera() {
-        return camera;
+    public boolean hasSeedReceived(){
+        return seedReceived;
+    }
+
+    public boolean isKeepInventory(){
+        return keepInventory;
     }
 }

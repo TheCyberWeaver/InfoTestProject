@@ -13,6 +13,7 @@ import io.github.infotest.util.ServerConnection;
 import java.util.ArrayList;
 
 public abstract class Player extends Actor{
+
     // basic things
     public String id;
     protected String name;
@@ -24,6 +25,9 @@ public abstract class Player extends Actor{
     protected float mana;
     protected float maxMana;
     protected float manaRegen = 2f;
+
+    protected Vector2 spawnpoint;
+    protected Vector2 lastDeathPos;
 
     protected float timeSinceLastT1Skill;
 
@@ -46,10 +50,11 @@ public abstract class Player extends Actor{
         this.maxMana = maxMana;
         this.mana = maxMana;
 
+        this.spawnpoint = initialPosition;
+
         this.timeSinceLastT1Skill = 0;
 
     }
-
 
     /// game logic
     @Override
@@ -70,14 +75,40 @@ public abstract class Player extends Actor{
     @Override
     public void update(float delta){
 
-        if (mana < maxMana) {
-            mana += manaRegen * delta;
-            if (mana > maxMana) {
-                mana = maxMana;
-            }
-        }
+//        if (mana < maxMana) {
+//            mana += manaRegen * delta;
+//            if (mana > maxMana) {
+//                mana = maxMana;
+//            }
+//        }
 
         timeSinceLastT1Skill += delta;
+    }
+
+    //TODO respawn
+
+    @Override
+    public void kill(){
+        this.isAlive = false;
+        respawn();
+    }
+
+    public void respawn(){
+        this.lastDeathPos = position;
+        this.position = new Vector2(spawnpoint.x, spawnpoint.y);
+        this.isAlive = true;
+
+        this.healthPoints = maxHealthPoints;
+        this.mana = maxMana;
+
+        this.timeSinceLastT1Skill = 0;
+
+        if (!mainScreen.isKeepInventory()){
+            for (Item i : items){
+                i.drop(lastDeathPos.x,lastDeathPos.y);
+            }
+            items.clear();
+        }
     }
 
 
@@ -110,6 +141,16 @@ public abstract class Player extends Actor{
         super.takeDamage(damage);
 
         System.out.println("[Player INFO]: Player ["+this.name+"] took Damage! "+healthPoints+"/"+maxHealthPoints);
+    }
+
+    public boolean drainMana(float amount) {
+        float tempMana = this.mana;
+        this.mana -= amount;
+        if (this.mana < 0) {
+            this.mana = tempMana;
+            return false;
+        }
+        return true;
     }
 
 
