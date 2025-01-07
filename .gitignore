@@ -165,3 +165,7 @@ Thumbs.db
 **/resource-config.json
 
 /assets/log/app.log
+
+/server/node_modules
+/server/package.json
+/server/package-lock.json
