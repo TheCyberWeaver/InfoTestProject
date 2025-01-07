@@ -1,5 +1,6 @@
 package io.github.infotest.util;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -32,10 +33,18 @@ public class Logger {
      * @param append   true to append to the file; false to overwrite
      */
     public static synchronized void init(String filename, boolean append) {
-        close();  // close any previously open PrintWriter
+        close(); // close any previously open PrintWriter
 
         try {
-            FileWriter fw = new FileWriter(filename, append);
+            // Ensure the parent directory exists
+            File file = new File(filename);
+            File parentDir = file.getParentFile();
+            if (parentDir != null && !parentDir.exists()) {
+                parentDir.mkdirs();
+            }
+
+            // Open the file for logging
+            FileWriter fw = new FileWriter(file, append);
             pw = new PrintWriter(fw);
         } catch (IOException e) {
             e.printStackTrace();
