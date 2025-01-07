@@ -1,7 +1,6 @@
 package io.github.infotest;
 
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -10,6 +9,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.character.Gegner;
 import io.github.infotest.character.Player;
+import io.github.infotest.util.MyAssetManager;
 import io.github.infotest.util.Overlay.UI_Layer;
 import io.github.infotest.util.Factory.PlayerFactory;
 import io.github.infotest.util.ServerConnection;
@@ -25,21 +25,11 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     private ShapeRenderer shapeRenderer;
     private OrthographicCamera camera;
     private UI_Layer uiLayer;
-    private AssetManager assetManager; //TODO
+    private MyAssetManager assetManager;
 
-    // texture needed
-    private Texture assassinTexture;
-    private Texture normalBlock;
-    private Texture grassBlock;
-    private Texture rockBlock;
-    private Texture basicWoodBlock;
 
-    private Texture[] fireball_sheets;
 
-    private Texture[] textures;
 
-    private Texture[] healthbar;
-    private Texture[] manabar;
 
     //Settings
     private boolean keepInventory;
@@ -78,47 +68,23 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
 
-        AssetManager manager = new AssetManager();
-        manager.load("assassin.png", Texture.class);
+        assetManager = new MyAssetManager();
 
-        // load texture
-        assassinTexture = new Texture("assassin.png");
-        normalBlock = new Texture("normal_block.jpg");
-        grassBlock = new Texture("grass_block.jpg");
-        rockBlock = new Texture("stone_block.png");
-        basicWoodBlock = new Texture("basicWood.png");
+        assetManager.loadLoadingScreen();
+        assetManager.loadMapAssets();
+        assetManager.loadFireballAssets();
+        assetManager.loadHealthBarAssets();
+        assetManager.loadManaBarAssets();
 
-        fireball_sheets = new Texture[4];
-        fireball_sheets[0] = new Texture(Gdx.files.internal("fireball_sheet_start.png"));;
-        fireball_sheets[1] = new Texture(Gdx.files.internal("fireball_sheet_fly.png"));;
-        fireball_sheets[2] = new Texture(Gdx.files.internal("fireball_sheet_endTime.png"));;
-        fireball_sheets[3] = new Texture(Gdx.files.internal("fireball_sheet_endHit.png"));;
 
-        healthbar = new Texture[4];
-        healthbar[0] = new Texture(Gdx.files.internal("healthbar_full_start.png"));
-        healthbar[1] = new Texture(Gdx.files.internal("healthbar_empty_start.png"));
-        healthbar[2] = new Texture(Gdx.files.internal("healthbar_full_middle.png"));
-        healthbar[3] = new Texture(Gdx.files.internal("healthbar_empty_middle.png"));
-
-        manabar = new Texture[4];
-        manabar[0] = new Texture(Gdx.files.internal("manabar_full_start.png"));
-        manabar[1] = new Texture(Gdx.files.internal("manabar_empty_start.png"));
-        manabar[2] = new Texture(Gdx.files.internal("manabar_full_middle.png"));
-        manabar[3] = new Texture(Gdx.files.internal("manabar_empty_middle.png"));
 
         // connect to server
         //serverConnection = new ServerConnection("http://www.thomas-hub.com:9595", assassinTexture);
-        serverConnection = new ServerConnection(game.getServerUrl(), assassinTexture);
+        serverConnection = new ServerConnection(game.getServerUrl(), assetManager);
 
         serverConnection.setSeedListener(this);
         serverConnection.connect();
 
-
-        textures = new Texture[numOfValidTextures];
-        textures[0] = normalBlock;
-        textures[1] = grassBlock;
-        textures[2] = rockBlock;
-        textures[3] = basicWoodBlock;
 
 
         Gdx.input.setInputProcessor(this);
@@ -128,7 +94,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         Vector2 spawnPosition = new Vector2(INITIAL_SIZE / 2f * CELL_SIZE, INITIAL_SIZE / 2f * CELL_SIZE);
         //System.out.println("class: "+ game.getPlayerClass());
-        player = PlayerFactory.createPlayer(serverConnection.getMySocketId(),game.getUsername(),game.getPlayerClass(),spawnPosition,assassinTexture);
+        player = PlayerFactory.createPlayer(serverConnection.getMySocketId(),game.getUsername(),game.getPlayerClass(),spawnPosition,assetManager);
         //System.out.println("class: "+ player.getClass());
 
         // send initial position to server
@@ -143,8 +109,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         }
         player.setMainScreen(this);
 
-        uiLayer.setHealthbar(healthbar);
-        uiLayer.setManabar(manabar);
+        uiLayer.setHealthbar(assetManager);
+        uiLayer.setManabar(assetManager);
     }
     @Override
     public void onSeedReceived(int seed) {
@@ -155,8 +121,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         seedReceived = true;
 
-        gameRenderer = new GameRenderer(textures, map, CELL_SIZE);
-        gameRenderer.initAnimations(fireball_sheets);
+        gameRenderer = new GameRenderer(assetManager, map, CELL_SIZE);
+        gameRenderer.initAnimations();
 
         System.out.println("[MainGameScreen INFO]: Map generated after receiving seed: " + seed);
     }
@@ -188,7 +154,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             gameRenderer.renderPlayers(batch, players, delta);
             gameRenderer.renderGegner(batch, allGegner, delta);
             gameRenderer.renderAnimations(batch,delta,shapeRenderer);
-            batch.draw(assassinTexture, 0, 0, 0, 0, assassinTexture.getWidth(), assassinTexture.getWidth(), 32, 32);
+            batch.draw(assetManager.getPlayerAssets(), 0, 0, 0, 0, assetManager.getPlayerAssets().getWidth(), assetManager.getPlayerAssets().getWidth(), 32, 32);
             batch.end();
 
             for(Player p: players.values()){
@@ -202,7 +168,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         }
         else{
             batch.begin();
-            batch.draw(assassinTexture,
+            batch.draw(assetManager.getLoadingScreenTexture(),
                 0, 0,
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             batch.end();
@@ -317,14 +283,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         // release rendering resources
         batch.dispose();
-        assassinTexture.dispose();
 
-        normalBlock.dispose();
-        grassBlock.dispose();
-        rockBlock.dispose();
-        basicWoodBlock.dispose();
-
-        assetManager.dispose();
+        assetManager.manager.dispose();
 
         // gameRenderer.dispose();
     }

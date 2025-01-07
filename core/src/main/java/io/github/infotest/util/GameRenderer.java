@@ -2,6 +2,7 @@ package io.github.infotest.util;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -32,17 +33,21 @@ public class GameRenderer {
 
     private MainGameScreen game;
 
+    private MyAssetManager assetManager;
 
-    public GameRenderer(Texture[] pTextures, int[][] map, int cellSize) {
-        textures = pTextures;
+
+    public GameRenderer(MyAssetManager assetManager, int[][] map, int cellSize) {
+        this.assetManager = assetManager;
         this.map = map;
         this.cellSize = cellSize;
+        this.textures=assetManager.getMapAssets();
 
         activeFireballs = new ArrayList<FireballInstance>();
 
     }
 
-    public void initAnimations(Texture[] fireball_sheets){
+    public void initAnimations(){
+        Texture[] fireball_sheets = assetManager.getFireballAssets();
         fireballAnimations = new Animation[fireball_sheets.length];
         int frameCols;
         int frameRows = 1;

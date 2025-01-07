@@ -1,5 +1,6 @@
 package io.github.infotest.util;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.character.Player;
@@ -34,7 +35,7 @@ public class ServerConnection {
     private int globalSeed = 0;
 
     // TODO
-    private Texture testTexture;
+    private MyAssetManager assetManager;
 
     public interface SeedListener {
         void onSeedReceived(int seed);
@@ -45,9 +46,9 @@ public class ServerConnection {
         this.seedListener = listener;
     }
 
-    public ServerConnection(String serverUrl, Texture testTexture) {
+    public ServerConnection(String serverUrl, MyAssetManager assetManager) {
         this.serverUrl = serverUrl;
-        this.testTexture = testTexture;
+        this.assetManager = assetManager;
     }
 
     public void connect() {
@@ -191,7 +192,7 @@ public class ServerConnection {
             Player player = players.get(socketId);
             if (player == null) {
 
-                player = PlayerFactory.createPlayer(playerData.id,playerData.name,playerData.classtype, new Vector2(x, y), testTexture);
+                player = PlayerFactory.createPlayer(playerData.id,playerData.name,playerData.classtype, new Vector2(x, y), assetManager);
 
                 if(player!=null){players.put(socketId, player);}
 

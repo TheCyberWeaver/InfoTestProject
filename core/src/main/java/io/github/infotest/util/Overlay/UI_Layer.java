@@ -2,6 +2,7 @@ package io.github.infotest.util.Overlay;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -14,6 +15,7 @@ import com.badlogic.gdx.utils.viewport.*;
 import io.github.infotest.MainGameScreen;
 import io.github.infotest.character.Player;
 import io.github.infotest.util.GameRenderer;
+import io.github.infotest.util.MyAssetManager;
 
 public class UI_Layer implements ApplicationListener {
     MainGameScreen mainScreen;
@@ -84,11 +86,11 @@ public class UI_Layer implements ApplicationListener {
     public void setPlayer(Player player) {
         this.player = player;
     }
-    public void setHealthbar(Texture[] healthbar) {
-        this.healthbar = healthbar;
+    public void setHealthbar(MyAssetManager assetManager) {
+        this.healthbar = assetManager.getHealthBarAssets();
     }
-    public void setManabar(Texture[] manabar) {
-        this.manabar = manabar;
+    public void setManabar(MyAssetManager assetManager) {
+        this.manabar = assetManager.getManaBarAssets();
     }
 }
 
