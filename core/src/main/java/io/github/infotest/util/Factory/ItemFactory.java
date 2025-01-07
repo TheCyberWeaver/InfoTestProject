@@ -2,6 +2,7 @@ package io.github.infotest.util.Factory;
 
 import io.github.infotest.item.Apple;
 import io.github.infotest.item.Item;
+import io.github.infotest.util.MyAssetManager;
 
 public class ItemFactory {
     /**
@@ -12,10 +13,10 @@ public class ItemFactory {
      * @return An instance of a class extending Item
      * @throws IllegalArgumentException if the item name is not recognized
      */
-    public static Item createItem(String itemName) {
+    public static Item createItem(String itemName, MyAssetManager assetManager) {
         switch (itemName) {
             case "Apple":
-                return new Apple();
+                return new Apple(assetManager);
             default:
                 throw new IllegalArgumentException("Unknown item: " + itemName);
         }

@@ -87,4 +87,90 @@ public class MyAssetManager {
         mana_bar[3]=manager.get("manabar_empty_middle.png", Texture.class);
         return mana_bar;
     }
+
+    public void loadAusdauerBarAssets(){
+        manager.load("ausdauerbar_full_start.png", Texture.class);
+        manager.load("ausdauerbar_empty_start.png", Texture.class);
+        manager.load("ausdauerbar_full_middle.png", Texture.class);
+        manager.load("ausdauerbar_empty_middle.png", Texture.class);
+        manager.finishLoading();
+    }
+    public Texture[] getAusdauerBarAssets(){
+        Texture[] ausdauerbar = new Texture[4];
+        ausdauerbar[0]=manager.get("ausdauerbar_full_start.png", Texture.class);
+        ausdauerbar[1]=manager.get("ausdauerbar_empty_start.png", Texture.class);
+        ausdauerbar[2]=manager.get("ausdauerbar_full_middle.png", Texture.class);
+        ausdauerbar[3]=manager.get("ausdauerbar_empty_middle.png", Texture.class);
+        return ausdauerbar;
+    }
+
+    public void loadNPCMaleAssets(){
+        manager.load("NPC_Male_1.png", Texture.class);
+        manager.load("NPC_Male_2.png", Texture.class);
+        manager.load("NPC_Male_3.png", Texture.class);
+        manager.load("NPC_Male_4.png", Texture.class);
+        manager.load("NPC_Male_5.png", Texture.class);
+        manager.load("NPC_Male_6.png", Texture.class);
+        manager.load("NPC_Male_7.png", Texture.class);
+        manager.load("NPC_Male_8.png", Texture.class);
+        manager.finishLoading();
+    }
+    public Texture[] getNPCMaleAssets(){
+        Texture[] npcmale = new Texture[8];
+        npcmale[0]=manager.get("NPC_Male_1.png", Texture.class);
+        npcmale[1]=manager.get("NPC_Male_2.png", Texture.class);
+        npcmale[2]=manager.get("NPC_Male_3.png", Texture.class);
+        npcmale[3]=manager.get("NPC_Male_4.png", Texture.class);
+        npcmale[4]=manager.get("NPC_Male_5.png", Texture.class);
+        npcmale[5]=manager.get("NPC_Male_6.png", Texture.class);
+        npcmale[6]=manager.get("NPC_Male_7.png", Texture.class);
+        npcmale[7]=manager.get("NPC_Male_8.png", Texture.class);
+        return npcmale;
+    }
+
+    public void loadNPCWomenAssets(){
+        manager.load("NPC_Women_1.png", Texture.class);
+        manager.load("NPC_Women_2.png", Texture.class);
+        manager.load("NPC_Women_3.png", Texture.class);
+        manager.load("NPC_Women_4.png", Texture.class);
+        manager.load("NPC_Women_5.png", Texture.class);
+        manager.load("NPC_Women_6.png", Texture.class);
+        manager.load("NPC_Women_7.png", Texture.class);
+        manager.load("NPC_Women_8.png", Texture.class);
+        manager.finishLoading();
+    }
+    public Texture[] getNPCWomenAssets(){
+        Texture[] npcwomen = new Texture[8];
+        npcwomen[0]=manager.get("NPC_Women_1.png", Texture.class);
+        npcwomen[1]=manager.get("NPC_Women_2.png", Texture.class);
+        npcwomen[2]=manager.get("NPC_Women_3.png", Texture.class);
+        npcwomen[3]=manager.get("NPC_Women_4.png", Texture.class);
+        npcwomen[4]=manager.get("NPC_Women_5.png", Texture.class);
+        npcwomen[5]=manager.get("NPC_Women_6.png", Texture.class);
+        npcwomen[6]=manager.get("NPC_Women_7.png", Texture.class);
+        npcwomen[7]=manager.get("NPC_Women_8.png", Texture.class);
+        return npcwomen;
+    }
+
+    public void loadNPCMarketAssets(){
+        manager.load("NPC/market/klein.png", Texture.class);
+        manager.load("NPC/market/kiste.png", Texture.class);
+        manager.load("NPC/market/besondereKiste.png", Texture.class);
+        manager.load("NPC/market/tasche.png", Texture.class);
+        manager.load("NPC/market/koffer.png", Texture.class);
+        manager.load("NPC/market/besonders.png", Texture.class);
+        manager.finishLoading();
+    }
+    public Texture[] getNPCMarketAssets(){
+        Texture[] npcmarket = new Texture[6];
+        npcmarket[0]=manager.get("NPC/market/klein.png", Texture.class);
+        npcmarket[1]=manager.get("NPC/market/kiste.png", Texture.class);
+        npcmarket[2]=manager.get("NPC/market/besondereKiste.png", Texture.class);
+        npcmarket[3]=manager.get("NPC/market/tasche.png", Texture.class);
+        npcmarket[4]=manager.get("NPC/market/koffer.png", Texture.class);
+        npcmarket[5]=manager.get("NPC/market/besonders.png", Texture.class);
+        return npcmarket;
+
+    }
+
 }

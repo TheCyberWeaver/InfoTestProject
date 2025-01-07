@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.Main;
 import io.github.infotest.MainGameScreen;
 import io.github.infotest.item.Item;
-import io.github.infotest.util.ItemFactory;
 import io.github.infotest.util.ServerConnection;
 
 import java.util.ArrayList;
@@ -55,6 +54,26 @@ public abstract class Actor {
         }
 
     }
+    public Actor(int maxHealthPoints, Vector2 initialPosition, float speed) {
+        this.maxHealthPoints = maxHealthPoints;
+        this.healthPoints = maxHealthPoints;
+        this.isAlive = true;
+        this.speed = speed;
+
+        //Movement related
+        this.position = new Vector2(initialPosition);
+        this.targetPosition = new Vector2(initialPosition);
+        this.speed = speed;
+        this.velocity = new Vector2(0, 0);
+        this.lastUpdateTimestamp = System.currentTimeMillis();
+        this.rotation = new Vector2(1, 0);
+
+        if (font == null) {
+            font = new BitmapFont();
+        }
+
+    }
+
     public void updateTargetPosition(Vector2 newTargetPosition) {
 
         this.targetPosition.set(newTargetPosition);

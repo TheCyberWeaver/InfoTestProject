@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.Main;
 import io.github.infotest.item.Item;
 import io.github.infotest.util.Factory.ItemFactory;
+import io.github.infotest.util.MyAssetManager;
 import io.github.infotest.util.ServerConnection;
 
 import java.util.ArrayList;
@@ -220,9 +221,9 @@ public abstract class Player extends Actor{
     public void setId(String id) {
         this.id = id;
     }
-    public void updateItemFromPlayerData(String[] playerDataItems) {
+    public void updateItemFromPlayerData(String[] playerDataItems, MyAssetManager assetManager) {
         for (String itemName : playerDataItems) {
-            Item item = ItemFactory.createItem(itemName);
+            Item item = ItemFactory.createItem(itemName, assetManager);
             items.add(item);
         }
     }

@@ -29,12 +29,6 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     private UI_Layer uiLayer;
     private MyAssetManager assetManager;
 
-    private Texture[] ausdauerbar;
-
-    private Texture[] NPC_Male;
-    private Texture[] NPC_Women;
-    private Texture[] NPC_market;
-
     //Settings
     private boolean keepInventory;
 
@@ -65,7 +59,6 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     public MainGameScreen(Game game) {
         this.game = (Main) game;
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        this.uiLayer = new UI_Layer(this);
         create();
     }
 
@@ -80,44 +73,11 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         assetManager.loadFireballAssets();
         assetManager.loadHealthBarAssets();
         assetManager.loadManaBarAssets();
-
-
-
-        ausdauerbar = new Texture[4];
-        ausdauerbar[0] = new Texture(Gdx.files.internal("ausdauerbar_full_start.png"));
-        ausdauerbar[1] = new Texture(Gdx.files.internal("ausdauerbar_empty_start.png"));
-        ausdauerbar[2] = new Texture(Gdx.files.internal("ausdauerbar_full_middle.png"));
-        ausdauerbar[3] = new Texture(Gdx.files.internal("ausdauerbar_empty_middle.png"));
-
-        NPC_Male = new Texture[8];
-        NPC_Male[0] = new Texture(Gdx.files.internal("NPC_Male_1.png"));
-        NPC_Male[1] = new Texture(Gdx.files.internal("NPC_Male_2.png"));
-        NPC_Male[2] = new Texture(Gdx.files.internal("NPC_Male_3.png"));
-        NPC_Male[3] = new Texture(Gdx.files.internal("NPC_Male_4.png"));
-        NPC_Male[4] = new Texture(Gdx.files.internal("NPC_Male_5.png"));
-        NPC_Male[5] = new Texture(Gdx.files.internal("NPC_Male_6.png"));
-        NPC_Male[6] = new Texture(Gdx.files.internal("NPC_Male_7.png"));
-        NPC_Male[7] = new Texture(Gdx.files.internal("NPC_Male_8.png"));
-
-        NPC_Women = new Texture[8];
-        NPC_Women[0] = new Texture(Gdx.files.internal("NPC_Women_1.png"));
-        NPC_Women[1] = new Texture(Gdx.files.internal("NPC_Women_2.png"));
-        NPC_Women[2] = new Texture(Gdx.files.internal("NPC_Women_3.png"));
-        NPC_Women[3] = new Texture(Gdx.files.internal("NPC_Women_4.png"));
-        NPC_Women[4] = new Texture(Gdx.files.internal("NPC_Women_5.png"));
-        NPC_Women[5] = new Texture(Gdx.files.internal("NPC_Women_6.png"));
-        NPC_Women[6] = new Texture(Gdx.files.internal("NPC_Women_7.png"));
-        NPC_Women[7] = new Texture(Gdx.files.internal("NPC_Women_8.png"));
-
-        NPC_market = new Texture[6];
-        NPC_market[0] = new Texture(Gdx.files.internal("klein.png"));
-        NPC_market[1] = new Texture(Gdx.files.internal("kiste.png"));
-        NPC_market[2] = new Texture(Gdx.files.internal("besondereKiste.png"));
-        NPC_market[3] = new Texture(Gdx.files.internal("tasche.png"));
-        NPC_market[4] = new Texture(Gdx.files.internal("koffer.png"));
-        NPC_market[5] = new Texture(Gdx.files.internal("besonders.png"));
-
-
+        assetManager.loadAusdauerBarAssets();
+        assetManager.loadNPCMaleAssets();
+        assetManager.loadNPCWomenAssets();
+        assetManager.loadNPCMarketAssets();
+        assetManager.manager.finishLoading();
 
         // connect to server
         //serverConnection = new ServerConnection("http://www.thomas-hub.com:9595", assassinTexture);
@@ -147,13 +107,6 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         if(game.isDevelopmentMode){
             player.setSpeed(500);
         }
-        if (player.getHealthPoints() <= player.getMaxHealthPoints()) {
-
-        }
-
-        uiLayer.setHealthbar(healthbar);
-        uiLayer.setManabar(manabar);
-        uiLayer.setAusdauerbar(ausdauerbar);
     }
     @Override
     public void onSeedReceived(int seed) {

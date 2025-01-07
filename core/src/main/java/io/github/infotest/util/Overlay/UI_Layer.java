@@ -42,6 +42,7 @@ public class UI_Layer implements ApplicationListener {
 
         this.healthbar = assetManager.getHealthBarAssets();
         this.manabar = assetManager.getManaBarAssets();
+        this.ausdauerbar = assetManager.getAusdauerBarAssets();
 
         create();
     }
