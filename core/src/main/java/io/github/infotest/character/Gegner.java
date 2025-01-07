@@ -4,9 +4,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 
-public class Gegner extends  Actor{
+public abstract class Gegner extends  Actor{
 
-    float killXP;
+    private float killXP;
 
     public Gegner(int maxHealthPoints, Vector2 initialPosition, float speed, Texture texture, float exp) {
         super(maxHealthPoints, initialPosition, speed, texture);
