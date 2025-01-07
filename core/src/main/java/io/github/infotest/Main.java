@@ -14,6 +14,7 @@ public class Main extends Game {
     private String serverUrl;
     public boolean isDevelopmentMode=true;
 
+    private boolean keepInventory = true;
     /*
         create() will be called once the application is started
      */
@@ -32,6 +33,9 @@ public class Main extends Game {
         // switch to gaming screen
         setScreen(new MainGameScreen(this));
     }
+    public void setMainScreen(MainGameScreen mainScreen) {
+        setScreen(mainScreen);
+    }
 
     public String getUsername() {
         return username;
@@ -43,6 +47,10 @@ public class Main extends Game {
 
     public String getServerUrl() {
         return serverUrl;
+    }
+
+    public boolean isKeepInventory() {
+        return keepInventory;
     }
 }
 

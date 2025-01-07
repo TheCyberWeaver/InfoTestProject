@@ -27,10 +27,6 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     private UI_Layer uiLayer;
     private MyAssetManager assetManager;
 
-
-
-
-
     //Settings
     private boolean keepInventory;
 
@@ -60,7 +56,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     public MainGameScreen(Game game) {
         this.game = (Main) game;
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        this.uiLayer = new UI_Layer(this);
+
         create();
     }
 
@@ -86,11 +82,10 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         serverConnection.connect();
 
 
-
+        this.uiLayer = new UI_Layer(this,assetManager);
         Gdx.input.setInputProcessor(this);
 
-        //Settings
-        keepInventory = true;
+
 
         Vector2 spawnPosition = new Vector2(INITIAL_SIZE / 2f * CELL_SIZE, INITIAL_SIZE / 2f * CELL_SIZE);
         //System.out.println("class: "+ game.getPlayerClass());
@@ -107,10 +102,6 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         if(game.isDevelopmentMode){
             player.setSpeed(500);
         }
-        player.setMainScreen(this);
-
-        uiLayer.setHealthbar(assetManager);
-        uiLayer.setManabar(assetManager);
     }
     @Override
     public void onSeedReceived(int seed) {

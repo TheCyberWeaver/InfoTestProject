@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.Vector2;
+import io.github.infotest.Main;
 import io.github.infotest.item.Item;
 import io.github.infotest.util.Factory.ItemFactory;
 import io.github.infotest.util.ServerConnection;
@@ -92,7 +93,7 @@ public abstract class Player extends Actor{
         //respawn();
     }
 
-    public void respawn(){
+    public void respawn(Main game){
         this.lastDeathPos = position;
         this.position = new Vector2(spawnpoint.x, spawnpoint.y);
         this.isAlive = true;
@@ -102,7 +103,7 @@ public abstract class Player extends Actor{
 
         this.timeSinceLastT1Skill = 0;
 
-        if (!mainScreen.isKeepInventory()){
+        if (!game.isKeepInventory()){
             for (Item i : items){
                 i.drop(lastDeathPos.x,lastDeathPos.y);
             }
@@ -114,7 +115,6 @@ public abstract class Player extends Actor{
     /// Abilities
     public void gainExperience(float exp) {
         experience += exp;
-        // 这里设置一个简单的升级机制，比如经验超过 100*等级 就升级
         if (experience >= 100 * level) {
             levelUp();
         }

@@ -18,6 +18,9 @@ import io.github.infotest.util.GameRenderer;
 import io.github.infotest.util.MyAssetManager;
 
 public class UI_Layer implements ApplicationListener {
+
+    MyAssetManager assetManager;
+
     MainGameScreen mainScreen;
     SpriteBatch batch;
     Camera uiCamera; // UI-specific camera
@@ -29,11 +32,16 @@ public class UI_Layer implements ApplicationListener {
     private Texture[] healthbar;
     private Texture[] manabar;
 
-    public UI_Layer(MainGameScreen mainScreen) {
+    public UI_Layer(MainGameScreen mainScreen, MyAssetManager assetManager) {
         this.mainScreen = mainScreen;
+        this.assetManager = assetManager;
         this.uiCamera = new OrthographicCamera(); // Create a new OrthographicCamera for UI
         viewport = new ScreenViewport(uiCamera);
         windowSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        this.healthbar = assetManager.getHealthBarAssets();
+        this.manabar = assetManager.getManaBarAssets();
+
         create();
     }
 
@@ -86,11 +94,6 @@ public class UI_Layer implements ApplicationListener {
     public void setPlayer(Player player) {
         this.player = player;
     }
-    public void setHealthbar(MyAssetManager assetManager) {
-        this.healthbar = assetManager.getHealthBarAssets();
-    }
-    public void setManabar(MyAssetManager assetManager) {
-        this.manabar = assetManager.getManaBarAssets();
-    }
+
 }
 

@@ -4,12 +4,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
+import io.github.infotest.Main;
 import io.github.infotest.MainGameScreen;
 import io.github.infotest.util.ServerConnection;
 
 public abstract class Actor {
 
-    protected MainGameScreen mainScreen; //TODO: implement this using other ways, Maingamescreen should not be written in actor
 
     // basic things
     protected float healthPoints;    // current HP
@@ -150,7 +150,5 @@ public abstract class Actor {
     public void updateRotationFromPlayerData(double Rx, double Ry) {
         this.rotation = new Vector2((float)Rx,(float)Ry);
     }
-    public void setMainScreen(MainGameScreen mainScreen) {
-        this.mainScreen = mainScreen;
-    }
+
 }
