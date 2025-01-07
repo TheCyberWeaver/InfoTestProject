@@ -17,15 +17,14 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class StartScreen implements Screen {
 
-    private final Main game;   // 引用主Game，用于切换Screen或访问其他资源
-    private Stage stage;           // 场景，用于摆放UI控件
-    private TextField nameTextField;     // 姓名输入框
-    private SelectBox<String> roleSelectBox; // 职业选择下拉框
+    private final Main game;
+    private Stage stage;
+    private TextField nameTextField;
+    private SelectBox<String> roleSelectBox;
     private SelectBox<String> serverSelectBox;
     private CheckBox devModeCheckBox;
     private Viewport viewport;
 
-    // 构造函数，传入主游戏对象
     public StartScreen(Main game) {
         this.game = game;
     }
@@ -33,35 +32,35 @@ public class StartScreen implements Screen {
     @Override
     public void show() {
         System.out.println("[StartScreen] StartScreen started");
-        // 初始化场景
+        // Viewport initialization
         viewport = new ScreenViewport();
         stage = new Stage(viewport);
-        // 设置输入处理给 stage，这样我们可以捕捉UI事件
+        // set input to  stage, so that we can catch UI events
         Gdx.input.setInputProcessor(stage);
 
-        // 创建一个皮肤（示例使用内置的皮肤，如果需要漂亮一点，可以用自定义皮肤）
+        // skin - default UI skin TODO: find more beautiful skins
         Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 
-        // 创建标题Label
+        // Title Label
         Label titleLabel = new Label("Select Your Name and Your Role", skin);
         titleLabel.setColor(Color.WHITE);
-        titleLabel.setFontScale(1.2f); // 放大字体
+        titleLabel.setFontScale(1.2f); // Magnified x1.2
 
-        // 创建文本框，用于输入用户名
+        // Text field for player name
         nameTextField = new TextField("", skin);
-        nameTextField.setMessageText("Enter Your Name"); // 提示文字
-        nameTextField.setMaxLength(20); // 设定最大输入长度，防止太长
+        nameTextField.setMessageText("Enter Your Name"); // Hint
+        nameTextField.setMaxLength(20); // Maximum length
         nameTextField.setTextFieldListener((textField, c) -> {
-            // 这里可以监听实时输入，比如检查敏感字符等
+            // monitor input in realtime (for sensitive characters e.g.)
         });
 
-        // 创建SelectBox，让玩家选择职业
+        // select Box: for selecting player class ("Mage" e.g.)
         roleSelectBox = new SelectBox<>(skin);
         roleSelectBox.setItems("Healer", "Assassin", "Defender", "Mage"); // 设置选项
         roleSelectBox.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                // 可以在这里监听SelectBox切换
+
                 String selectedRole = roleSelectBox.getSelected();
                 //System.out.println("Selected:" + selectedRole);
             }
@@ -86,7 +85,7 @@ public class StartScreen implements Screen {
             }
         });
 
-        // 创建“开始游戏”按钮
+        // Start Game Button
         TextButton startButton = new TextButton("Start Game", skin);
         startButton.addListener(new ChangeListener() {
             @Override
@@ -96,13 +95,13 @@ public class StartScreen implements Screen {
             }
         });
 
-        // 使用Table来安排布局
+        // use Table to organize the layout
         Table table = new Table();
-        table.setFillParent(true); // 填满整个屏幕
-        table.defaults().pad(10);  // 设置每个控件之间的间隔
+        table.setFillParent(true); // fill the screen completely
+        table.defaults().pad(10);  // set space between widgets
 
-        // 依次添加控件到表格
-        table.add(titleLabel).colspan(2).row();   // 占据两列，并换行
+        // add widgets to the table
+        table.add(titleLabel).colspan(2).row();   // two columns and to next row
         table.add(new Label("Name:", skin));
         table.add(nameTextField).width(200).row();
         table.add(new Label("Role:", skin));
@@ -113,7 +112,7 @@ public class StartScreen implements Screen {
         table.add(devModeCheckBox).width(200).row();
 
 
-        // 把Table添加到Stage
+        // add table to stage
         stage.addActor(table);
     }
     public void startGame(){
@@ -182,7 +181,7 @@ public class StartScreen implements Screen {
 
     @Override
     public void hide() {
-        // 当切换Screen时，可以手动移除输入处理
+        // when the screen is hidden, stop processing input
         Gdx.input.setInputProcessor(null);
     }
 

@@ -2,6 +2,7 @@ package io.github.infotest.util.Overlay;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -14,8 +15,12 @@ import com.badlogic.gdx.utils.viewport.*;
 import io.github.infotest.MainGameScreen;
 import io.github.infotest.character.Player;
 import io.github.infotest.util.GameRenderer;
+import io.github.infotest.util.MyAssetManager;
 
 public class UI_Layer implements ApplicationListener {
+
+    MyAssetManager assetManager;
+
     MainGameScreen mainScreen;
     SpriteBatch batch;
     Camera uiCamera; // UI-specific camera
@@ -28,11 +33,16 @@ public class UI_Layer implements ApplicationListener {
     private Texture[] manabar;
     private Texture[] ausdauerbar;
 
-    public UI_Layer(MainGameScreen mainScreen) {
+    public UI_Layer(MainGameScreen mainScreen, MyAssetManager assetManager) {
         this.mainScreen = mainScreen;
+        this.assetManager = assetManager;
         this.uiCamera = new OrthographicCamera(); // Create a new OrthographicCamera for UI
         viewport = new ScreenViewport(uiCamera);
         windowSize = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        this.healthbar = assetManager.getHealthBarAssets();
+        this.manabar = assetManager.getManaBarAssets();
+
         create();
     }
 
@@ -89,14 +99,6 @@ public class UI_Layer implements ApplicationListener {
     public void setPlayer(Player player) {
         this.player = player;
     }
-    public void setHealthbar(Texture[] healthbar) {
-        this.healthbar = healthbar;
-    }
-    public void setManabar(Texture[] manabar) {
-        this.manabar = manabar;
-    }
-    public void setAusdauerbar(Texture[] ausdauerbar) {
-        this.ausdauerbar = ausdauerbar;
-    }
+
 }
 
