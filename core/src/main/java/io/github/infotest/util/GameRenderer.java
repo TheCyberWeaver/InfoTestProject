@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import io.github.infotest.MainGameScreen;
 import io.github.infotest.character.Gegner;
+import io.github.infotest.character.NPC;
 import io.github.infotest.character.Player;
 
 import java.util.ArrayList;
@@ -132,6 +133,16 @@ public class GameRenderer {
         for (Gegner gegner : allGegner) {
             gegner.interpolatePosition(deltaTime);
             gegner.render(batch);
+        }
+    }
+
+    public void renderNPCs(SpriteBatch batch, ArrayList<NPC> allNPCs, float deltaTime) {
+        if (allNPCs == null){
+            System.out.println("NPCs is null");
+            return;
+        }
+        for (NPC npc : allNPCs) {
+            npc.render(batch);
         }
     }
 

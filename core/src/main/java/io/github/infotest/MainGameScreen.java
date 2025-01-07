@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.character.Gegner;
+import io.github.infotest.character.NPC;
 import io.github.infotest.character.Player;
 import io.github.infotest.item.Item;
 import io.github.infotest.util.Overlay.UI_Layer;
@@ -44,6 +45,10 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     private Texture[] manabar;
     private Texture[] ausdauerbar;
 
+    private Texture[] NPC_Male;
+    private Texture[] NPC_Women;
+    private Texture[] NPC_market;
+
     //Settings
     private boolean keepInventory;
 
@@ -64,6 +69,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     // player list
     private HashMap<String, Player> players = new HashMap<>();
     private ArrayList<Gegner> allGegner = new ArrayList<>();
+    private ArrayList<NPC> allNPC = new ArrayList<>();
 
     private Main game;
     public int globalSeed = 0;
@@ -111,6 +117,36 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         ausdauerbar[1] = new Texture(Gdx.files.internal("ausdauerbar_empty_start.png"));
         ausdauerbar[2] = new Texture(Gdx.files.internal("ausdauerbar_full_middle.png"));
         ausdauerbar[3] = new Texture(Gdx.files.internal("ausdauerbar_empty_middle.png"));
+
+        NPC_Male = new Texture[8];
+        NPC_Male[0] = new Texture(Gdx.files.internal("NPC_Male_1.png"));
+        NPC_Male[1] = new Texture(Gdx.files.internal("NPC_Male_2.png"));
+        NPC_Male[2] = new Texture(Gdx.files.internal("NPC_Male_3.png"));
+        NPC_Male[3] = new Texture(Gdx.files.internal("NPC_Male_4.png"));
+        NPC_Male[4] = new Texture(Gdx.files.internal("NPC_Male_5.png"));
+        NPC_Male[5] = new Texture(Gdx.files.internal("NPC_Male_6.png"));
+        NPC_Male[6] = new Texture(Gdx.files.internal("NPC_Male_7.png"));
+        NPC_Male[7] = new Texture(Gdx.files.internal("NPC_Male_8.png"));
+
+        NPC_Women = new Texture[8];
+        NPC_Women[0] = new Texture(Gdx.files.internal("NPC_Women_1.png"));
+        NPC_Women[1] = new Texture(Gdx.files.internal("NPC_Women_2.png"));
+        NPC_Women[2] = new Texture(Gdx.files.internal("NPC_Women_3.png"));
+        NPC_Women[3] = new Texture(Gdx.files.internal("NPC_Women_4.png"));
+        NPC_Women[4] = new Texture(Gdx.files.internal("NPC_Women_5.png"));
+        NPC_Women[5] = new Texture(Gdx.files.internal("NPC_Women_6.png"));
+        NPC_Women[6] = new Texture(Gdx.files.internal("NPC_Women_7.png"));
+        NPC_Women[7] = new Texture(Gdx.files.internal("NPC_Women_8.png"));
+
+        NPC_market = new Texture[6];
+        NPC_market[0] = new Texture(Gdx.files.internal("klein.png"));
+        NPC_market[1] = new Texture(Gdx.files.internal("kiste.png"));
+        NPC_market[2] = new Texture(Gdx.files.internal("besondereKiste.png"));
+        NPC_market[3] = new Texture(Gdx.files.internal("tasche.png"));
+        NPC_market[4] = new Texture(Gdx.files.internal("koffer.png"));
+        NPC_market[5] = new Texture(Gdx.files.internal("besonders.png"));
+
+
 
         // connect to server
         //serverConnection = new ServerConnection("http://www.thomas-hub.com:9595", assassinTexture);
@@ -398,8 +434,13 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     public boolean hasSeedReceived(){
         return seedReceived;
     }
-
     public boolean isKeepInventory(){
         return keepInventory;
+    }
+    public Texture[] getNPC_Male(){
+        return NPC_Male;
+    }
+    public Texture[] getNPC_Women(){
+        return NPC_Women;
     }
 }
