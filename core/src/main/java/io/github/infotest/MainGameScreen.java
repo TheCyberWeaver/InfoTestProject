@@ -140,10 +140,6 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        for (NPC npc : allNPC) {
-            npc.render(batch);
-        }
-
         if(player!=null && gameRenderer!=null){
             // update camera position
             camera.position.set(player.getX(), player.getY(), 0);
@@ -154,6 +150,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             gameRenderer.renderMap(batch, camera.zoom, player.getPosition());
             gameRenderer.renderPlayers(batch, players, delta);
             gameRenderer.renderGegner(batch, allGegner, delta);
+            gameRenderer.renderNPCs(batch, allNPC, delta);
             gameRenderer.renderAnimations(batch,delta,shapeRenderer);
             batch.draw(assetManager.getPlayerAssets(), 0, 0, 0, 0, assetManager.getPlayerAssets().getWidth(), assetManager.getPlayerAssets().getWidth(), 32, 32);
             batch.end();
@@ -220,7 +217,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             if (tempTime >= 2f){
                 NPC npc = new NPC("NPC"+(allNPC.toArray().length+1),50,
-                    player.getPosition(), 0, 0, 4, assetManager);
+                    new Vector2(player.getPosition().x-16f,player.getPosition().y-16f), 0, 0, 4, assetManager);
                 allNPC.add(npc);
                 System.out.println("[MainGameScreen INFO]: NPC adde; "+npc.getName());
                 tempTime = 0;

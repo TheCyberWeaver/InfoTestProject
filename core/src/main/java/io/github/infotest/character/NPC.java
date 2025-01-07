@@ -3,6 +3,7 @@ package io.github.infotest.character;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.sun.tools.javac.jvm.Items;
 import io.github.infotest.item.Item;
@@ -40,7 +41,6 @@ public class NPC extends Actor {
         this.assetManager = assetManager;
         this.texture = genderTypeToTexture(gender%2, type%8);
         initMarketMap();
-
     }
 
     private void initMarketMap(){
@@ -131,6 +131,8 @@ public class NPC extends Actor {
 
     @Override
     public void render(Batch batch) {
+        batch.draw(new TextureRegion(texture), position.x, position.y, 0, 0,
+            texture.getWidth(), texture.getHeight(), 3/4f, 3/4f,0);
 
 
     }
