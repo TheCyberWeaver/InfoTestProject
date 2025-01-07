@@ -17,6 +17,7 @@ import io.github.infotest.util.Factory.PlayerFactory;
 import io.github.infotest.util.ServerConnection;
 import io.github.infotest.util.GameRenderer;
 import io.github.infotest.util.MapCreator;
+import jdk.jpackage.internal.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -139,6 +140,10 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        for (NPC npc : allNPC) {
+            npc.render(batch);
+        }
+
         if(player!=null && gameRenderer!=null){
             // update camera position
             camera.position.set(player.getX(), player.getY(), 0);
@@ -211,6 +216,15 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             player.sprint(delta, game.isDevelopmentMode);
         } else if(player.isSprinting()){
             player.stopSprint();
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            if (tempTime >= 2f){
+                NPC npc = new NPC("NPC"+(allNPC.toArray().length+1),50,
+                    player.getPosition(), 0, 0, 4, assetManager);
+                allNPC.add(npc);
+                System.out.println("[MainGameScreen INFO]: NPC adde; "+npc.getName());
+                tempTime = 0;
+            }
         }
         if(Gdx.input.isKeyPressed(Input.Keys.P) && game.isDevelopmentMode && debugTimer>=1){
 
