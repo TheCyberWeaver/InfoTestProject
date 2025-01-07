@@ -78,6 +78,9 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
 
+        AssetManager manager = new AssetManager();
+        manager.load("assassin.png", Texture.class);
+
         // load texture
         assassinTexture = new Texture("assassin.png");
         normalBlock = new Texture("normal_block.jpg");
