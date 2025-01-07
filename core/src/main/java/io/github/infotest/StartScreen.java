@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import io.github.infotest.util.Logger;
 
 public class StartScreen implements Screen {
 
@@ -31,7 +32,7 @@ public class StartScreen implements Screen {
 
     @Override
     public void show() {
-        System.out.println("[StartScreen] StartScreen started");
+        Logger.log("[StartScreen] StartScreen started");
         // Viewport initialization
         viewport = new ScreenViewport();
         stage = new Stage(viewport);
@@ -62,7 +63,7 @@ public class StartScreen implements Screen {
             public void changed(ChangeEvent event, Actor actor) {
 
                 String selectedRole = roleSelectBox.getSelected();
-                //System.out.println("Selected:" + selectedRole);
+                //Logger.log("Selected:" + selectedRole);
             }
         });
 
@@ -122,7 +123,7 @@ public class StartScreen implements Screen {
         String selectedServer = serverSelectBox.getSelected();
         // Validation
         if (playerName == null || playerName.trim().isEmpty()) {
-            System.out.println("[StartScreen WARNING]: Name cannot be empty!");
+            Logger.log("[StartScreen WARNING]: Name cannot be empty!");
             return;
         }
 
@@ -139,17 +140,17 @@ public class StartScreen implements Screen {
                 break;
         }
         // Log
-        System.out.println("-------Init Setup-------");
-        System.out.println("User Name:" + playerName);
-        System.out.println("Your Role:" + selectedRole);
-        System.out.println("Your Server:" + selectedServerUrl);
-        System.out.println("-------Init Setup-------");
+        Logger.log("-------Init Setup-------");
+        Logger.log("User Name:" + playerName);
+        Logger.log("Your Role:" + selectedRole);
+        Logger.log("Your Server:" + selectedServerUrl);
+        Logger.log("-------Init Setup-------");
 
         game.startGame(playerName, selectedRole,selectedServerUrl);
     }
     @Override
     public void render(float delta) {
-        //System.out.println("render");
+        //Logger.log("render");
         // clear screen
         Gdx.gl.glClearColor(0.439f, 0.5f, 0.5625f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);

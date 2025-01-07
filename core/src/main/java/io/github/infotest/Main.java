@@ -14,6 +14,8 @@ public class Main extends Game {
     private String serverUrl;
     public boolean isDevelopmentMode=true;
 
+    public String  clientVersion="v2.1";
+
     private boolean keepInventory = true;
     /*
         create() will be called once the application is started

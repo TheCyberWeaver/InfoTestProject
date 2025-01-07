@@ -6,6 +6,7 @@ import io.github.infotest.classes.Assassin;
 import io.github.infotest.classes.Defender;
 import io.github.infotest.classes.Healer;
 import io.github.infotest.classes.Mage;
+import io.github.infotest.util.Logger;
 import io.github.infotest.util.MyAssetManager;
 
 public class PlayerFactory {
@@ -20,7 +21,7 @@ public class PlayerFactory {
             case "Healer":
                 return new Healer(id,playerName, initialPosition, assetManager.getPlayerAssets());
             default:
-                System.out.println("[WARNING]: Unknown class: " + className+ " - Player not created");
+                Logger.log("[WARNING]: Unknown class: " + className+ " - Player not created");
                 return null;
         }
     }

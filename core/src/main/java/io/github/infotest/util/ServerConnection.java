@@ -32,6 +32,8 @@ public class ServerConnection {
     // value is player object
     private HashMap<String, Player> players = new HashMap<>();
 
+    private String clientVersion;
+
     private int globalSeed = 0;
 
     // TODO
@@ -46,9 +48,10 @@ public class ServerConnection {
         this.seedListener = listener;
     }
 
-    public ServerConnection(String serverUrl, MyAssetManager assetManager) {
+    public ServerConnection(String serverUrl, MyAssetManager assetManager, String clientVersion) {
         this.serverUrl = serverUrl;
         this.assetManager = assetManager;
+        this.clientVersion = clientVersion;
     }
 
     public void connect() {
@@ -58,29 +61,15 @@ public class ServerConnection {
             socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    System.out.println("[ServerConnection INFO]: Connected to server");
+                    Logger.log("[ServerConnection INFO]: Connected to server");
                 }
             }).on("yourId", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
                     if (args.length > 0 && args[0] instanceof String) {
                         mySocketId = (String) args[0];
-                        System.out.println("[ServerConnection INFO]: My socket ID: " + mySocketId);
+                        Logger.log("[ServerConnection INFO]: My socket ID: " + mySocketId);
                     }
-                }
-            }).on("init", new Emitter.Listener() {
-                @Override
-                public void call(Object... args) {
-                    String updatedPlayersJson = args[0].toString();
-
-                    //   - key: socketId (e.g., "socketId_1")
-                    //   - value: <PlayerData>
-                    Gson gson = new Gson();
-                    Type typeOfHashMap = new TypeToken<Map<String, PlayerData>>(){}.getType();
-                    Map<String, PlayerData> playersMap = gson.fromJson(updatedPlayersJson, typeOfHashMap);
-
-                    updatePlayers(playersMap);
-
                 }
             }).on("updateAllPlayers", new Emitter.Listener() {
                 @Override
@@ -104,16 +93,46 @@ public class ServerConnection {
                         players.remove(leftPlayerId);
                     }
                 }
-            }).on("initializeSeed", new Emitter.Listener() {
+            }).on("init", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    if (args.length > 0 && args[0] instanceof Integer) {
-                        globalSeed = (int) args[0];
-                        //System.out.println("[INFO]: Global seed : " + globalSeed);
+                    if (args.length > 0 && args[0] instanceof JSONObject) {
+                        JSONObject data = (JSONObject) args[0];
 
+                        globalSeed = (int) data.get("seed");
+                        //Logger.log("[INFO]: Global seed : " + globalSeed);
                         // call back
                         if (seedListener != null) {
                             seedListener.onSeedReceived(globalSeed);
+                        }
+
+                        String serverVersion = (String) data.get("serverVersion");
+                        if (serverVersion.equals(clientVersion)) {
+                            Logger.log("[ServerConnection INFO]: All Up to Date. Server&Client  Version: " + serverVersion);
+                        }
+                        else{
+                            int[] client = parseVersion(clientVersion); // [clientMajor, clientMinor]
+                            int[] server = parseVersion(serverVersion); // [serverMajor, serverMinor]
+
+                            int clientMajor = client[0];
+                            int clientMinor = client[1];
+                            int serverMajor = server[0];
+                            int serverMinor = server[1];
+
+                            if (clientMajor < serverMajor) {
+                                // Major version is behind
+                                Logger.log("[ServerConnection ERROR]: Client Major version is behind, Client is not compatible");
+                                Logger.log("[ServerConnection ERROR]: Server Version: " + serverVersion + "| Client Version: " + clientVersion);
+                                Logger.log("[ServerConnection ERROR]: Shutting Down the Client");
+                            } else if (clientMajor == serverMajor && clientMinor < serverMinor) {
+                                // Minor version is behind
+                                Logger.log("[ServerConnection WARNING]: Client Minor version is behind. There might be bugs not discovered. Pls consider updating your client", true );
+                                Logger.log("[ServerConnection WARNING]: Server Version: " + serverVersion + "| Client Version: " + clientVersion);
+                            } else {
+                                // Otherwise: client is ahead
+                                Logger.log("[ServerConnection WARNING]: Server Version is behind");
+                                Logger.log("[ServerConnection WARNING]: Server Version: " + serverVersion + "| Client Version: " + clientVersion);
+                            }
                         }
                     }
                 }
@@ -123,7 +142,7 @@ public class ServerConnection {
                     if (args.length > 0 && args[0] instanceof JSONObject) {
                         JSONObject data = (JSONObject) args[0];
                         try {
-                            //System.out.println("[ServerConnection INFO]: " + data.toString());
+                            //Logger.log("[ServerConnection INFO]: " + data.toString());
                             doPlayerAction(data);
 
                         } catch (JSONException e) {
@@ -136,7 +155,7 @@ public class ServerConnection {
                 public void call(Object... args) {
                     if (args.length > 0 && args[0] instanceof String) {
                         String text = (String) args[0];
-                        System.out.println("[Server Warning]: " + text);
+                        Logger.log("[Server Warning]: " + text);
                         //TODO: Write server warnings into a logging file
                     }
                 }
@@ -153,7 +172,7 @@ public class ServerConnection {
         String playerID   = data.getString("playerID");
         Player player = players.get(playerID);
         if(player == null ){
-            System.out.println("[ServerConnection Warning]: Cannot find player with id " + playerID);
+            Logger.log("[ServerConnection Warning]: Cannot find player with id " + playerID);
             return;
         }
         if(playerID.equals(mySocketId)){
@@ -162,15 +181,15 @@ public class ServerConnection {
         switch (actionType) {
             case "Fireball":
                 player.castSkill(1, this);
-                //System.out.println("[INFO]: Fireball triggered"+player.getName());
+                //Logger.log("[INFO]: Fireball triggered"+player.getName());
                 break;
             case "TakeDamage":
                 float damage = Float.parseFloat(data.getString("damage"));
                 player.takeDamage(damage);
-                System.out.println("[ServerConnection INFO]: Taking damage of " + damage);
+                Logger.log("[ServerConnection INFO]: Taking damage of " + damage);
                 break;
             default:
-                System.out.println("[SeverConnection Warning]: received Action not Known: " + actionType);
+                Logger.log("[SeverConnection Warning]: received Action not Known: " + actionType);
                 break;
         }
 
@@ -202,7 +221,7 @@ public class ServerConnection {
                 player.updateHPFromPlayerData((float)playerData.hp);
                 player.updateItemFromPlayerData(playerData.items, assetManager);
                 player.updateRotationFromPlayerData(playerData.rotation.x,playerData.rotation.y);
-                //System.out.println("[INFO]: Player Rotation update " + playerData.rotation.x+" "+playerData.rotation.y);
+                //Logger.log("[INFO]: Player Rotation update " + playerData.rotation.x+" "+playerData.rotation.y);
             }
         }
     }
@@ -218,7 +237,7 @@ public class ServerConnection {
             pos.put("Rx", Rx);
             pos.put("Ry", Ry);
             socket.emit("updatePosition", pos);
-            //System.out.println("Updated position: " + pos);
+            //Logger.log("Updated position: " + pos);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -234,10 +253,10 @@ public class ServerConnection {
             initData.put("classtype",player.getClassName());
             initData.put("items",player.getItems());
 
-            System.out.println("[ServerConnection INFO]: Init Data: "+initData.toString());
+            Logger.log("[ServerConnection INFO]: Init Data: "+initData.toString());
 
             socket.emit("init", initData);
-            //System.out.println("Updated position: " + pos);
+            //Logger.log("Updated position: " + pos);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -267,7 +286,7 @@ public class ServerConnection {
                 socket.emit("playerAction", takeDamageData);
             }
             else{
-                System.out.println("[ServerConnection Error]: sendTakeDamage: key is null"+player.getName());
+                Logger.log("[ServerConnection Error]: sendTakeDamage: key is null"+player.getName());
             }
 
         } catch (JSONException e) {
@@ -283,6 +302,27 @@ public class ServerConnection {
         }
     }
 
+    /**
+     * Converts "vX.Y" into [X, Y].
+     * Author: ChatGPT o1
+     */
+    private static int[] parseVersion(String version) {
+        // Remove 'v' prefix if present
+        String pureVersion = version.startsWith("v") ? version.substring(1) : version;
+        // Split by '.'
+        String[] parts = pureVersion.split("\\.");
+
+        int major = 0;
+        int minor = 0;
+        if (parts.length > 0) {
+            major = Integer.parseInt(parts[0]);
+        }
+        if (parts.length > 1) {
+            minor = Integer.parseInt(parts[1]);
+        }
+
+        return new int[]{major, minor};
+    }
 
     public HashMap<String, Player> getPlayers() {
         return players;

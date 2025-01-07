@@ -121,7 +121,7 @@ public class GameRenderer {
 
     public void renderPlayers(SpriteBatch batch, HashMap<String, Player> players, float deltaTime) {
         if (players == null){
-            System.out.println("players is null");
+            Logger.log("players is null");
             return;
         }
         for (Player player : players.values()) {
@@ -132,7 +132,7 @@ public class GameRenderer {
 
     public void renderGegner(SpriteBatch batch, ArrayList<Gegner> allGegner, float deltaTime) {
         if (allGegner == null){
-            System.out.println("players is null");
+            Logger.log("players is null");
             return;
         }
         for (Gegner gegner : allGegner) {
@@ -143,7 +143,7 @@ public class GameRenderer {
 
     public void renderNPCs(SpriteBatch batch, ArrayList<NPC> allNPCs, float deltaTime) {
         if (allNPCs == null){
-            System.out.println("NPCs is null");
+            Logger.log("NPCs is null");
             return;
         }
         for (NPC npc : allNPCs) {
