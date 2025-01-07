@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.character.Player;
 import io.github.infotest.util.GameRenderer;
+import io.github.infotest.util.Logger;
 import io.github.infotest.util.ServerConnection;
 
 public class Mage extends Player {
@@ -27,14 +28,14 @@ public class Mage extends Player {
         switch(skillID) {
             case 1:
                 if(timeSinceLastT1Skill >= fireballCooldown && drainMana(fireballCost) ||  localPlayer!=this) {
-                    System.out.println("[Mage INFO]: Player ["+this.getName()+"] casts skill "+skillID);
+                    Logger.log("[Mage INFO]: Player ["+this.getName()+"] casts skill "+skillID);
                     timeSinceLastT1Skill = 0;
                     castFireball(this.position.x, this.position.y, rotation);
                     if(localPlayer==this){
                         serverConnection.sendCastSkill(this, "Fireball");
                     }
                 }
-                //System.out.println(mana+"/"+maxMana);
+                //Logger.log(mana+"/"+maxMana);
                 break;
             case 2:
                 break;

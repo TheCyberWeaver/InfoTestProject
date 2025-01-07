@@ -11,12 +11,9 @@ import io.github.infotest.character.Gegner;
 import io.github.infotest.character.NPC;
 import io.github.infotest.character.Player;
 import io.github.infotest.item.Item;
-import io.github.infotest.util.MyAssetManager;
+import io.github.infotest.util.*;
 import io.github.infotest.util.Overlay.UI_Layer;
 import io.github.infotest.util.Factory.PlayerFactory;
-import io.github.infotest.util.ServerConnection;
-import io.github.infotest.util.GameRenderer;
-import io.github.infotest.util.MapCreator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -81,7 +78,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         // connect to server
         //serverConnection = new ServerConnection("http://www.thomas-hub.com:9595", assassinTexture);
-        serverConnection = new ServerConnection(game.getServerUrl(), assetManager);
+        serverConnection = new ServerConnection(game.getServerUrl(), assetManager, game.clientVersion);
 
         serverConnection.setSeedListener(this);
         serverConnection.connect();
@@ -93,9 +90,9 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
 
         Vector2 spawnPosition = new Vector2(INITIAL_SIZE / 2f * CELL_SIZE, INITIAL_SIZE / 2f * CELL_SIZE);
-        //System.out.println("class: "+ game.getPlayerClass());
+        //Logger.log("class: "+ game.getPlayerClass());
         player = PlayerFactory.createPlayer(serverConnection.getMySocketId(),game.getUsername(),game.getPlayerClass(),spawnPosition,assetManager);
-        //System.out.println("class: "+ player.getClass());
+        //Logger.log("class: "+ player.getClass());
 
         // send initial position to server
         serverConnection.sendPlayerInit(player);
@@ -120,7 +117,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         gameRenderer = new GameRenderer(assetManager, map, CELL_SIZE);
         gameRenderer.initAnimations();
 
-        System.out.println("[MainGameScreen INFO]: Map generated after receiving seed: " + seed);
+        Logger.log("[MainGameScreen INFO]: Map generated after receiving seed: " + seed);
     }
     @Override
     public void render(float delta) {
@@ -131,7 +128,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             this.players.put(serverConnection.getMySocketId(), player);
         }
 
-        //System.out.println(player);
+        //Logger.log(player);
 
         uiLayer.setPlayer(player);
 
@@ -214,12 +211,12 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         }
         if(Gdx.input.isKeyPressed(Input.Keys.P) && game.isDevelopmentMode && debugTimer>=1){
 
-            System.out.println("----------");
+            Logger.log("----------");
             for (Map.Entry<String, Player> stringPlayerEntry : players.entrySet()) {
                 Player tmpPlayer=stringPlayerEntry.getValue();
-                System.out.println(stringPlayerEntry.getKey()+" "+tmpPlayer.getName()+" "+tmpPlayer.getHealthPoints());
+                Logger.log(stringPlayerEntry.getKey()+" "+tmpPlayer.getName()+" "+tmpPlayer.getHealthPoints());
             }
-            System.out.println("----------");
+            Logger.log("----------");
             debugTimer=0;
         }
 

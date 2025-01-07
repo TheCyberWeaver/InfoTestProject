@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.sun.tools.javac.jvm.Items;
 import io.github.infotest.item.Item;
+import io.github.infotest.util.Logger;
 import io.github.infotest.util.MyAssetManager;
 import io.github.infotest.util.ServerConnection;
 
@@ -193,7 +194,7 @@ public class NPC extends Actor {
         } else if (gender == 1){
             return assetManager.getNPCWomenAssets()[tempType];
         }
-        System.out.println("[NPC: Warning] gender and Type is not valid");
+        Logger.log("[NPC: Warning] gender and Type is not valid");
         return null;
     }
 

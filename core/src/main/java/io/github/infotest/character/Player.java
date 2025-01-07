@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.Main;
 import io.github.infotest.item.Item;
 import io.github.infotest.util.Factory.ItemFactory;
+import io.github.infotest.util.Logger;
 import io.github.infotest.util.MyAssetManager;
 import io.github.infotest.util.ServerConnection;
 
@@ -80,7 +81,7 @@ public abstract class Player extends Actor{
         if (texture != null) {
             batch.draw(texture, predictedPosition .x, predictedPosition .y,32,32);
         }
-        //System.out.println(name);
+        //Logger.log(name);
         //calculate name width
 
         GlyphLayout layout = new GlyphLayout(font, name);
@@ -161,7 +162,7 @@ public abstract class Player extends Actor{
     public void takeDamage(float damage) {
         super.takeDamage(damage);
 
-        System.out.println("[Player INFO]: Player ["+this.name+"] took Damage! "+healthPoints+"/"+maxHealthPoints);
+        Logger.log("[Player INFO]: Player ["+this.name+"] took Damage! "+healthPoints+"/"+maxHealthPoints);
     }
 
     public boolean drainMana(float amount) {
