@@ -108,7 +108,7 @@ public class ServerConnection {
 
                         String serverVersion = (String) data.get("serverVersion");
                         if (serverVersion.equals(clientVersion)) {
-                            Logger.log("[ServerConnection INFO]: All Up to Date. Server&Client  Version: " + serverVersion,true);
+                            Logger.log("[ServerConnection INFO]: All Up to Date. Server&Client  Version: " + serverVersion);
                         }
                         else{
                             int[] client = parseVersion(clientVersion); // [clientMajor, clientMinor]

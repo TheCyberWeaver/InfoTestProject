@@ -63,7 +63,7 @@ public class Logger {
     }
     public static synchronized void log(String message) {
         // Calls the overloaded method with isConsole = true
-        log(message, false);
+        log(message, true);
     }
 
     /**
