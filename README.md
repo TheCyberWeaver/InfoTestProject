@@ -14,7 +14,7 @@ Install IntelliJ from Internet.
 - Login with your GitHub account. You should be able to see the name of this project
 - ![img_4.png](img_4.png)
 - There should be a pop out window during the process, telling you that you should install git.
-- DO NOT close this pop out window, click install and wait till git is installed.
+- DO NOT close this pop out window, click install and wait till git is installed. If you accidentally closed it, I suggest just reinstalling IntelliJ.
 - DO NOT try to install git from internet. I have no idea why installing git from internet fails here.
 - (maybe there is a way to solve this, but I am no IOS expert)
 - ![img_6.png](img_6.png)
