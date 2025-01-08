@@ -17,8 +17,7 @@ public Weapon(MyAssetManager assetManager, int damage, double range, String mate
 
 public int getDamage() {
     return damage;
-    }
-
+}
 public void setDamage(int pDamage) {
         this.damage = pDamage;
 }
@@ -26,12 +25,16 @@ public void setDamage(int pDamage) {
 public void getRange() {
     return range;
 }
-
 public void setRange(double pRange){
     this.range = pRange;
 }
 
-    public void render(){
+public void getMaterial(){
+    return material;
+}
+public void setMaterial(String pMaterial){
+this.material = pMaterial;
+}
 
 public void showStats() {
         System.out.println("Weapon Stats:");
@@ -40,5 +43,8 @@ public void showStats() {
         System.out.println("Weight: " + weight + " kg");
         System.out.println("Material: " + material);
 }
+
+ public void render(){
+
     }
 }
