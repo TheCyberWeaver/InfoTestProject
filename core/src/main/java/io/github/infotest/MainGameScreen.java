@@ -20,9 +20,7 @@ import io.github.infotest.util.GameRenderer;
 import io.github.infotest.util.MapCreator;
 import jdk.jpackage.internal.Log;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class MainGameScreen implements Screen, InputProcessor, ServerConnection.SeedListener {
     private SpriteBatch batch;
@@ -52,6 +50,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     private HashMap<String, Player> players = new HashMap<>();
     private ArrayList<Gegner> allGegner = new ArrayList<>();
     private ArrayList<NPC> allNPC = new ArrayList<>();
+    private int lastLength = 0;
     private NPC isTradingTo;
 
     private Main game;
@@ -154,9 +153,24 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             gameRenderer.renderMap(batch, camera.zoom, player.getPosition());
             gameRenderer.renderPlayers(batch, players, delta);
             gameRenderer.renderGegner(batch, allGegner, delta);
+            handleInput(batch, delta);
+            if (lastLength < allNPC.size()) {
+                //Sort list based on y coordinate (dsc)
+                allNPC.sort(new Comparator<NPC>() {
+                    @Override
+                    public int compare(NPC npc1, NPC npc2) {
+                        return Float.compare(npc2.getPosition().y, npc1.getPosition().y);
+                    }
+                });
+            }
             gameRenderer.renderNPCs(batch, allNPC, delta);
             gameRenderer.renderAnimations(batch,delta,shapeRenderer);
-            handleInput(batch, delta);
+
+            if (isTradingTo != null) {
+                uiLayer.renderMarket(batch, isTradingTo.getMarketTexture());
+                uiLayer.renderItems(batch, isTradingTo.getMarket(), isTradingTo.getNPC_marketMapValue(isTradingTo.getMarketTextureID()));
+                handleUIInput(batch, delta);
+            }
             batch.draw(assetManager.getPlayerAssets(), 0, 0, 0, 0, assetManager.getPlayerAssets().getWidth(), assetManager.getPlayerAssets().getWidth(), 32, 32);
             batch.end();
 
@@ -180,6 +194,12 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         }
         debugTimer+=delta;
         uiLayer.render();
+
+        lastLength = allNPC.size();
+    }
+
+    private void handleUIInput(Batch batch, float delta) {
+
     }
 
     float tempTime = 0;
@@ -219,7 +239,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             player.stopSprint();
         }
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            if (tempTime >= 2f){
+            if (tempTime >= 0.5f){
                 NPC npc = new NPC("NPC"+(allNPC.toArray().length+1),50,
                     new Vector2(player.getPosition().x-6.5f,player.getPosition().y), 0, 0, 4, assetManager, uiLayer);
                 allNPC.add(npc);

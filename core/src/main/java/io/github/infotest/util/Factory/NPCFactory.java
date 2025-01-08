@@ -5,6 +5,9 @@ import io.github.infotest.character.NPC;
 import io.github.infotest.util.MyAssetManager;
 import io.github.infotest.util.Overlay.UI_Layer;
 
+import java.util.Collections;
+import java.util.Comparator;
+
 public class NPCFactory {
     public static NPC createNPC(String npcName, int maxHP, Vector2 pos, int gender, int type, MyAssetManager assetManager, UI_Layer ui_layer) {
         // Serverconnection: NPC attributes: name, pos, gender(0 || 1), type(0-7), startItems für market;

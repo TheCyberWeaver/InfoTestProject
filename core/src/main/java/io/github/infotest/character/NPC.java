@@ -145,12 +145,6 @@ public class NPC extends Actor {
     public void render(Batch batch) {
         batch.draw(new TextureRegion(texture), position.x, position.y, 0, 0,
             texture.getWidth(), texture.getHeight(), 3/4f, 3/4f,0);
-        if (isTrading) {
-            uiLayer.renderMarket(batch, marketTexture);
-            uiLayer.renderItems(batch, market, NPC_marketMap.get(marketTextureID));
-        }
-
-
     }
     @Override
     public void update(float delta) {
@@ -225,5 +219,13 @@ public class NPC extends Actor {
     public boolean isTrading() {
         return isTrading;
     }
-
+    public Texture getMarketTexture() {
+        return marketTexture;
+    }
+    public ArrayList<Vector2> getNPC_marketMapValue(int key) {
+        return NPC_marketMap.get(key);
+    }
+    public int getMarketTextureID(){
+        return marketTextureID;
+    }
 }

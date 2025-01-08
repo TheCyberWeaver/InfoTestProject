@@ -102,8 +102,8 @@ public class UI_Layer implements ApplicationListener {
             Vector2 itemOffset = offset.get(i);
             if (item != null){
                 batch.draw(item.getTexture(),
-                    player.getX()+itemOffset.x*screenScaleX,
-                    player.getY()+itemOffset.y*screenScaleX,
+                    player.getX()+(itemOffset.x-51f)*screenScaleX,
+                    player.getY()+(itemOffset.y-76f)*screenScaleX,
                     14f*screenScaleX, 14f*screenScaleX);
             }
         }
