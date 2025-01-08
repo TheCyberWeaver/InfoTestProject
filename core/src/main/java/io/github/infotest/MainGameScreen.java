@@ -4,6 +4,7 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -51,6 +52,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     private HashMap<String, Player> players = new HashMap<>();
     private ArrayList<Gegner> allGegner = new ArrayList<>();
     private ArrayList<NPC> allNPC = new ArrayList<>();
+    private NPC isTradingTo;
 
     private Main game;
     public int globalSeed = 0;
@@ -108,6 +110,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         if(game.isDevelopmentMode){
             player.setSpeed(500);
         }
+
+        isTradingTo= null;
     }
     @Override
     public void onSeedReceived(int seed) {
@@ -152,6 +156,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             gameRenderer.renderGegner(batch, allGegner, delta);
             gameRenderer.renderNPCs(batch, allNPC, delta);
             gameRenderer.renderAnimations(batch,delta,shapeRenderer);
+            handleInput(batch, delta);
             batch.draw(assetManager.getPlayerAssets(), 0, 0, 0, 0, assetManager.getPlayerAssets().getWidth(), assetManager.getPlayerAssets().getWidth(), 32, 32);
             batch.end();
 
@@ -160,8 +165,6 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             }
             //player.update(delta);
             checkFireballCollisions();
-
-            handleInput(delta);
 
             if (player.getHealthPoints() <= 0) {
                 player.kill();
@@ -180,7 +183,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     }
 
     float tempTime = 0;
-    private void handleInput(float delta) {
+    private void handleInput(Batch batch, float delta) {
         boolean moved = false;
         float speed = player.getSpeed();
 
@@ -206,6 +209,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             moved = true;
             player.setRotation(new Vector2(0,-1));
         }
+
         if (Gdx.input.isKeyPressed(Input.Keys.E)) {
             player.castSkill(1,serverConnection);
         }
@@ -217,11 +221,24 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             if (tempTime >= 2f){
                 NPC npc = new NPC("NPC"+(allNPC.toArray().length+1),50,
-                    new Vector2(player.getPosition().x-16f,player.getPosition().y-16f), 0, 0, 4, assetManager);
+                    new Vector2(player.getPosition().x-6.5f,player.getPosition().y), 0, 0, 4, assetManager, uiLayer);
                 allNPC.add(npc);
-                System.out.println("[MainGameScreen INFO]: NPC adde; "+npc.getName());
                 tempTime = 0;
             }
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.F)){
+            NPC cNpc = getClosestNPC();
+            if(cNpc!=null){
+                float distance = player.getPosition().dst(cNpc.getPosition());
+                if (isTradingTo == null && distance <= 100 && !cNpc.isTrading()) {
+                    cNpc.openMarket(batch);
+                    isTradingTo = cNpc;
+                }
+            }
+        }
+        if (moved && isTradingTo != null) {
+            isTradingTo.closeMarket();
+            isTradingTo = null;
         }
         if(Gdx.input.isKeyPressed(Input.Keys.P) && game.isDevelopmentMode && debugTimer>=1){
 
@@ -282,13 +299,25 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     public static int lvlToMaxHP(int lvl){
         return 50 + 5 * lvl;
     }
-
     public static int lvlToMaxMana(int lvl){
         return 25 + 5 * lvl;
     }
-
     public static int neededExpForLevel(int lvl){
         return 20 + 10 * lvl;
+    }
+
+    public NPC getClosestNPC(){
+        NPC cNpc = null;
+        float dist = Float.MAX_VALUE;
+        Vector2 playerPos = player.getPosition();
+        for (NPC npc : allNPC){
+            float distanceSq = npc.getPosition().dst2(playerPos);
+            if (distanceSq < dist){
+                dist = distanceSq;
+                cNpc = npc;
+            }
+        }
+        return cNpc;
     }
 
     @Override

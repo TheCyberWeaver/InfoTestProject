@@ -1,7 +1,5 @@
 package io.github.infotest.util;
 
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.character.Player;
 import io.github.infotest.util.DataObjects.PlayerData;

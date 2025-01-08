@@ -6,9 +6,11 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.sun.tools.javac.jvm.Items;
+import io.github.infotest.item.Apple;
 import io.github.infotest.item.Item;
 import io.github.infotest.util.Logger;
 import io.github.infotest.util.MyAssetManager;
+import io.github.infotest.util.Overlay.UI_Layer;
 import io.github.infotest.util.ServerConnection;
 
 import java.util.ArrayList;
@@ -30,17 +32,27 @@ public class NPC extends Actor {
     protected boolean isTrading;
 
     protected MyAssetManager assetManager;
+    protected UI_Layer uiLayer;
 
 
 
-    public NPC(String name, int maxHealthPoints, Vector2 startPosition, float speed, int gender, int type, MyAssetManager assetManager) {
+    public NPC(String name, int maxHealthPoints, Vector2 startPosition, float speed, int gender, int type, MyAssetManager assetManager, UI_Layer uiLayer) {
         super(maxHealthPoints, startPosition, speed);
         this.name = name;
         this.genderType = new Vector2(gender%2, type%8);
         this.isTrading = false;
         this.assetManager = assetManager;
+        this.uiLayer = uiLayer;
         this.texture = genderTypeToTexture(gender%2, type%8);
         initMarketMap();
+        Item[] items = new Item[6];
+        items[0] = new Apple(assetManager);
+        items[1] = new Apple(assetManager);
+        items[2] = new Apple(assetManager);
+        items[3] = new Apple(assetManager);
+        items[4] = new Apple(assetManager);
+        items[5] = new Apple(assetManager);
+        updateMarket(1, items);
     }
 
     private void initMarketMap(){
@@ -133,6 +145,10 @@ public class NPC extends Actor {
     public void render(Batch batch) {
         batch.draw(new TextureRegion(texture), position.x, position.y, 0, 0,
             texture.getWidth(), texture.getHeight(), 3/4f, 3/4f,0);
+        if (isTrading) {
+            uiLayer.renderMarket(batch, marketTexture);
+            uiLayer.renderItems(batch, market, NPC_marketMap.get(marketTextureID));
+        }
 
 
     }
@@ -159,20 +175,9 @@ public class NPC extends Actor {
     }
 
     public void openMarket(Batch batch){
-        ArrayList<Vector2> temp = NPC_marketMap.get(marketTextureID);
         isTrading = true;
-        float screenX = (float) Gdx.graphics.getWidth() / 2 - 50f;
-        float screenY = (float) Gdx.graphics.getHeight() / 2 - 75f;
-        batch.draw(marketTexture, screenX, screenY);
-        for (int i = 0; i < market.length; i++){
-            Item item = market[i];
-            if (item != null){
-                batch.draw(item.getTexture(),screenX+temp.get(i).x, screenY+temp.get(i).y);
-            }
-        }
     }
-
-    private void cloaseMarket(){
+    public void closeMarket(){
         isTrading = false;
     }
 

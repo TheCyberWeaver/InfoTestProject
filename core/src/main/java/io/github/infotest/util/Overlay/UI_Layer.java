@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -14,8 +15,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.*;
 import io.github.infotest.MainGameScreen;
 import io.github.infotest.character.Player;
+import io.github.infotest.item.Item;
 import io.github.infotest.util.GameRenderer;
 import io.github.infotest.util.MyAssetManager;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class UI_Layer implements ApplicationListener {
 
@@ -80,6 +85,27 @@ public class UI_Layer implements ApplicationListener {
                 800,
                 nScale * screenScaleX, screenScaleY);
             batch.end();
+        }
+    }
+
+    float nScale = 3f;
+    public void renderMarket(Batch batch, Texture texture) {
+        float screenScaleX = Gdx.graphics.getWidth()/windowSize.x * nScale;
+        float screenX = player.getX()-50f*screenScaleX;
+        float screenY = player.getY()-75f* screenScaleX;
+        batch.draw(texture, screenX, screenY, texture.getWidth()*screenScaleX, texture.getHeight()* screenScaleX);
+    }
+    public void renderItems(Batch batch, Item[] items, ArrayList<Vector2> offset){
+        float screenScaleX = Gdx.graphics.getWidth()/windowSize.x * nScale;
+        for (int i=0; i<items.length; i++){
+            Item item = items[i];
+            Vector2 itemOffset = offset.get(i);
+            if (item != null){
+                batch.draw(item.getTexture(),
+                    player.getX()+itemOffset.x*screenScaleX,
+                    player.getY()+itemOffset.y*screenScaleX,
+                    14f*screenScaleX, 14f*screenScaleX);
+            }
         }
     }
 
