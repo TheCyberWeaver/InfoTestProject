@@ -33,6 +33,12 @@ public void setRange(double pRange){
 
     public void render(){
 
-
+public void showStats() {
+        System.out.println("Weapon Stats:");
+        System.out.println("Damage: " + damage);
+        System.out.println("Range: " + range + " meters");
+        System.out.println("Weight: " + weight + " kg");
+        System.out.println("Material: " + material);
+}
     }
 }
