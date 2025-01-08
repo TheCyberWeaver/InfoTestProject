@@ -4,10 +4,11 @@ import io.github.infotest.util.MyAssetManager;
 
 public class Weapon extends Item {
     private int damage;
-    private double range;
+    private float range;
     private String material;
+    private float weight;
 
-public Weapon(MyAssetManager assetManager, int damage, double range, String material) {
+public Weapon(MyAssetManager assetManager, int damage, float range, String material) {
         super("weapon", "just a weapon", assetManager.getLoadingScreenTexture());
     this.damage = damage;
     this.range = range;
@@ -22,14 +23,14 @@ public void setDamage(int pDamage) {
         this.damage = pDamage;
 }
 
-public void getRange() {
+public float getRange() {
     return range;
 }
-public void setRange(double pRange){
+public void setRange(float pRange){
     this.range = pRange;
 }
 
-public void getMaterial(){
+public String getMaterial(){
     return material;
 }
 public void setMaterial(String pMaterial){
