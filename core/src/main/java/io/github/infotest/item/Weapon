@@ -3,12 +3,36 @@ package io.github.infotest.item;
 import io.github.infotest.util.MyAssetManager;
 
 public class Weapon extends Item {
-    public String color;
+    private int damage;
+    private double range;
+    private String material;
 
-    public Apple(MyAssetManager assetManager) {
-        super("apple","just an apple", assetManager.getLoadingScreenTexture());
+public Weapon(MyAssetManager assetManager, int damage, double range, String material) {
+        super("weapon", "just a weapon", assetManager.getLoadingScreenTexture());
+    this.damage = damage;
+    this.range = range;
+    this.weight = weight;
+    this.material = material;
+}
+
+public int getDamage() {
+    return damage;
     }
+
+public void setDamage(int pDamage) {
+        this.damage = pDamage;
+}
+
+public void getRange() {
+    return range;
+}
+
+public void setRange(double pRange){
+    this.range = pRange;
+}
+
     public void render(){
+
 
     }
 }
