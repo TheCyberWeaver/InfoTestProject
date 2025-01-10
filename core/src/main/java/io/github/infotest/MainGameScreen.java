@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import io.github.infotest.character.Gegner;
 import io.github.infotest.character.NPC;
 import io.github.infotest.character.Player;
@@ -18,7 +19,6 @@ import io.github.infotest.util.Factory.PlayerFactory;
 import io.github.infotest.util.ServerConnection;
 import io.github.infotest.util.GameRenderer;
 import io.github.infotest.util.MapCreator;
-import jdk.jpackage.internal.Log;
 
 import java.util.*;
 
@@ -28,6 +28,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     private OrthographicCamera camera;
     private UI_Layer uiLayer;
     private MyAssetManager assetManager;
+
+    private Vector3 clickPos = null;
 
     //Settings
     private boolean keepInventory;
@@ -79,6 +81,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         assetManager.loadNPCMaleAssets();
         assetManager.loadNPCWomenAssets();
         assetManager.loadNPCMarketAssets();
+        assetManager.loadSignsAssets();
         assetManager.manager.finishLoading();
 
         // connect to server
@@ -89,13 +92,13 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         serverConnection.connect();
 
 
-        this.uiLayer = new UI_Layer(this,assetManager);
+        this.uiLayer = new UI_Layer(this,assetManager,gameRenderer);
         Gdx.input.setInputProcessor(this);
 
 
 
         Vector2 spawnPosition = new Vector2(INITIAL_SIZE / 2f * CELL_SIZE, INITIAL_SIZE / 2f * CELL_SIZE);
-        //Logger.log("class: "+ game.getPlayerClass());
+        //Logger.log(""class: "+ game.getPlayerClass());
         player = PlayerFactory.createPlayer(serverConnection.getMySocketId(),game.getUsername(),game.getPlayerClass(),spawnPosition,assetManager);
         //Logger.log("class: "+ player.getClass());
 
@@ -163,14 +166,41 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                     }
                 });
             }
+
             gameRenderer.renderNPCs(batch, allNPC, delta);
             gameRenderer.renderAnimations(batch,delta,shapeRenderer);
 
+            // Render Market and Items
             if (isTradingTo != null) {
                 uiLayer.renderMarket(batch, isTradingTo.getMarketTexture());
                 uiLayer.renderItems(batch, isTradingTo.getMarket(), isTradingTo.getNPC_marketMapValue(isTradingTo.getMarketTextureID()));
                 handleUIInput(batch, delta);
             }
+            // Render INV_FULL sign
+            if (uiLayer.isRenderingSign()){
+                Vector3 worldCoordinates = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+                float worldX = worldCoordinates.x;
+                float worldY = worldCoordinates.y;
+                float time = uiLayer.getSignTimer();
+                if (time <= uiLayer.getDuration()){
+                    batch.draw(assetManager.getSignsAssets(), worldX, worldY);
+                } else if (time > uiLayer.getDuration() && time-uiLayer.getSignTimer()< uiLayer.getFadeDuration()) {
+                    float alpha = MyMath.getExpValue(uiLayer.getBase(), uiLayer.getFadeDuration(), time-uiLayer.getDuration());
+                    batch.setColor(1,1,1,alpha);
+                    batch.draw(assetManager.getSignsAssets(), worldX, worldY);
+                    batch.setColor(1,1,1,1);
+                    if (Float.isNaN(alpha)){
+                        uiLayer.resetTimer();
+                        uiLayer.resetRenderingSign();
+                    }
+
+                }
+                uiLayer.addSignTimer(delta);
+            } else {
+                uiLayer.resetRenderingSign();
+            }
+
+
             batch.draw(assetManager.getPlayerAssets(), 0, 0, 0, 0, assetManager.getPlayerAssets().getWidth(), assetManager.getPlayerAssets().getWidth(), 32, 32);
             batch.end();
 
@@ -198,8 +228,21 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         lastLength = allNPC.size();
     }
 
+    Vector3 oldPosition = null;
     private void handleUIInput(Batch batch, float delta) {
+        if (clickPos == null) return;
+        if (!clickPos.equals(oldPosition)) {
+            oldPosition = clickPos;
+            Vector2 clickPosition = new Vector2(clickPos.x, clickPos.y);
+            for (int i = 0; i < isTradingTo.getMarket().length; i++) {
+                Item item = isTradingTo.getMarket()[i];
+                Vector2 itemPos = isTradingTo.getItemPos(i, player, uiLayer.getNScale(), uiLayer.getWindowSize());
+                if (MyMath.inInPixelRange(itemPos, clickPosition, 21)){
+                    isTradingTo.trade(i, player);
+                }
+            }
 
+        }
     }
 
     float tempTime = 0;
@@ -238,14 +281,15 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         } else if(player.isSprinting()){
             player.stopSprint();
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            if (tempTime >= 0.5f){
-                NPC npc = new NPC("NPC"+(allNPC.toArray().length+1),50,
-                    new Vector2(player.getPosition().x-6.5f,player.getPosition().y), 0, 0, 4, assetManager, uiLayer);
-                allNPC.add(npc);
-                tempTime = 0;
-            }
-        }
+//        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+//            if (tempTime >= 0.5f){
+//                NPC npc = new NPC("NPC"+(allNPC.toArray().length+1),50,
+//                    new Vector2(player.getPosition().x-6.5f,player.getPosition().y),
+//                    0, 0, 0, assetManager, uiLayer);
+//                allNPC.add(npc);
+//                tempTime = 0;
+//            }
+//        }
         if (Gdx.input.isKeyPressed(Input.Keys.F)){
             NPC cNpc = getClosestNPC();
             if(cNpc!=null){
@@ -305,12 +349,16 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         return true;
     }
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        clickPos = camera.unproject(new Vector3(screenX, screenY, 0));
+        return true;
+    }
 
     // InputProcessor empty implementations
     @Override public boolean keyDown(int keycode) { return false; }
     @Override public boolean keyUp(int keycode) { return false; }
     @Override public boolean keyTyped(char character) { return false; }
-    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean touchCancelled(int i, int i1, int i2, int i3) {return false;}
     @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }

@@ -45,14 +45,11 @@ public class NPC extends Actor {
         this.uiLayer = uiLayer;
         this.texture = genderTypeToTexture(gender%2, type%8);
         initMarketMap();
-        Item[] items = new Item[6];
+        Item[] items = new Item[3];
         items[0] = new Apple(assetManager);
         items[1] = new Apple(assetManager);
         items[2] = new Apple(assetManager);
-        items[3] = new Apple(assetManager);
-        items[4] = new Apple(assetManager);
-        items[5] = new Apple(assetManager);
-        updateMarket(1, items);
+        updateMarket(0, items);
     }
 
     private void initMarketMap(){
@@ -159,13 +156,15 @@ public class NPC extends Actor {
 
     }
 
-    public boolean trade(Item item){
-        int itemID = contains(market, item);
+    public void trade(int itemID, Player player) {
         if (itemID >= 0){
-            market[itemID] = null;
-            return true;
+            Item item = market[itemID];
+            if (player.addItem(item)) {
+                market[itemID] = null;
+            } else if (item != null) {
+                uiLayer.startSignRendering(0.5f, 1, 20);
+            }
         }
-        return false;
     }
 
     public void openMarket(Batch batch){
@@ -197,6 +196,17 @@ public class NPC extends Actor {
         }
         Logger.log("[NPC: Warning] gender and Type is not valid");
         return null;
+    }
+    public Vector2 getItemPos(int itemID, Player player, float nScale, Vector2 windowSize){
+        float screenScaleX = Gdx.graphics.getWidth()/windowSize.x * nScale;
+        Vector2 awns = new Vector2();
+        Vector2 offset = NPC_marketMap.get(marketTextureID).get(itemID);
+        Vector2 playerPos = player.getPosition();
+
+        awns.x = player.getX()+(offset.x-51f)*screenScaleX;
+        awns.y = player.getY()+(offset.y-76f)*screenScaleX;
+
+        return awns;
     }
 
 

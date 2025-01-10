@@ -21,12 +21,14 @@ import io.github.infotest.util.MyAssetManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Timer;
 
 public class UI_Layer implements ApplicationListener {
 
     MyAssetManager assetManager;
 
     MainGameScreen mainScreen;
+    GameRenderer gameRenderer;
     SpriteBatch batch;
     Camera uiCamera; // UI-specific camera
     Player player;
@@ -38,8 +40,15 @@ public class UI_Layer implements ApplicationListener {
     private Texture[] manabar;
     private Texture[] ausdauerbar;
 
-    public UI_Layer(MainGameScreen mainScreen, MyAssetManager assetManager) {
+    private float signTimer = 0;
+    private boolean isRenderingSign = false;
+    private float duration = 3;
+    private float fadeDuration = 2;
+    private float base;
+
+    public UI_Layer(MainGameScreen mainScreen, MyAssetManager assetManager, GameRenderer renderer) {
         this.mainScreen = mainScreen;
+        this.gameRenderer = renderer;
         this.assetManager = assetManager;
         this.uiCamera = new OrthographicCamera(); // Create a new OrthographicCamera for UI
         viewport = new ScreenViewport(uiCamera);
@@ -89,6 +98,13 @@ public class UI_Layer implements ApplicationListener {
     }
 
     float nScale = 3f;
+    public float getNScale() {
+        return nScale;
+    }
+    public Vector2 getWindowSize() {
+        return windowSize;
+    }
+
     public void renderMarket(Batch batch, Texture texture) {
         float screenScaleX = Gdx.graphics.getWidth()/windowSize.x * nScale;
         float screenX = player.getX()-50f*screenScaleX;
@@ -107,6 +123,37 @@ public class UI_Layer implements ApplicationListener {
                     14f*screenScaleX, 14f*screenScaleX);
             }
         }
+    }
+
+    public void startSignRendering(float duration, float fadeDuration, float base) {
+        isRenderingSign = true;
+        this.duration = duration;
+        this.fadeDuration = fadeDuration;
+        this.base = base;
+    }
+    public boolean isRenderingSign(){
+        return isRenderingSign;
+    }
+    public void resetRenderingSign(){
+        isRenderingSign = false;
+    }
+    public float getDuration(){
+        return duration;
+    }
+    public float getFadeDuration(){
+        return fadeDuration;
+    }
+    public float getBase(){
+        return base;
+    }
+    public float getSignTimer(){
+        return signTimer;
+    }
+    public void addSignTimer(float delta){
+        signTimer += delta;
+    }
+    public void resetTimer(){
+        signTimer = 0;
     }
 
     @Override

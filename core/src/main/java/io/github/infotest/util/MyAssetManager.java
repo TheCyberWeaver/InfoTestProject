@@ -11,7 +11,6 @@ public class MyAssetManager {
     }
     public void loadLoadingScreen(){
         manager.load("assassin.png", Texture.class);
-        manager.finishLoading();
     }
     public Texture getLoadingScreenTexture(){
         return manager.get("assassin.png", Texture.class);
@@ -22,7 +21,6 @@ public class MyAssetManager {
         manager.load("grass_block.jpg",Texture.class);
         manager.load("stone_block.png",Texture.class);
         manager.load("basicWood.png",Texture.class);
-        manager.finishLoading();
     }
     public Texture[] getMapAssets(){
         Texture[] textures=new Texture[4];
@@ -34,7 +32,6 @@ public class MyAssetManager {
     }
     public void loadPlayerAssets(){
         manager.load("assassin.png", Texture.class);
-        manager.finishLoading();
     }
     public Texture getPlayerAssets(){
         return manager.get("assassin.png", Texture.class);
@@ -45,7 +42,6 @@ public class MyAssetManager {
         manager.load("fireball_sheet_fly.png", Texture.class);
         manager.load("fireball_sheet_endTime.png", Texture.class);
         manager.load("fireball_sheet_endHit.png", Texture.class);
-        manager.finishLoading();
     }
     public Texture[] getFireballAssets(){
         Texture[] fireball_sheets=new Texture[4];
@@ -61,7 +57,6 @@ public class MyAssetManager {
         manager.load("healthbar_empty_start.png", Texture.class);
         manager.load("healthbar_full_middle.png", Texture.class);
         manager.load("healthbar_empty_middle.png", Texture.class);
-        manager.finishLoading();
     }
     public Texture[] getHealthBarAssets(){
         Texture[] healthbar = new Texture[4];
@@ -77,7 +72,6 @@ public class MyAssetManager {
         manager.load("manabar_empty_start.png", Texture.class);
         manager.load("manabar_full_middle.png", Texture.class);
         manager.load("manabar_empty_middle.png", Texture.class);
-        manager.finishLoading();
     }
     public Texture[] getManaBarAssets(){
         Texture[] mana_bar = new Texture[4];
@@ -93,7 +87,6 @@ public class MyAssetManager {
         manager.load("ausdauerbar_empty_start.png", Texture.class);
         manager.load("ausdauerbar_full_middle.png", Texture.class);
         manager.load("ausdauerbar_empty_middle.png", Texture.class);
-        manager.finishLoading();
     }
     public Texture[] getAusdauerBarAssets(){
         Texture[] ausdauerbar = new Texture[4];
@@ -113,7 +106,6 @@ public class MyAssetManager {
         manager.load("NPC_Male_6.png", Texture.class);
         manager.load("NPC_Male_7.png", Texture.class);
         manager.load("NPC_Male_8.png", Texture.class);
-        manager.finishLoading();
     }
     public Texture[] getNPCMaleAssets(){
         Texture[] npcmale = new Texture[8];
@@ -137,7 +129,6 @@ public class MyAssetManager {
         manager.load("NPC_Women_6.png", Texture.class);
         manager.load("NPC_Women_7.png", Texture.class);
         manager.load("NPC_Women_8.png", Texture.class);
-        manager.finishLoading();
     }
     public Texture[] getNPCWomenAssets(){
         Texture[] npcwomen = new Texture[8];
@@ -159,7 +150,6 @@ public class MyAssetManager {
         manager.load("NPC/market/tasche.png", Texture.class);
         manager.load("NPC/market/koffer.png", Texture.class);
         manager.load("NPC/market/besonders.png", Texture.class);
-        manager.finishLoading();
     }
     public Texture[] getNPCMarketAssets(){
         Texture[] npcmarket = new Texture[6];
@@ -171,6 +161,13 @@ public class MyAssetManager {
         npcmarket[5]=manager.get("NPC/market/besonders.png", Texture.class);
         return npcmarket;
 
+    }
+
+    public void loadSignsAssets(){
+        manager.load("Ur_Inv_Is_Full_Sign.png", Texture.class);
+    }
+    public Texture getSignsAssets(){
+        return manager.get("Ur_Inv_Is_Full_Sign.png", Texture.class);
     }
 
 }

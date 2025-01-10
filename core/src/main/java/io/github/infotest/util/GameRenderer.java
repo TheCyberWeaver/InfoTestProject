@@ -5,17 +5,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import io.github.infotest.MainGameScreen;
+import io.github.infotest.MyMath;
 import io.github.infotest.character.Gegner;
 import io.github.infotest.character.NPC;
 import io.github.infotest.character.Player;
+import io.github.infotest.util.Overlay.UI_Layer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -195,6 +194,20 @@ public class GameRenderer {
         spriteStart.setPosition(x-segments*spriteMiddle.getWidth()*scaleX-scaleX*20, y);
         spriteStart.setScale(scaleX,scaleY);
         spriteStart.draw(batch);
+    }
+
+    private float fadeTimer = 0f;
+    public boolean fadeTextureOut(Batch batch, float delta, Texture texture , float worldX, float worldY, float duration, float basis) {
+        float alpha = MyMath.getExpValue(basis, duration, fadeTimer);
+        if(Float.isNaN(alpha)){
+            fadeTimer = 0f;
+            return false;
+        }
+        batch.setColor(1, 1, 1, alpha);
+        batch.draw(texture, worldX, worldY);
+        fadeTimer += delta;
+        batch.setColor(1, 1, 1, 1);
+        return true;
     }
 
 
