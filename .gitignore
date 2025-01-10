@@ -17,6 +17,8 @@ gradle-app.setting
 
 /server_java/build/
 /server_java/build/tmp/
+/server_java/build/tmp/compileJava/
+/server_java/build/tmp/compileJava/previous-compilation-data.bin
 
 ## Java:
 *.class
