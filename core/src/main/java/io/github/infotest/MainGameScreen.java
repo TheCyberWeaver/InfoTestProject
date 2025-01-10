@@ -4,9 +4,11 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import io.github.infotest.character.Gegner;
 import io.github.infotest.character.NPC;
 import io.github.infotest.character.Player;
@@ -14,10 +16,11 @@ import io.github.infotest.item.Item;
 import io.github.infotest.util.*;
 import io.github.infotest.util.Overlay.UI_Layer;
 import io.github.infotest.util.Factory.PlayerFactory;
+import io.github.infotest.util.ServerConnection;
+import io.github.infotest.util.GameRenderer;
+import io.github.infotest.util.MapCreator;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class MainGameScreen implements Screen, InputProcessor, ServerConnection.SeedListener {
     private SpriteBatch batch;
@@ -25,6 +28,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     private OrthographicCamera camera;
     private UI_Layer uiLayer;
     private MyAssetManager assetManager;
+
+    private Vector3 clickPos = null;
 
     //Settings
     private boolean keepInventory;
@@ -47,6 +52,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     private HashMap<String, Player> players = new HashMap<>();
     private ArrayList<Gegner> allGegner = new ArrayList<>();
     private ArrayList<NPC> allNPC = new ArrayList<>();
+    private int lastLength = 0;
+    private NPC isTradingTo;
 
     private Main game;
     public int globalSeed = 0;
@@ -74,6 +81,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         assetManager.loadNPCMaleAssets();
         assetManager.loadNPCWomenAssets();
         assetManager.loadNPCMarketAssets();
+        assetManager.loadSignsAssets();
         assetManager.manager.finishLoading();
 
         // connect to server
@@ -84,13 +92,13 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         serverConnection.connect();
 
 
-        this.uiLayer = new UI_Layer(this,assetManager);
+        this.uiLayer = new UI_Layer(this,assetManager,gameRenderer);
         Gdx.input.setInputProcessor(this);
 
 
 
         Vector2 spawnPosition = new Vector2(INITIAL_SIZE / 2f * CELL_SIZE, INITIAL_SIZE / 2f * CELL_SIZE);
-        //Logger.log("class: "+ game.getPlayerClass());
+        //Logger.log(""class: "+ game.getPlayerClass());
         player = PlayerFactory.createPlayer(serverConnection.getMySocketId(),game.getUsername(),game.getPlayerClass(),spawnPosition,assetManager);
         //Logger.log("class: "+ player.getClass());
 
@@ -104,6 +112,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         if(game.isDevelopmentMode){
             player.setSpeed(500);
         }
+
+        isTradingTo= null;
     }
     @Override
     public void onSeedReceived(int seed) {
@@ -146,7 +156,51 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             gameRenderer.renderMap(batch, camera.zoom, player.getPosition());
             gameRenderer.renderPlayers(batch, players, delta);
             gameRenderer.renderGegner(batch, allGegner, delta);
+            handleInput(batch, delta);
+            if (lastLength < allNPC.size()) {
+                //Sort list based on y coordinate (dsc)
+                allNPC.sort(new Comparator<NPC>() {
+                    @Override
+                    public int compare(NPC npc1, NPC npc2) {
+                        return Float.compare(npc2.getPosition().y, npc1.getPosition().y);
+                    }
+                });
+            }
+
+            gameRenderer.renderNPCs(batch, allNPC, delta);
             gameRenderer.renderAnimations(batch,delta,shapeRenderer);
+
+            // Render Market and Items
+            if (isTradingTo != null) {
+                uiLayer.renderMarket(batch, isTradingTo.getMarketTexture());
+                uiLayer.renderItems(batch, isTradingTo.getMarket(), isTradingTo.getNPC_marketMapValue(isTradingTo.getMarketTextureID()));
+                handleUIInput(batch, delta);
+            }
+            // Render INV_FULL sign
+            if (uiLayer.isRenderingSign()){
+                Vector3 worldCoordinates = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+                float worldX = worldCoordinates.x;
+                float worldY = worldCoordinates.y;
+                float time = uiLayer.getSignTimer();
+                if (time <= uiLayer.getDuration()){
+                    batch.draw(assetManager.getSignsAssets(), worldX, worldY);
+                } else if (time > uiLayer.getDuration() && time-uiLayer.getSignTimer()< uiLayer.getFadeDuration()) {
+                    float alpha = MyMath.getExpValue(uiLayer.getBase(), uiLayer.getFadeDuration(), time-uiLayer.getDuration());
+                    batch.setColor(1,1,1,alpha);
+                    batch.draw(assetManager.getSignsAssets(), worldX, worldY);
+                    batch.setColor(1,1,1,1);
+                    if (Float.isNaN(alpha)){
+                        uiLayer.resetTimer();
+                        uiLayer.resetRenderingSign();
+                    }
+
+                }
+                uiLayer.addSignTimer(delta);
+            } else {
+                uiLayer.resetRenderingSign();
+            }
+
+
             batch.draw(assetManager.getPlayerAssets(), 0, 0, 0, 0, assetManager.getPlayerAssets().getWidth(), assetManager.getPlayerAssets().getWidth(), 32, 32);
             batch.end();
 
@@ -155,8 +209,6 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             }
             //player.update(delta);
             checkFireballCollisions();
-
-            handleInput(delta);
 
             if (player.getHealthPoints() <= 0) {
                 player.kill();
@@ -172,10 +224,29 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         }
         debugTimer+=delta;
         uiLayer.render();
+
+        lastLength = allNPC.size();
+    }
+
+    Vector3 oldPosition = null;
+    private void handleUIInput(Batch batch, float delta) {
+        if (clickPos == null) return;
+        if (!clickPos.equals(oldPosition)) {
+            oldPosition = clickPos;
+            Vector2 clickPosition = new Vector2(clickPos.x, clickPos.y);
+            for (int i = 0; i < isTradingTo.getMarket().length; i++) {
+                Item item = isTradingTo.getMarket()[i];
+                Vector2 itemPos = isTradingTo.getItemPos(i, player, uiLayer.getNScale(), uiLayer.getWindowSize());
+                if (MyMath.inInPixelRange(itemPos, clickPosition, 21)){
+                    isTradingTo.trade(i, player);
+                }
+            }
+
+        }
     }
 
     float tempTime = 0;
-    private void handleInput(float delta) {
+    private void handleInput(Batch batch, float delta) {
         boolean moved = false;
         float speed = player.getSpeed();
 
@@ -201,6 +272,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             moved = true;
             player.setRotation(new Vector2(0,-1));
         }
+
         if (Gdx.input.isKeyPressed(Input.Keys.E)) {
             player.castSkill(1,serverConnection);
         }
@@ -208,6 +280,29 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             player.sprint(delta, game.isDevelopmentMode);
         } else if(player.isSprinting()){
             player.stopSprint();
+        }
+//        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+//            if (tempTime >= 0.5f){
+//                NPC npc = new NPC("NPC"+(allNPC.toArray().length+1),50,
+//                    new Vector2(player.getPosition().x-6.5f,player.getPosition().y),
+//                    0, 0, 0, assetManager, uiLayer);
+//                allNPC.add(npc);
+//                tempTime = 0;
+//            }
+//        }
+        if (Gdx.input.isKeyPressed(Input.Keys.F)){
+            NPC cNpc = getClosestNPC();
+            if(cNpc!=null){
+                float distance = player.getPosition().dst(cNpc.getPosition());
+                if (isTradingTo == null && distance <= 100 && !cNpc.isTrading()) {
+                    cNpc.openMarket(batch);
+                    isTradingTo = cNpc;
+                }
+            }
+        }
+        if (moved && isTradingTo != null) {
+            isTradingTo.closeMarket();
+            isTradingTo = null;
         }
         if(Gdx.input.isKeyPressed(Input.Keys.P) && game.isDevelopmentMode && debugTimer>=1){
 
@@ -254,12 +349,16 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         return true;
     }
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        clickPos = camera.unproject(new Vector3(screenX, screenY, 0));
+        return true;
+    }
 
     // InputProcessor empty implementations
     @Override public boolean keyDown(int keycode) { return false; }
     @Override public boolean keyUp(int keycode) { return false; }
     @Override public boolean keyTyped(char character) { return false; }
-    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean touchCancelled(int i, int i1, int i2, int i3) {return false;}
     @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
@@ -268,13 +367,25 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     public static int lvlToMaxHP(int lvl){
         return 50 + 5 * lvl;
     }
-
     public static int lvlToMaxMana(int lvl){
         return 25 + 5 * lvl;
     }
-
     public static int neededExpForLevel(int lvl){
         return 20 + 10 * lvl;
+    }
+
+    public NPC getClosestNPC(){
+        NPC cNpc = null;
+        float dist = Float.MAX_VALUE;
+        Vector2 playerPos = player.getPosition();
+        for (NPC npc : allNPC){
+            float distanceSq = npc.getPosition().dst2(playerPos);
+            if (distanceSq < dist){
+                dist = distanceSq;
+                cNpc = npc;
+            }
+        }
+        return cNpc;
     }
 
     @Override

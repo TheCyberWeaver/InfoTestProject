@@ -30,6 +30,8 @@ public abstract class Player extends Actor{
     protected float maxMana;
     protected float manaRegen = 2f;
 
+    protected int INV_SIZE = 5;
+
     protected float ausdauer;
     protected float maxAusdauer;
     protected float ausdauerRegen = 3f;
@@ -52,6 +54,9 @@ public abstract class Player extends Actor{
         this.level = 1;
         this.experience = 0;
         items=new ArrayList<>();
+        for(int i=0;i<INV_SIZE;i++) {
+            items.add(null);
+        }
         // use custom font
         // FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("font.ttf"));
         // FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -215,6 +220,25 @@ public abstract class Player extends Actor{
     }
     public ArrayList<Item> getItems() {
         return items;
+    }
+    public boolean addItem(Item item){
+        for (int j=0;j<items.size();j++){
+            Item i = items.get(j);
+            if (i == null){
+                items.set(j,item);
+                Logger.log(items.toString());
+                return true;
+            }
+        }
+        return false;
+    }
+    public boolean addItem(Item item, int index){
+        Item i = items.get(index);
+        if (i == null){
+            items.set(index,item);
+            return true;
+        }
+        return false;
     }
     public void clearInv(){
         items.clear();
