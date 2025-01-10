@@ -16,6 +16,7 @@ gradle-app.setting
 /shared/build/
 
 /server_java/build/
+/server_java/build/tmp/
 
 ## Java:
 *.class
