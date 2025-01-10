@@ -15,5 +15,15 @@
 * run command `npm install express http socket.io` and wait till all dependencies are successfully installed
 
 ## Start the Server
+1. Method 1: Use Terminal
+* go to the Terminal of IntelliJ
+* run command `cd server` to get into server folder
 * run command `node server_v2.js` to start the server
 * press `Ctrl` + `C` to stop the server
+2. Method 2: Configure Running Setup
+* go to edit configuration
+* ![img_1.png](img_1.png)
+* Configure as the following
+* ![img_2.png](img_2.png)
+* Now you can start and stop the server just like what you do with your client application.
+
