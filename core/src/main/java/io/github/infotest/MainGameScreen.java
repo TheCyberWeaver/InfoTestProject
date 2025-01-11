@@ -30,6 +30,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     private MyAssetManager assetManager;
 
     private Vector3 clickPos = null;
+    private boolean clicked = false;
 
     //Settings
     private boolean keepInventory;
@@ -196,8 +197,6 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
                 }
                 uiLayer.addSignTimer(delta);
-            } else {
-                uiLayer.resetRenderingSign();
             }
 
 
@@ -226,6 +225,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         uiLayer.render();
 
         lastLength = allNPC.size();
+        clicked = false;
     }
 
     Vector3 oldPosition = null;
@@ -235,13 +235,14 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             oldPosition = clickPos;
             Vector2 clickPosition = new Vector2(clickPos.x, clickPos.y);
             for (int i = 0; i < isTradingTo.getMarket().length; i++) {
-                Item item = isTradingTo.getMarket()[i];
                 Vector2 itemPos = isTradingTo.getItemPos(i, player, uiLayer.getNScale(), uiLayer.getWindowSize());
-                if (MyMath.inInPixelRange(itemPos, clickPosition, 21)){
+                if (MyMath.inInPixelRange(itemPos, clickPosition, 21)) {
+                    //Player has Clicked on Item
                     isTradingTo.trade(i, player);
                 }
             }
-
+        } else if (clickPos.equals(oldPosition) && clicked) {
+            uiLayer.resetTimer();
         }
     }
 
@@ -281,15 +282,15 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         } else if(player.isSprinting()){
             player.stopSprint();
         }
-//        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-//            if (tempTime >= 0.5f){
-//                NPC npc = new NPC("NPC"+(allNPC.toArray().length+1),50,
-//                    new Vector2(player.getPosition().x-6.5f,player.getPosition().y),
-//                    0, 0, 0, assetManager, uiLayer);
-//                allNPC.add(npc);
-//                tempTime = 0;
-//            }
-//        }
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            if (tempTime >= 0.5f){
+                NPC npc = new NPC("NPC"+(allNPC.toArray().length+1),50,
+                    new Vector2(player.getPosition().x-6.5f,player.getPosition().y),
+                    0, 0, 0, assetManager, uiLayer);
+                allNPC.add(npc);
+                tempTime = 0;
+            }
+        }
         if (Gdx.input.isKeyPressed(Input.Keys.F)){
             NPC cNpc = getClosestNPC();
             if(cNpc!=null){
@@ -352,6 +353,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         clickPos = camera.unproject(new Vector3(screenX, screenY, 0));
+        clicked = true;
         return true;
     }
 
@@ -453,7 +455,6 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     public boolean hasSeedReceived(){
         return seedReceived;
     }
-
     public boolean isKeepInventory(){
         return keepInventory;
     }
