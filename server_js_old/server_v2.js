@@ -28,7 +28,7 @@ io.on('connection', (socket) => {
     // Send socket.id to the client
     socket.emit('yourId', socket.id);
 
-    io.emit('init', {
+    socket.emit('init', {
         seed: seed,
         serverVersion: serverVersion,
     });

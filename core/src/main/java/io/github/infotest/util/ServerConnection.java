@@ -1,6 +1,7 @@
 package io.github.infotest.util;
 
 import com.badlogic.gdx.math.Vector2;
+import com.google.gson.JsonObject;
 import io.github.infotest.character.Player;
 import io.github.infotest.util.DataObjects.PlayerData;
 import io.github.infotest.util.Factory.PlayerFactory;
@@ -64,81 +65,63 @@ public class ServerConnection {
             }).on("yourId", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    if (args.length > 0 && args[0] instanceof String) {
-                        mySocketId = (String) args[0];
+                    if (args.length > 1 && args[1] instanceof String) {
+                        mySocketId = args[1].toString();
                         Logger.log("[ServerConnection INFO]: My socket ID: " + mySocketId);
-                    }
-                }
-            }).on("updateAllPlayers", new Emitter.Listener() {
-                @Override
-                public void call(Object... args) {
-                    String updatedPlayersJson = args[0].toString();
-
-                    //   - key: socketId (e.g., "socketId_1")
-                    //   - value: <PlayerData>
-                    Gson gson = new Gson();
-                    Type typeOfHashMap = new TypeToken<Map<String, PlayerData>>(){}.getType();
-                    Map<String, PlayerData> playersMap = gson.fromJson(updatedPlayersJson, typeOfHashMap);
-
-                    updatePlayers(playersMap);
-
-                }
-            }).on("playerLeft", new Emitter.Listener() {
-                @Override
-                public void call(Object... args) {
-                    if (args.length > 0 && args[0] instanceof String) {
-                        String leftPlayerId = (String) args[0];
-                        players.remove(leftPlayerId);
+                        //Logger.log("[ServerConnection INFO]: "+(String)args[1]);
                     }
                 }
             }).on("init", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
+                    if (args.length > 1 && args[1] instanceof JSONObject) {
+                        Logger.log("[ServerConnection Debug]: "+args[0].toString());
+                        JSONObject data = (JSONObject) args[1];
+                        Logger.log("[ServerConnection INFO] Received init data: " + data.toString());
+                        try{
+                            initClient(data);
+                        }catch (Exception e){
+                            Logger.log("[ServerConnection ERROR]: Failed to parse init data: " + e.getMessage());
+                            e.printStackTrace();
+                        }
+                    }
+                    else {
+                        Logger.log("[ServerConnection ERROR]: Received init event with invalid data");
+                    }
+                }
+            }).on("updateAllPlayers", new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
                     if (args.length > 0 && args[0] instanceof JSONObject) {
-                        JSONObject data = (JSONObject) args[0];
+                        String updatedPlayersJson = args[0].toString();
+                        // Logger.log("[ServerConnection Debug]: "+updatedPlayersJson);
+                        //   - key: socketId (e.g., "socketId_1")
+                        //   - value: <PlayerData>
+                        Gson gson = new Gson();
+                        Type typeOfHashMap = new TypeToken<Map<String, PlayerData>>(){}.getType();
+                        Map<String, PlayerData> playersMap = gson.fromJson(updatedPlayersJson, typeOfHashMap);
 
-                        globalSeed = (int) data.get("seed");
-                        //Logger.log("[INFO]: Global seed : " + globalSeed);
-                        // call back
-                        if (seedListener != null) {
-                            seedListener.onSeedReceived(globalSeed);
-                        }
+                        updatePlayers(playersMap);
+                    }
+                    else {
+                        Logger.log("[ServerConnection ERROR]: Received updateAllPlayers event with invalid data");
+                    }
 
-                        String serverVersion = (String) data.get("serverVersion");
-                        if (serverVersion.equals(clientVersion)) {
-                            Logger.log("[ServerConnection INFO]: All Up to Date. Server&Client  Version: " + serverVersion);
-                        }
-                        else{
-                            int[] client = parseVersion(clientVersion); // [clientMajor, clientMinor]
-                            int[] server = parseVersion(serverVersion); // [serverMajor, serverMinor]
 
-                            int clientMajor = client[0];
-                            int clientMinor = client[1];
-                            int serverMajor = server[0];
-                            int serverMinor = server[1];
-
-                            if (clientMajor < serverMajor) {
-                                // Major version is behind
-                                Logger.log("[ServerConnection ERROR]: Client Major version is behind, Client is not compatible");
-                                Logger.log("[ServerConnection ERROR]: Server Version: " + serverVersion + "| Client Version: " + clientVersion);
-                                Logger.log("[ServerConnection ERROR]: Shutting Down the Client");
-                            } else if (clientMajor == serverMajor && clientMinor < serverMinor) {
-                                // Minor version is behind
-                                Logger.log("[ServerConnection WARNING]: Client Minor version is behind. There might be bugs not discovered. Pls consider updating your client", true );
-                                Logger.log("[ServerConnection WARNING]: Server Version: " + serverVersion + "| Client Version: " + clientVersion);
-                            } else {
-                                // Otherwise: client is ahead
-                                Logger.log("[ServerConnection WARNING]: Server Version is behind");
-                                Logger.log("[ServerConnection WARNING]: Server Version: " + serverVersion + "| Client Version: " + clientVersion);
-                            }
-                        }
+                }
+            }).on("playerLeft", new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    if (args.length > 1 && args[1] instanceof String) {
+                        String leftPlayerId = (String) args[1];
+                        players.remove(leftPlayerId);
                     }
                 }
             }).on("playerAction", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    if (args.length > 0 && args[0] instanceof JSONObject) {
-                        JSONObject data = (JSONObject) args[0];
+                    if (args.length > 1 && args[1] instanceof JSONObject) {
+                        JSONObject data = (JSONObject) args[1];
                         try {
                             //Logger.log("[ServerConnection INFO]: " + data.toString());
                             doPlayerAction(data);
@@ -151,8 +134,8 @@ public class ServerConnection {
             }).on("loggingINFO", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    if (args.length > 0 && args[0] instanceof String) {
-                        String text = (String) args[0];
+                    if (args.length > 1 && args[1] instanceof String) {
+                        String text = (String) args[1];
                         Logger.log("[Server Warning]: " + text);
                         //TODO: Write server warnings into a logging file
                     }
@@ -163,6 +146,43 @@ public class ServerConnection {
 
         } catch (URISyntaxException e) {
             e.printStackTrace();
+        }
+    }
+    private void initClient(JSONObject data) {
+        globalSeed = (int) data.get("seed");
+        Logger.log("[INFO]: Global seed : " + globalSeed);
+        // call back
+        if (seedListener != null) {
+            seedListener.onSeedReceived(globalSeed);
+        }
+
+        String serverVersion = (String) data.get("serverVersion");
+        if (serverVersion.equals(clientVersion)) {
+            Logger.log("[ServerConnection INFO]: All Up to Date. Server&Client  Version: " + serverVersion);
+        }
+        else{
+            int[] client = parseVersion(clientVersion); // [clientMajor, clientMinor]
+            int[] server = parseVersion(serverVersion); // [serverMajor, serverMinor]
+
+            int clientMajor = client[0];
+            int clientMinor = client[1];
+            int serverMajor = server[0];
+            int serverMinor = server[1];
+
+            if (clientMajor < serverMajor) {
+                // Major version is behind
+                Logger.log("[ServerConnection ERROR]: Client Major version is behind, Client is not compatible");
+                Logger.log("[ServerConnection ERROR]: Server Version: " + serverVersion + "| Client Version: " + clientVersion);
+                Logger.log("[ServerConnection ERROR]: Shutting Down the Client");
+            } else if (clientMajor == serverMajor && clientMinor < serverMinor) {
+                // Minor version is behind
+                Logger.log("[ServerConnection WARNING]: Client Minor version is behind. There might be bugs not discovered. Pls consider updating your client", true );
+                Logger.log("[ServerConnection WARNING]: Server Version: " + serverVersion + "| Client Version: " + clientVersion);
+            } else {
+                // Otherwise: client is ahead
+                Logger.log("[ServerConnection WARNING]: Server Version is behind");
+                Logger.log("[ServerConnection WARNING]: Server Version: " + serverVersion + "| Client Version: " + clientVersion);
+            }
         }
     }
     private void doPlayerAction(JSONObject data) throws JSONException {
@@ -199,7 +219,7 @@ public class ServerConnection {
         for (Map.Entry<String, PlayerData> entry : playersMap.entrySet()) {
             String socketId = entry.getKey();
             PlayerData playerData = entry.getValue();
-
+//            Logger.log("Debug:"+socketId+" | "+playerData.name);
             float x = (float)playerData.position.x;
             float y = (float)playerData.position.y;
 

@@ -4,6 +4,7 @@ import com.corundumstudio.socketio.*;
 import com.corundumstudio.socketio.listener.*;
 import com.google.gson.*;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -41,7 +42,11 @@ public class GameSocketServer {
             // 原 Node.js 中是 io.emit('init', {...})
             // 这里我们也可以选择给所有客户端发，也可以只在 connect 时发给当前用户
             // 为了和原本逻辑更一致，这里演示广播
-            server.getBroadcastOperations().sendEvent("init", new InitData(seed, serverVersion));
+            Map<String, Object> initData = new HashMap<>();
+            initData.put("seed", seed);
+            initData.put("serverVersion", serverVersion);
+            //server.getBroadcastOperations().sendEvent("init", initData);
+            client.sendEvent("init", initData);
         });
 
         // 4. 当收到 "init" 事件时，创建新玩家
@@ -68,10 +73,9 @@ public class GameSocketServer {
             newPlayer.setPosition(x, y);
 
             // 从 JSON 数组中取 item
-            for (int i=0; i<items.size(); i++){
-                newPlayer.pickItem(items.get(i).getAsString());
-            }
-
+//            for (int i=0; i<items.size(); i++){
+//                newPlayer.pickItem(items.get(i).getAsString());
+//            }
             players.put(socketId, newPlayer);
             System.out.println("[INFO]: " + newPlayer.name + " " + newPlayer.classtype + " joins the world");
 

@@ -6,7 +6,7 @@
 * `node -v`
 * the output should be something like this
 * `v22.12.0`
-* ![img.png](img.png)
+* ![img.png](img/img.png)
 ## Setup Node.js 
 * go to the Terminal of IntelliJ
 * run command `cd server` to get into server folder
@@ -22,8 +22,8 @@
 * press `Ctrl` + `C` to stop the server
 2. Method 2: Configure Running Setup
 * go to edit configuration
-* ![img_1.png](img_1.png)
+* ![img_1.png](img/img_1.png)
 * Configure as the following
-* ![img_2.png](img_2.png)
+* ![img_2.png](img/img_2.png)
 * Now you can start and stop the server just like what you do with your client application.
 
