@@ -27,8 +27,8 @@ public class MapCreator {
 
     public int[][] initializePerlinNoiseMap(){
         // generate perlin noise based on seed (see Perlin Class)
-        float[][] whiteNoise = perlinClass.GenerateWhiteNoise(mapWidth, mapWidth, seed);
-        float[][] perlinNoise = perlinClass.GeneratePerlinNoise(whiteNoise, 5);
+        float[][] whiteNoise = Perlin.GenerateWhiteNoise(mapWidth, mapWidth, seed);
+        float[][] perlinNoise = perlinClass.GeneratePerlinNoise(whiteNoise, 6); //5
 
         // convert perlin noise to valid map
         for (int y = 0; y < mapWidth; y++) {
@@ -50,7 +50,6 @@ public class MapCreator {
         return map;
     }
 
-    // Check if a block is isolated (no similar neighbors)
     private boolean isIsolatedBlock(int x, int y) {
         int currentBlock = map[y][x];
         boolean hasSameNeighbor = false;
@@ -63,8 +62,6 @@ public class MapCreator {
 
         return !hasSameNeighbor;
     }
-
-    // Check if a block is part of an isolated pair
     private boolean isIsolatedBlockPair(int x, int y) {
         int currentBlock = map[y][x];
 
@@ -79,8 +76,6 @@ public class MapCreator {
 
         return false;
     }
-
-    // Check for neighbors except the pair itself
     private boolean hasSameNeighborExceptPair(int x1, int y1, int x2, int y2) {
         int currentBlock = map[y1][x1];
 
@@ -92,7 +87,6 @@ public class MapCreator {
 
         return false;
     }
-
     private boolean CheckEveryNeighbour(int x1, int y1, int x2, int y2, int currentBlock) {
         if (x1 > 0 && map[y1][x1 - 1] == currentBlock && !(x1 - 1 == x2 && y1 == y2)) return true;
         if (x1 < mapWidth - 1 && map[y1][x1 + 1] == currentBlock && !(x1 + 1 == x2 && y1 == y2)) return true;
@@ -101,7 +95,6 @@ public class MapCreator {
         return false;
     }
 
-    // Get a random block from one of the 4 neighbors
     private int getRandomNeighbor(int x, int y) {
         List<Integer> neighbors = new ArrayList<>();
 

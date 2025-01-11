@@ -129,6 +129,7 @@ public class UI_Layer implements ApplicationListener {
         isRenderingSign = true;
         this.duration = duration;
         this.fadeDuration = fadeDuration;
+        this.signTimer = 0f;
         this.base = base;
     }
     public boolean isRenderingSign(){
