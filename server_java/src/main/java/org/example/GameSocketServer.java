@@ -11,10 +11,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class GameSocketServer {
 
     /**
-     * 固定seed
+     * fixed seed:114514 (Meaning of this number could be found on internet)
      */
     private static final int seed = 114514;
-    private static final String serverVersion = "v2.1";
+    private static final String serverVersion = "v3.0";
 
     /**
      * 存放所有连接的玩家

@@ -14,7 +14,7 @@ public class Main extends Game {
     private String serverUrl;
     public boolean isDevelopmentMode=true;
 
-    public String  clientVersion="v2.1";
+    public String  clientVersion="v3.0";
 
     private boolean keepInventory = true;
     /*
