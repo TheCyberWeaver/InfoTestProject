@@ -24,8 +24,7 @@ public class MyMath {
     /**
      * Die Methode berechnet den Funktionswert für den Wert x der Funktion:
      * b^-x,
-     * wobei von:
-     * x_e-0,5 < x < x_e
+     * wobei von: x_e - 0,5 kleiner als  x kleiner als x_e
      * eine Linearfunktion anliegt.
      * @param b die basis der Exponentialfunktion
      * @param x_e der maximale Wert, des Definitionsbereichs
