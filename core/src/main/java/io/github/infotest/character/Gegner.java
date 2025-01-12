@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public abstract class Gegner extends  Actor{
 
-    private float killXP;
+    private final float killXP;
 
     public Gegner(int maxHealthPoints, Vector2 initialPosition, float speed, Texture texture, float exp) {
         super(maxHealthPoints, initialPosition, speed, texture);

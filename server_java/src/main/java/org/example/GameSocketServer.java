@@ -1,9 +1,15 @@
 package org.example;
-
+/*
+ * Author: Thomas Lu
+ * Translated by: ChatGPT o1
+ */
 import com.corundumstudio.socketio.*;
-import com.corundumstudio.socketio.listener.*;
 import com.google.gson.*;
+import org.example.character.Player;
+import org.example.character.NPC;
+import org.example.util.MapCreator;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,14 +20,26 @@ public class GameSocketServer {
      * fixed seed:114514 (Meaning of this number could be found on internet)
      */
     private static final int seed = 114514;
-    private static final String serverVersion = "v3.0";
+    private static final String serverVersion = "v3.1";
 
+    // Map data
+
+    public static final int CELL_SIZE = 32;
+    public static final int MAP_SIZE = 3000;
+    public static int numOfValidTextures = 4;
+    public static int[][] GAME_MAP=new int[MAP_SIZE][MAP_SIZE];
+
+    //NPC
+    private static ArrayList<NPC> npcs=new ArrayList<NPC>();
     /**
      * Stores all connected players
      */
     private static final Map<String, Player> players = new ConcurrentHashMap<>();
 
     public static void main(String[] args) {
+        // 0. Initialize the Server
+        serverInitialization();
+
         // 1. Configure the server
         Configuration config = new Configuration();
         // Corresponds to server.listen(9595, '0.0.0.0');
@@ -203,13 +221,19 @@ public class GameSocketServer {
         }
         server.stop();
     }
-
+    private static void serverInitialization(){
+        MapCreator mapCreator=new MapCreator(seed);
+        mapCreator.initializePerlinNoiseMap();
+        npcs = mapCreator.spawnNPCs();
+    }
     /**
      * Push the latest player list to all clients
      */
     private static void broadcastAllPlayers(SocketIOServer server) {
         server.getBroadcastOperations().sendEvent("updateAllPlayers", players);
+        server.getBroadcastOperations().sendEvent("updateAllNPCs", npcs);
     }
+
 
     /**
      * Used to send initial information to the client

@@ -1,7 +1,6 @@
-package io.github.infotest;
+package io.github.infotest.util;
 
 import com.badlogic.gdx.math.Vector2;
-import io.github.infotest.util.Logger;
 
 public class MyMath {
     /**

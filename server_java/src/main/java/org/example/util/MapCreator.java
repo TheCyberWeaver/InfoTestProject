@@ -1,20 +1,22 @@
-package io.github.infotest.util;
+package org.example.util;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static io.github.infotest.MainGameScreen.*;
+import static org.example.GameSocketServer.*;
+import org.example.character.NPC;
 
 public class MapCreator {
-    private int seed;
-    private Perlin perlinClass;
-    private Random rndm;
+    private final int seed;
+    private final Perlin perlinClass;
+    private final Random rndm;
 
     public MapCreator(int pSeed) {
         seed = pSeed;
         perlinClass = new Perlin();
         rndm = new Random(seed);
+
     }
 
     public void initializePerlinNoiseMap(){
@@ -40,13 +42,28 @@ public class MapCreator {
             }
         }
     }
+    /**
+     * generate a bunch of NPCs on int[][] map
+     * @return an ArrayList of NPCs
+     */
+    public ArrayList<NPC> spawnNPCs(){
+        ArrayList<NPC> npcs = new ArrayList<>();
+        //TODO: @alxmorozova
+        //Example:
+        int centralPointX = MAP_SIZE *CELL_SIZE / 2; // centralPointX=48000
+        int centralPointY = MAP_SIZE *CELL_SIZE / 2; // centralPointY=48000
+        npcs.add(new NPC("Unknown",100,new Vector2(centralPointX,centralPointY),0,2));
+
+
+        return npcs;
+    }
 
     private boolean isIsolatedBlock(int x, int y) {
         int currentBlock = GAME_MAP[y][x];
-        boolean hasSameNeighbor = false;
+        boolean hasSameNeighbor = x > 0 && GAME_MAP[y][x - 1] == currentBlock;
 
         // Check the 4 direct neighbors (up, down, left, right)
-        if (x > 0 && GAME_MAP[y][x - 1] == currentBlock) hasSameNeighbor = true; // Left
+        // Left
         if (x < MAP_SIZE - 1 && GAME_MAP[y][x + 1] == currentBlock) hasSameNeighbor = true; // Right
         if (y > 0 && GAME_MAP[y - 1][x] == currentBlock) hasSameNeighbor = true; // Up
         if (y < MAP_SIZE - 1 && GAME_MAP[y + 1][x] == currentBlock) hasSameNeighbor = true; // Down
@@ -74,16 +91,13 @@ public class MapCreator {
         if (CheckEveryNeighbour(x1, y1, x2, y2, currentBlock)) return true; // Down
 
         // Check neighbors of the second block
-        if (CheckEveryNeighbour(x2, y2, x1, y1, currentBlock)) return true;
-
-        return false;
+        return CheckEveryNeighbour(x2, y2, x1, y1, currentBlock);
     }
     private boolean CheckEveryNeighbour(int x1, int y1, int x2, int y2, int currentBlock) {
         if (x1 > 0 && GAME_MAP[y1][x1 - 1] == currentBlock && !(x1 - 1 == x2 && y1 == y2)) return true;
         if (x1 < MAP_SIZE - 1 && GAME_MAP[y1][x1 + 1] == currentBlock && !(x1 + 1 == x2 && y1 == y2)) return true;
         if (y1 > 0 && GAME_MAP[y1 - 1][x1] == currentBlock && !(x1 == x2 && y1 - 1 == y2)) return true;
-        if (y1 < MAP_SIZE - 1 && GAME_MAP[y1 + 1][x1] == currentBlock && !(x1 == x2 && y1 + 1 == y2)) return true;
-        return false;
+        return y1 < MAP_SIZE - 1 && GAME_MAP[y1 + 1][x1] == currentBlock && !(x1 == x2 && y1 + 1 == y2);
     }
 
     private int getRandomNeighbor(int x, int y) {

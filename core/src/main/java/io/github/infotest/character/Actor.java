@@ -13,7 +13,6 @@ public abstract class Actor {
     // basic things
     protected float healthPoints;    // current HP
     protected float maxHealthPoints; // maximum HP
-    protected float healthPointsRegen = 2f; // health regeneration per second
     protected boolean isAlive;
 
     //Movement related
