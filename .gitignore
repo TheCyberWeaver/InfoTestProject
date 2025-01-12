@@ -12,8 +12,10 @@ gradle-app.setting
 /ios/build/
 /ios-moe/build/
 /headless/build/
-/server/build/
+/server_js_old/build/
 /shared/build/
+
+/server_java/build/
 
 ## Java:
 *.class
@@ -76,7 +78,7 @@ www-test/
 /ios/bin/
 /ios-moe/bin/
 /headless/bin/
-/server/bin/
+/server_js_old/bin/
 /shared/bin/
 *.tmp
 *.bak
@@ -100,7 +102,7 @@ www-test/
 /ios/nbproject/private/
 /ios-moe/nbproject/private/
 /headless/nbproject/private/
-/server/nbproject/private/
+/server_js_old/nbproject/private/
 /shared/nbproject/private/
 
 /nbbuild/
@@ -113,7 +115,7 @@ www-test/
 /ios/nbbuild/
 /ios-moe/nbbuild/
 /headless/nbbuild/
-/server/nbbuild/
+/server_js_old/nbbuild/
 /shared/nbbuild/
 
 /dist/
@@ -126,7 +128,7 @@ www-test/
 /ios/dist/
 /ios-moe/dist/
 /headless/dist/
-/server/dist/
+/server_js_old/dist/
 /shared/dist/
 
 /nbdist/
@@ -139,7 +141,7 @@ www-test/
 /ios/nbdist/
 /ios-moe/nbdist/
 /headless/nbdist/
-/server/nbdist/
+/server_js_old/nbdist/
 /shared/nbdist/
 
 nbactions.xml
@@ -165,3 +167,7 @@ Thumbs.db
 **/resource-config.json
 
 /assets/log/app.log
+
+/server_js_old/node_modules
+/server_js_old/package.json
+/server_js_old/package-lock.json

@@ -9,28 +9,28 @@ class Player {
        * The socket ID associated with this player
        */
       this.id = id;
-  
+
       /**
        * The player's name
        */
       this.name = name;
-  
+
       /**
        * The player's current position
        */
       this.position = { x: 0, y: 0 };
-  
+
       /**
        * The items that the player is currently carrying
        */
       this.items = [];
-  
+
       /**
        * The player's hit points
        */
       this.hp = 100;
-  
-  
+
+
       /**
        * The player's classtype
        */
@@ -42,7 +42,7 @@ class Player {
 
       this.rotation = { x: 0, y: 0 };
     }
-  
+
     /**
      * Set a new position for the player
      * @param {number} x - The X coordinate
@@ -69,7 +69,7 @@ class Player {
     pickItem(item) {
       this.items.push(item);
     }
-  
+
     /**
      * Player drops an item from the inventory
      * @param {string} item - The item to drop
@@ -80,13 +80,13 @@ class Player {
         this.items.splice(index, 1);
       }
     }
-  
-    
+
+
     takeDamage(damage) {
       // Example logic for normal attack
       this.hp -= damage;
     }
-    
+
     /**
      * Player performs a profession-specific skill
      * @param {Player} target - The target player
@@ -95,6 +95,5 @@ class Player {
       target.hp -= damage;
     }
   }
-  
+
   module.exports = Player;
-  

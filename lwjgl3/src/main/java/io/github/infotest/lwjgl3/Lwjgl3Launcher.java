@@ -2,12 +2,17 @@ package io.github.infotest.lwjgl3;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.badlogic.gdx.utils.SharedLibraryLoader;
 import io.github.infotest.Main;
+import org.lwjgl.system.Configuration;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {
     public static void main(String[] args) {
         if (StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
+        if (SharedLibraryLoader.isMac) {
+            Configuration.GLFW_LIBRARY_NAME.set("glfw_async");
+        }
         createApplication();
     }
 
