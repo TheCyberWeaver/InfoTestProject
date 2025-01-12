@@ -120,8 +120,8 @@ public class ServerConnection {
             }).on("playerAction", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    if (args.length > 1 && args[1] instanceof JSONObject) {
-                        JSONObject data = (JSONObject) args[1];
+                    if (args.length > 0 && args[0] instanceof JSONObject) {
+                        JSONObject data = (JSONObject) args[0];
                         try {
                             //Logger.log("[ServerConnection INFO]: " + data.toString());
                             doPlayerAction(data);
