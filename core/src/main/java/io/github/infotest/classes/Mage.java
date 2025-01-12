@@ -1,10 +1,7 @@
 package io.github.infotest.classes;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.character.Player;
 import io.github.infotest.util.GameRenderer;
@@ -53,7 +50,15 @@ public class Mage extends Player {
                 if(timeSinceLastT1Skill >= fireballCooldown && drainMana(fireballCost) ||  localPlayer!=this) {
                     Logger.log("[Mage INFO]: Player ["+this.getName()+"] casts skill "+skillID);
                     timeSinceLastT1Skill = 0;
-                    castFireball(this.position.x, this.position.y, rotation);
+
+                    int xOffset = 0;
+                    if (rotation.angleDeg() == 180) {
+                        xOffset = -36;
+                    } else {
+                        xOffset = 47;
+                    }
+
+                    castFireball(this.position.x+xOffset, this.position.y+46, rotation);
                     if(localPlayer==this){
                         serverConnection.sendCastSkill(this, "Fireball");
                     }
@@ -65,7 +70,6 @@ public class Mage extends Player {
             default:
                 break;
         }
-
     }
 
 
@@ -76,8 +80,6 @@ public class Mage extends Player {
         float velocityY = 1.5f * playerRot.y;
         this.isAttacking = true;
         GameRenderer.fireball(x, y, velocityX, velocityY, playerRot, fireballScale, fireballDamage, fireballSpeed, fireballLT, this);
-
-
     }
 
     @Override
@@ -95,8 +97,6 @@ public class Mage extends Player {
         } else {
             STATE = IDLE;
         }
-        Logger.log("isAttacking: "+isAttacking+";\nisHit"+isHit+";\nisSprinting: "+isSprinting+";\nisAlive: "+isAlive+"\n////////////////////");
-
         if(STATE!=oldState){
             animationTime = 0;
         }
@@ -106,9 +106,16 @@ public class Mage extends Player {
             isSprinting = false;
             isAlive = true;
         }
+        Sprite currentFrame = new Sprite(STATE.getKeyFrame(animationTime));
 
-        TextureRegion currentFrame = STATE.getKeyFrame(animationTime);
-        batch.draw(currentFrame, position.x, position.y);
+        if (rotation.angleDeg() == 180) {
+            currentFrame.flip(true, false);
+        }
+
+        currentFrame.setPosition(position.x-92, position.y-60);
+        currentFrame.setOrigin(currentFrame.getWidth()/2, currentFrame.getHeight()/2);
+        currentFrame.setScale(0.75f);
+        currentFrame.draw(batch);
 
         animationTime += delta;
 
@@ -117,6 +124,6 @@ public class Mage extends Player {
         font.draw(batch, name, predictedPosition.x + 16 - (int)textWidth/2f, predictedPosition.y + 40);
     }
     public String toString() {
-        return "Mage";
+        return "Mage: "+name;
     }
 }
