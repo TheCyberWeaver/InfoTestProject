@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+import static io.github.infotest.MainGameScreen.uiLayer;
+
 public class NPC extends Actor {
 
     protected String name;
@@ -31,17 +33,15 @@ public class NPC extends Actor {
     protected boolean isTrading;
 
     protected MyAssetManager assetManager;
-    protected UI_Layer uiLayer;
 
 
 
-    public NPC(String name, int maxHealthPoints, Vector2 startPosition, float speed, int gender, int type, MyAssetManager assetManager, UI_Layer uiLayer) {
+    public NPC(String name, int maxHealthPoints, Vector2 startPosition, float speed, int gender, int type, MyAssetManager assetManager) {
         super(maxHealthPoints, startPosition, speed);
         this.name = name;
         this.genderType = new Vector2(gender%2, type%8);
         this.isTrading = false;
         this.assetManager = assetManager;
-        this.uiLayer = uiLayer;
         this.texture = genderTypeToTexture(gender%2, type%8);
         initMarketMap();
         Item[] items = new Item[3];

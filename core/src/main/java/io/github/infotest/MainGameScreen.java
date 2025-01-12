@@ -26,7 +26,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
     private OrthographicCamera camera;
-    private UI_Layer uiLayer;
+    public static UI_Layer uiLayer;
     private MyAssetManager assetManager;
 
     private Vector3 clickPos = null;
@@ -135,6 +135,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         // update player list
         this.players = serverConnection.getPlayers();
+        this.allNPC = serverConnection.getNPCs();
         if(serverConnection.getMySocketId()!=""){
             this.players.put(serverConnection.getMySocketId(), player);
         }
@@ -286,7 +287,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             if (tempTime >= 0.5f){
                 NPC npc = new NPC("NPC"+(allNPC.toArray().length+1),50,
                     new Vector2(player.getPosition().x-6.5f,player.getPosition().y),
-                    0, 0, 0, assetManager, uiLayer);
+                    0, 0, 0, assetManager);
                 allNPC.add(npc);
                 tempTime = 0;
             }
@@ -305,12 +306,16 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             isTradingTo.closeMarket();
             isTradingTo = null;
         }
+        //Debug Key P
         if(Gdx.input.isKeyPressed(Input.Keys.P) && game.isDevelopmentMode && debugTimer>=1){
 
             Logger.log("----------");
-            for (Map.Entry<String, Player> stringPlayerEntry : players.entrySet()) {
-                Player tmpPlayer=stringPlayerEntry.getValue();
-                Logger.log(stringPlayerEntry.getKey()+" "+tmpPlayer.getName()+" "+tmpPlayer.getHealthPoints());
+//            for (Map.Entry<String, Player> stringPlayerEntry : players.entrySet()) {
+//                Player tmpPlayer=stringPlayerEntry.getValue();
+//                Logger.log(stringPlayerEntry.getKey()+" "+tmpPlayer.getName()+" "+tmpPlayer.getHealthPoints());
+//            }
+            for(NPC npc: allNPC){
+                Logger.log(npc.toString());
             }
             Logger.log("----------");
             debugTimer=0;

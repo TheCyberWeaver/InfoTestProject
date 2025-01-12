@@ -58,7 +58,7 @@ public class MapCreator {
         ArrayList<NPC> npcs = new ArrayList<>();
         //TODO:
         //Example:
-        npcs.add(new NPC("Unknown",100,new Vector2(3,3),0,2));
+        npcs.add(new NPC("Unknown",100,new Vector2(48000,48000),0,2));
 
         return npcs;
     }

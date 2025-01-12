@@ -3,13 +3,17 @@ package io.github.infotest.util;
 import com.badlogic.gdx.math.Vector2;
 import com.google.gson.JsonObject;
 import io.github.infotest.character.Player;
+import io.github.infotest.character.NPC;
+import io.github.infotest.util.DataObjects.NPCData;
 import io.github.infotest.util.DataObjects.PlayerData;
+import io.github.infotest.util.Factory.NPCFactory;
 import io.github.infotest.util.Factory.PlayerFactory;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.google.gson.Gson;
@@ -30,6 +34,7 @@ public class ServerConnection {
     // key is socketId
     // value is player object
     private HashMap<String, Player> players = new HashMap<>();
+    private ArrayList<NPC> npcs = new ArrayList<>();
 
     private String clientVersion;
 
@@ -105,6 +110,27 @@ public class ServerConnection {
                     }
                     else {
                         Logger.log("[ServerConnection ERROR]: Received updateAllPlayers event with invalid data");
+                    }
+
+
+                }
+            }).on("updateAllNPCs", new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+//                    if (args.length > 0 && args[0] instanceof JSONObject) {
+                    if(args.length > 0){
+                        String updatedNPCsJson = args[0].toString();
+                        //Logger.log("[ServerConnection Debug]: "+updatedNPCsJson);
+                        //   - key: socketId (e.g., "socketId_1")
+                        //   - value: <NPCData>
+                        Gson gson = new Gson();
+                        Type typeOfHashMap = new TypeToken<ArrayList<NPCData>>(){}.getType();
+                        ArrayList<NPCData> NPCsList = gson.fromJson(updatedNPCsJson, typeOfHashMap);
+
+                        updateNPCs(NPCsList);
+                    }
+                    else {
+                        Logger.log("[ServerConnection ERROR]: Received updateAllNPCs event with invalid data");
                     }
 
 
@@ -243,6 +269,19 @@ public class ServerConnection {
             }
         }
     }
+    private void updateNPCs(ArrayList<NPCData> NPCsMap){
+        // playersMap 中每一个 key 都是一个 socketId，
+        // value 则是对应的 PlayerData 对象
+        npcs=new ArrayList<>();
+        for (NPCData npcData : NPCsMap) {
+//            Logger.log("Debug:"+socketId+" | "+playerData.name);
+            float x = (float)npcData.position.x;
+            float y = (float)npcData.position.y;
+
+            NPC npc = NPCFactory.createNPC(npcData.name,npcData.maxHP,new Vector2(x,y),npcData.gender,npcData.type,assetManager);
+            npcs.add(npc);
+        }
+    }
 
 
 
@@ -345,7 +384,9 @@ public class ServerConnection {
     public HashMap<String, Player> getPlayers() {
         return players;
     }
-
+    public ArrayList<NPC> getNPCs() {
+        return npcs;
+    }
     public int getGlobalSeed() {
         return globalSeed;
     }

@@ -23,21 +23,23 @@ public class GameSocketServer {
     private static final String serverVersion = "v3.0";
 
     // Map data
-    private int[][] map;
+    private static int[][] map;
     private static final int CELL_SIZE = 32;
     private static final int INITIAL_SIZE = 3000;
     private static int numOfValidTextures = 4;
 
     //NPC
-    private ArrayList<NPC> npcs=new ArrayList<NPC>();
+    private static ArrayList<NPC> npcs=new ArrayList<NPC>();
     /**
      * Stores all connected players
      */
     private static final Map<String, Player> players = new ConcurrentHashMap<>();
 
-    public void main(String[] args) {
+    public static void main(String[] args) {
         // 0. Initialize Map
-        serverInitialization();
+        MapCreator mapCreator=new MapCreator(seed,CELL_SIZE,numOfValidTextures);
+        map = mapCreator.initializePerlinNoiseMap();
+        npcs = mapCreator.spawnNPCs();
 
         // 1. Configure the server
         Configuration config = new Configuration();
@@ -230,6 +232,7 @@ public class GameSocketServer {
      */
     private static void broadcastAllPlayers(SocketIOServer server) {
         server.getBroadcastOperations().sendEvent("updateAllPlayers", players);
+        server.getBroadcastOperations().sendEvent("updateAllNPCs", npcs);
     }
 
     public ArrayList<NPC> getNpcs() {
