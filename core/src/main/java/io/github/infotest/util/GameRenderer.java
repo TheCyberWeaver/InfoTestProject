@@ -2,28 +2,25 @@ package io.github.infotest.util;
 
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import io.github.infotest.MainGameScreen;
 import io.github.infotest.MyMath;
 import io.github.infotest.character.Gegner;
 import io.github.infotest.character.NPC;
 import io.github.infotest.character.Player;
-import io.github.infotest.util.Overlay.UI_Layer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static io.github.infotest.MainGameScreen.CELL_SIZE;
+import static io.github.infotest.MainGameScreen.GAME_MAP;
+
 public class GameRenderer {
 
     private Texture[] textures;
-    private final int[][] map;
-    private final int cellSize;
 
     // Fireball animation-related fields
     private static ArrayList<FireballInstance> activeFireballs;
@@ -36,10 +33,8 @@ public class GameRenderer {
     private MyAssetManager assetManager;
 
 
-    public GameRenderer(MyAssetManager assetManager, int[][] map, int cellSize) {
+    public GameRenderer(MyAssetManager assetManager) {
         this.assetManager = assetManager;
-        this.map = map;
-        this.cellSize = cellSize;
         this.textures=assetManager.getMapAssets();
 
         activeFireballs = new ArrayList<FireballInstance>();
@@ -96,11 +91,11 @@ public class GameRenderer {
 
 
     public void renderMap(SpriteBatch batch, float zoom, Vector2 pos) {
-        int widthCell = (int) Math.ceil(Gdx.graphics.getWidth() * zoom / cellSize);
-        int heightCell = (int) Math.ceil(Gdx.graphics.getHeight() * zoom / cellSize);
+        int widthCell = (int) Math.ceil(Gdx.graphics.getWidth() * zoom / CELL_SIZE);
+        int heightCell = (int) Math.ceil(Gdx.graphics.getHeight() * zoom / CELL_SIZE);
 
-        int playerX = (int) (pos.x/cellSize);
-        int playerY = (int) (pos.y/cellSize);
+        int playerX = (int) (pos.x/CELL_SIZE);
+        int playerY = (int) (pos.y/CELL_SIZE);
 
         for (int y =  -7; y < heightCell + 7; y++) {
             for (int x = -7; x < widthCell + 7; x++) {
@@ -108,11 +103,11 @@ public class GameRenderer {
                 int worldX = playerX - widthCell/2 + x ;
                 int worldY = playerY - heightCell/2 + y ;
 
-                worldX = Math.max(0, Math.min(worldX, map[0].length - 1) );
-                worldY = Math.max(0, Math.min(worldY, map.length - 1) );
+                worldX = Math.max(0, Math.min(worldX, GAME_MAP[0].length - 1) );
+                worldY = Math.max(0, Math.min(worldY, GAME_MAP.length - 1) );
 
-                Texture cellTexture = textures[map[worldY][worldX]];
-                batch.draw(cellTexture, worldX * cellSize, worldY * cellSize, cellSize, cellSize);
+                Texture cellTexture = textures[GAME_MAP[worldY][worldX]];
+                batch.draw(cellTexture, worldX * CELL_SIZE, worldY * CELL_SIZE, CELL_SIZE, CELL_SIZE);
             }
         }
 

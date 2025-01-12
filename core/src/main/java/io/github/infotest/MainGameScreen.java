@@ -3,7 +3,6 @@ package io.github.infotest;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -37,10 +36,10 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
 
     // Map data
-    private int[][] map;
-    private static final int CELL_SIZE = 32;
-    private static final int INITIAL_SIZE = 3000;
-    private static int numOfValidTextures = 4;
+    public static int[][] GAME_MAP;
+    public static final int CELL_SIZE = 32;
+    public static final int INITIAL_MAP_SIZE = 3000;
+    public static int numOfValidTextures = 4;
 
     // User character
     private Player player;
@@ -98,7 +97,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
 
 
-        Vector2 spawnPosition = new Vector2(INITIAL_SIZE / 2f * CELL_SIZE, INITIAL_SIZE / 2f * CELL_SIZE);
+        Vector2 spawnPosition = new Vector2(INITIAL_MAP_SIZE / 2f * CELL_SIZE, INITIAL_MAP_SIZE / 2f * CELL_SIZE);
         //Logger.log(""class: "+ game.getPlayerClass());
         player = PlayerFactory.createPlayer(serverConnection.getMySocketId(),game.getUsername(),game.getPlayerClass(),spawnPosition,assetManager);
         //Logger.log("class: "+ player.getClass());
@@ -119,13 +118,13 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     @Override
     public void onSeedReceived(int seed) {
         // map initialization
-        MapCreator mapCreator = new MapCreator(seed, INITIAL_SIZE,  numOfValidTextures);
+        MapCreator mapCreator = new MapCreator(seed);
         globalSeed = seed;
-        map = mapCreator.initializePerlinNoiseMap();
+        GAME_MAP = mapCreator.initializePerlinNoiseMap();
 
         seedReceived = true;
 
-        gameRenderer = new GameRenderer(assetManager, map, CELL_SIZE);
+        gameRenderer = new GameRenderer(assetManager);
         gameRenderer.initAnimations();
 
         Logger.log("[MainGameScreen INFO]: Map generated after receiving seed: " + seed);
@@ -167,6 +166,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                         return Float.compare(npc2.getPosition().y, npc1.getPosition().y);
                     }
                 });
+
             }
 
             gameRenderer.renderNPCs(batch, allNPC, delta);

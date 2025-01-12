@@ -9,13 +9,16 @@ import java.util.Random;
 
 import org.example.character.NPC;
 
+import static org.example.GameSocketServer.INITIAL_MAP_SIZE;
+
 public class MapCreator {
     private int seed;
     private int[][] map;
-    private int mapWidth;
+    private int mapWidth; // in map coordinate
     private Perlin perlinClass;
     private int numOfValidTextures;
     private Random rndm;
+
 
     public MapCreator(int pSeed, int width, int pNumOfValidTextures) {
         seed = 123;
@@ -56,9 +59,12 @@ public class MapCreator {
      */
     public ArrayList<NPC> spawnNPCs(){
         ArrayList<NPC> npcs = new ArrayList<>();
-        //TODO:
+        //TODO: @alxmorozova
         //Example:
-        npcs.add(new NPC("Unknown",100,new Vector2(48000,48000),0,2));
+        int centralPointX = INITIAL_MAP_SIZE*mapWidth / 2; // centralPointX=48000
+        int centralPointY = INITIAL_MAP_SIZE*mapWidth / 2; // centralPointY=48000
+        npcs.add(new NPC("Unknown",100,new Vector2(centralPointX,centralPointY),0,2));
+
 
         return npcs;
     }

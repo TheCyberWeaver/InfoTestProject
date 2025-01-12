@@ -25,7 +25,8 @@ public class GameSocketServer {
     // Map data
     private static int[][] map;
     private static final int CELL_SIZE = 32;
-    private static final int INITIAL_SIZE = 3000;
+    public static final int INITIAL_MAP_SIZE = 3000;
+
     private static int numOfValidTextures = 4;
 
     //NPC
