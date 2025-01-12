@@ -1,9 +1,13 @@
 package org.example.util;
 
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+
+import org.example.character.NPC;
 
 public class MapCreator {
     private int seed;
@@ -45,6 +49,18 @@ public class MapCreator {
             }
         }
         return map;
+    }
+    /**
+     * generate a bunch of NPCs on int[][] map
+     * @return an ArrayList of NPCs
+     */
+    public ArrayList<NPC> spawnNPCs(){
+        ArrayList<NPC> npcs = new ArrayList<>();
+        //TODO:
+        //Example:
+        npcs.add(new NPC("Unknown",100,new Vector2(3,3),0,2));
+
+        return npcs;
     }
 
     private boolean isIsolatedBlock(int x, int y) {

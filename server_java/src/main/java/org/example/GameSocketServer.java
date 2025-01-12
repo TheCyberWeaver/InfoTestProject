@@ -1,9 +1,15 @@
 package org.example;
-
+/*
+ * Author: Thomas Lu
+ * Translated by: ChatGPT o1
+ */
 import com.corundumstudio.socketio.*;
-import com.corundumstudio.socketio.listener.*;
 import com.google.gson.*;
+import org.example.character.Player;
+import org.example.character.NPC;
+import org.example.util.MapCreator;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,12 +22,23 @@ public class GameSocketServer {
     private static final int seed = 114514;
     private static final String serverVersion = "v3.0";
 
+    // Map data
+    private int[][] map;
+    private static final int CELL_SIZE = 32;
+    private static final int INITIAL_SIZE = 3000;
+    private static int numOfValidTextures = 4;
+
+    //NPC
+    private ArrayList<NPC> npcs=new ArrayList<NPC>();
     /**
      * Stores all connected players
      */
     private static final Map<String, Player> players = new ConcurrentHashMap<>();
 
-    public static void main(String[] args) {
+    public void main(String[] args) {
+        // 0. Initialize Map
+        serverInitialization();
+
         // 1. Configure the server
         Configuration config = new Configuration();
         // Corresponds to server.listen(9595, '0.0.0.0');
@@ -203,12 +220,24 @@ public class GameSocketServer {
         }
         server.stop();
     }
-
+    private void serverInitialization(){
+        MapCreator mapCreator=new MapCreator(seed,CELL_SIZE,numOfValidTextures);
+        map = mapCreator.initializePerlinNoiseMap();
+        npcs = mapCreator.spawnNPCs();
+    }
     /**
      * Push the latest player list to all clients
      */
     private static void broadcastAllPlayers(SocketIOServer server) {
         server.getBroadcastOperations().sendEvent("updateAllPlayers", players);
+    }
+
+    public ArrayList<NPC> getNpcs() {
+        return npcs;
+    }
+
+    public void setNpcs(ArrayList<NPC> npcs) {
+        this.npcs = npcs;
     }
 
     /**
