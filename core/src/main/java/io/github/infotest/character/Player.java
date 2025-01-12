@@ -36,7 +36,14 @@ public abstract class Player extends Actor{
     protected float maxAusdauer;
     protected float ausdauerRegen = 3f;
     protected float ausdauerCost = 10f; //Ausdauer kosten pro Sekunde
+
     protected boolean isSprinting;
+
+    protected boolean hasMoved;
+    protected  boolean isHit;
+    protected boolean isAttacking;
+    protected float animationTime = 0f;
+
     protected float sprintingSpeed = speed*7/4;
     protected float normalSpeed;
 
@@ -71,6 +78,8 @@ public abstract class Player extends Actor{
         this.ausdauer = maxAusdauer;
 
         this.isSprinting = false;
+        this.isHit = false;
+        this.isAttacking = false;
         this.normalSpeed = speed;
 
         this.spawnpoint = initialPosition;
@@ -81,7 +90,7 @@ public abstract class Player extends Actor{
 
     /// game logic
     @Override
-    public void render(Batch batch) {
+    public void render(Batch batch, float delta) {
         Vector2 predictedPosition = predictPosition();
         if (texture != null) {
             batch.draw(texture, predictedPosition .x, predictedPosition .y,32,32);
@@ -161,7 +170,7 @@ public abstract class Player extends Actor{
     public void takeDamage(float damage, ServerConnection serverConnection) {
         takeDamage(damage);
         serverConnection.sendTakeDamage(this,damage);
-
+        isHit = true;
     }
     @Override
     public void takeDamage(float damage) {
@@ -276,5 +285,8 @@ public abstract class Player extends Actor{
     }
     public void resetT1Timer(){
         timeSinceLastT1Skill = 0;
+    }
+    public void setHasMoved(boolean hasMoved) {
+        this.hasMoved = hasMoved;
     }
 }
