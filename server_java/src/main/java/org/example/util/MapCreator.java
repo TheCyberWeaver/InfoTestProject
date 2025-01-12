@@ -16,6 +16,7 @@ public class MapCreator {
         seed = pSeed;
         perlinClass = new Perlin();
         rndm = new Random(seed);
+
     }
 
     public void initializePerlinNoiseMap(){

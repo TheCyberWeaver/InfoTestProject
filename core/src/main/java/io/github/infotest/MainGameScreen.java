@@ -36,10 +36,10 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
 
     // Map data
-    public static int[][] GAME_MAP;
     public static final int CELL_SIZE = 32;
     public static final int INITIAL_MAP_SIZE = 3000;
     public static int numOfValidTextures = 4;
+    public static int[][] GAME_MAP=new int[INITIAL_MAP_SIZE][INITIAL_MAP_SIZE];
 
     // User character
     private Player player;

@@ -23,10 +23,11 @@ public class GameSocketServer {
     private static final String serverVersion = "v3.1";
 
     // Map data
-    public static int[][] GAME_MAP;
+
     public static final int CELL_SIZE = 32;
     public static final int INITIAL_MAP_SIZE = 3000;
     public static int numOfValidTextures = 4;
+    public static int[][] GAME_MAP=new int[INITIAL_MAP_SIZE][INITIAL_MAP_SIZE];
 
     //NPC
     private static ArrayList<NPC> npcs=new ArrayList<NPC>();
