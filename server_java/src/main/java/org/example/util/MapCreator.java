@@ -1,6 +1,5 @@
-package io.github.infotest.util;
+package org.example.util;
 
-import io.github.infotest.MainGameScreen;
 
 import java.util.ArrayList;
 import java.util.List;
