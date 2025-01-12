@@ -17,7 +17,7 @@ public class MapCreator {
         rndm = new Random(seed);
     }
 
-    public int[][] initializePerlinNoiseMap(){
+    public void initializePerlinNoiseMap(){
         // generate perlin noise based on seed (see Perlin Class)
         float[][] whiteNoise = Perlin.GenerateWhiteNoise(INITIAL_MAP_SIZE, INITIAL_MAP_SIZE, seed);
         float[][] perlinNoise = perlinClass.GeneratePerlinNoise(whiteNoise, 6); //5
@@ -39,7 +39,6 @@ public class MapCreator {
                 }
             }
         }
-        return GAME_MAP;
     }
 
     private boolean isIsolatedBlock(int x, int y) {
