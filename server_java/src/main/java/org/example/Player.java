@@ -94,14 +94,9 @@ public class Player {
     public void professionAttack(Player target, float damage) {
         target.hp -= damage;
     }
-
-    // 你可以根据需要添加更多方法
-    // ...
 }
 
-/**
- * 一个简单的坐标或旋转结构
- */
+
 class Position {
     public float x;
     public float y;
