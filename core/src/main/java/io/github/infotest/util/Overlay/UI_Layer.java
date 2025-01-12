@@ -2,43 +2,36 @@ package io.github.infotest.util.Overlay;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.*;
-import io.github.infotest.MainGameScreen;
-import io.github.infotest.character.Player;
 import io.github.infotest.item.Item;
 import io.github.infotest.util.GameRenderer;
 import io.github.infotest.util.MyAssetManager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Timer;
+
+import static io.github.infotest.MainGameScreen.hasInitializedMap;
+import static io.github.infotest.MainGameScreen.localPlayer;
 
 public class UI_Layer implements ApplicationListener {
 
     MyAssetManager assetManager;
 
-    MainGameScreen mainScreen;
-    GameRenderer gameRenderer;
     SpriteBatch batch;
     Camera uiCamera; // UI-specific camera
-    Player player;
     Viewport viewport;
     ShapeRenderer shapeRenderer;
     Vector2 windowSize;
 
-    private Texture[] healthbar;
-    private Texture[] manabar;
-    private Texture[] ausdauerbar;
+    private final Texture[] healthbar;
+    private final Texture[] manabar;
+    private final Texture[] ausdauerbar;
 
     private float signTimer = 0;
     private boolean isRenderingSign = false;
@@ -46,9 +39,7 @@ public class UI_Layer implements ApplicationListener {
     private float fadeDuration = 2;
     private float base;
 
-    public UI_Layer(MainGameScreen mainScreen, MyAssetManager assetManager, GameRenderer renderer) {
-        this.mainScreen = mainScreen;
-        this.gameRenderer = renderer;
+    public UI_Layer( MyAssetManager assetManager) {
         this.assetManager = assetManager;
         this.uiCamera = new OrthographicCamera(); // Create a new OrthographicCamera for UI
         viewport = new ScreenViewport(uiCamera);
@@ -79,17 +70,17 @@ public class UI_Layer implements ApplicationListener {
         float screenScaleY = windowSize.y/Gdx.graphics.getHeight();
         float nScale = 0.75f;
 
-        if (mainScreen.hasSeedReceived()) {
+        if (hasInitializedMap) {
             batch.begin();
-            GameRenderer.renderBar(batch, healthbar, player.getHealthPoints(), player.getMaxHealthPoints(),
+            GameRenderer.renderBar(batch, healthbar, localPlayer.getHealthPoints(), localPlayer.getMaxHealthPoints(),
                 1250,
                 900,
                 nScale * screenScaleX, nScale * screenScaleY);
-            GameRenderer.renderBar(batch, manabar, player.getMana(), player.getMaxMana(),
+            GameRenderer.renderBar(batch, manabar, localPlayer.getMana(), localPlayer.getMaxMana(),
                 1250,
                 850,
                 nScale * screenScaleX, nScale * screenScaleY);
-            GameRenderer.renderBar(batch, ausdauerbar, player.getAusdauer(), player.getMaxAusdauer(),
+            GameRenderer.renderBar(batch, ausdauerbar, localPlayer.getAusdauer(), localPlayer.getMaxAusdauer(),
                 1250,
                 800,
                 nScale * screenScaleX, screenScaleY);
@@ -107,8 +98,8 @@ public class UI_Layer implements ApplicationListener {
 
     public void renderMarket(Batch batch, Texture texture) {
         float screenScaleX = Gdx.graphics.getWidth()/windowSize.x * nScale;
-        float screenX = player.getX()-50f*screenScaleX;
-        float screenY = player.getY()-75f* screenScaleX;
+        float screenX = localPlayer.getX()-50f*screenScaleX;
+        float screenY = localPlayer.getY()-75f* screenScaleX;
         batch.draw(texture, screenX, screenY, texture.getWidth()*screenScaleX, texture.getHeight()* screenScaleX);
     }
     public void renderItems(Batch batch, Item[] items, ArrayList<Vector2> offset){
@@ -118,8 +109,8 @@ public class UI_Layer implements ApplicationListener {
             Vector2 itemOffset = offset.get(i);
             if (item != null){
                 batch.draw(item.getTexture(),
-                    player.getX()+(itemOffset.x-51f)*screenScaleX,
-                    player.getY()+(itemOffset.y-76f)*screenScaleX,
+                    localPlayer.getX()+(itemOffset.x-51f)*screenScaleX,
+                    localPlayer.getY()+(itemOffset.y-76f)*screenScaleX,
                     14f*screenScaleX, 14f*screenScaleX);
             }
         }
@@ -169,10 +160,6 @@ public class UI_Layer implements ApplicationListener {
             tex.dispose();
         }
         batch.dispose();
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
     }
 
 }

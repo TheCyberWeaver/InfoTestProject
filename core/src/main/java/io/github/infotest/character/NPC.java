@@ -9,12 +9,9 @@ import io.github.infotest.item.Apple;
 import io.github.infotest.item.Item;
 import io.github.infotest.util.Logger;
 import io.github.infotest.util.MyAssetManager;
-import io.github.infotest.util.Overlay.UI_Layer;
-import io.github.infotest.util.ServerConnection;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 
 import static io.github.infotest.MainGameScreen.uiLayer;
 

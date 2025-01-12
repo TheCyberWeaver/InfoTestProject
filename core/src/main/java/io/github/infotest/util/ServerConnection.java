@@ -1,7 +1,6 @@
 package io.github.infotest.util;
 
 import com.badlogic.gdx.math.Vector2;
-import com.google.gson.JsonObject;
 import io.github.infotest.character.Player;
 import io.github.infotest.character.NPC;
 import io.github.infotest.util.DataObjects.NPCData;
@@ -24,6 +23,9 @@ import org.json.JSONObject;
 import java.lang.reflect.Type;
 import java.util.Map;
 
+import static io.github.infotest.MainGameScreen.*;
+
+
 /**
  * maintain connection to server and other player's information
  */
@@ -33,20 +35,15 @@ public class ServerConnection {
     private String mySocketId="";
     // key is socketId
     // value is player object
-    private HashMap<String, Player> players = new HashMap<>();
-    private ArrayList<NPC> npcs = new ArrayList<>();
 
     private String clientVersion;
 
-    private int globalSeed = 0;
 
-    // TODO
     private MyAssetManager assetManager;
 
     public interface SeedListener {
         void onSeedReceived(int seed);
     }
-
     private SeedListener seedListener;
     public void setSeedListener(SeedListener listener) {
         this.seedListener = listener;
@@ -140,7 +137,7 @@ public class ServerConnection {
                 public void call(Object... args) {
                     if (args.length > 1 && args[1] instanceof String) {
                         String leftPlayerId = (String) args[1];
-                        players.remove(leftPlayerId);
+                        allPlayers.remove(leftPlayerId);
                     }
                 }
             }).on("playerAction", new Emitter.Listener() {
@@ -175,11 +172,11 @@ public class ServerConnection {
         }
     }
     private void initClient(JSONObject data) {
-        globalSeed = (int) data.get("seed");
-        Logger.log("[INFO]: Global seed : " + globalSeed);
+        GLOBAL_SEED = (int) data.get("seed");
+        Logger.log("[INFO]: Global seed : " + GLOBAL_SEED);
         // call back
         if (seedListener != null) {
-            seedListener.onSeedReceived(globalSeed);
+            seedListener.onSeedReceived(GLOBAL_SEED);
         }
 
         String serverVersion = (String) data.get("serverVersion");
@@ -214,7 +211,7 @@ public class ServerConnection {
     private void doPlayerAction(JSONObject data) throws JSONException {
         String actionType = data.getString("actionType");
         String playerID   = data.getString("playerID");
-        Player player = players.get(playerID);
+        Player player = allPlayers.get(playerID);
         if(player == null ){
             Logger.log("[ServerConnection Warning]: Cannot find player with id " + playerID);
             return;
@@ -252,12 +249,14 @@ public class ServerConnection {
             if (socketId.equals(mySocketId)) {
                 continue;
             }
-            Player player = players.get(socketId);
+            Player player = allPlayers.get(socketId);
             if (player == null) {
 
                 player = PlayerFactory.createPlayer(playerData.id,playerData.name,playerData.classtype, new Vector2(x, y), assetManager);
 
-                if(player!=null){players.put(socketId, player);}
+                if(player!=null){
+                    allPlayers.put(socketId, player);
+                }
 
             } else {
                 // Old Player - update position
@@ -272,14 +271,14 @@ public class ServerConnection {
     private void updateNPCs(ArrayList<NPCData> NPCsMap){
         // playersMap 中每一个 key 都是一个 socketId，
         // value 则是对应的 PlayerData 对象
-        npcs=new ArrayList<>();
+        allNPCs=new ArrayList<>();
         for (NPCData npcData : NPCsMap) {
 //            Logger.log("Debug:"+socketId+" | "+playerData.name);
             float x = (float)npcData.position.x;
             float y = (float)npcData.position.y;
 
             NPC npc = NPCFactory.createNPC(npcData.name,npcData.maxHP,new Vector2(x,y),npcData.gender,npcData.type,assetManager);
-            npcs.add(npc);
+            allNPCs.add(npc);
         }
     }
 
@@ -382,13 +381,13 @@ public class ServerConnection {
     }
 
     public HashMap<String, Player> getPlayers() {
-        return players;
+        return allPlayers;
     }
     public ArrayList<NPC> getNPCs() {
-        return npcs;
+        return allNPCs;
     }
     public int getGlobalSeed() {
-        return globalSeed;
+        return GLOBAL_SEED;
     }
     public String getMySocketId() {
         return mySocketId;

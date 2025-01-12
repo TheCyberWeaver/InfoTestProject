@@ -25,9 +25,9 @@ public class GameSocketServer {
     // Map data
 
     public static final int CELL_SIZE = 32;
-    public static final int INITIAL_MAP_SIZE = 3000;
+    public static final int MAP_SIZE = 3000;
     public static int numOfValidTextures = 4;
-    public static int[][] GAME_MAP=new int[INITIAL_MAP_SIZE][INITIAL_MAP_SIZE];
+    public static int[][] GAME_MAP=new int[MAP_SIZE][MAP_SIZE];
 
     //NPC
     private static ArrayList<NPC> npcs=new ArrayList<NPC>();
@@ -234,13 +234,6 @@ public class GameSocketServer {
         server.getBroadcastOperations().sendEvent("updateAllNPCs", npcs);
     }
 
-    public ArrayList<NPC> getNpcs() {
-        return npcs;
-    }
-
-    public void setNpcs(ArrayList<NPC> npcs) {
-        this.npcs = npcs;
-    }
 
     /**
      * Used to send initial information to the client

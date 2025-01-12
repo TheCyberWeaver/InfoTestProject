@@ -6,8 +6,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import io.github.infotest.MainGameScreen;
-import io.github.infotest.MyMath;
 import io.github.infotest.character.Gegner;
 import io.github.infotest.character.NPC;
 import io.github.infotest.character.Player;
@@ -20,24 +18,22 @@ import static io.github.infotest.MainGameScreen.GAME_MAP;
 
 public class GameRenderer {
 
-    private Texture[] textures;
+    private final Texture[] textures;
 
     // Fireball animation-related fields
     private static ArrayList<FireballInstance> activeFireballs;
-    private float fireballFrameDuration = 0.1f;
+    private final float fireballFrameDuration = 0.1f;
 
     private Animation<TextureRegion>[] fireballAnimations;
 
-    private MainGameScreen game;
-
-    private MyAssetManager assetManager;
+    private final MyAssetManager assetManager;
 
 
     public GameRenderer(MyAssetManager assetManager) {
         this.assetManager = assetManager;
         this.textures=assetManager.getMapAssets();
 
-        activeFireballs = new ArrayList<FireballInstance>();
+        activeFireballs = new ArrayList<>();
 
     }
 
@@ -283,12 +279,6 @@ public class GameRenderer {
 
     public ArrayList<FireballInstance> getActiveFireballs() {
         return activeFireballs;
-    }
-
-    public void dispose() {
-        for (Texture texture : textures) {
-            texture.dispose();
-        }
     }
 
 

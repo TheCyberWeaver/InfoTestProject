@@ -10,12 +10,12 @@ import io.github.infotest.util.ServerConnection;
 
 public class Mage extends Player {
 
-    private static float fireballCost = 5f;
-    private static float fireballDamage = 3f;
-    private static float fireballCooldown = 0.5f;
-    private static float fireballSpeed = 3f;
-    private static float fireballScale = 1f;
-    private static float fireballLT = 2f; // lifetime with 0.5 second on start and 0.7 s on hit and 0.8 on end without hit
+    private static final float fireballCost = 5f;
+    private static final float fireballDamage = 3f;
+    private static final float fireballCooldown = 0.5f;
+    private static final float fireballSpeed = 3f;
+    private static final float fireballScale = 1f;
+    private static final float fireballLT = 2f; // lifetime with 0.5 second on start and 0.7 s on hit and 0.8 on end without hit
 
 
     public Mage(String id, String name, Vector2 playerPosition, Texture t) {
