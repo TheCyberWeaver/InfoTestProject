@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import io.github.infotest.character.Actor;
 import io.github.infotest.character.Gegner;
 import io.github.infotest.character.NPC;
 import io.github.infotest.character.Player;
@@ -77,6 +78,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         assetManager.loadLoadingScreen();
         assetManager.loadMapAssets();
+        assetManager.loadPlayerAssets();
+        assetManager.loadMageAssets();
         assetManager.loadFireballAssets();
         assetManager.loadHealthBarAssets();
         assetManager.loadManaBarAssets();
@@ -86,6 +89,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         assetManager.loadNPCMarketAssets();
         assetManager.loadSignsAssets();
         assetManager.manager.finishLoading();
+
+        Actor.assetManager = assetManager;
 
         // connect to server
         //serverConnection = new ServerConnection("http://www.thomas-hub.com:9595", assassinTexture);
@@ -305,6 +310,9 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                 }
             }
         }
+        if (Gdx.input.isKeyPressed(Input.Keys.K)) {
+            player.kill();
+        }
         if (moved && currentTradingToNPC != null) {
             currentTradingToNPC.closeMarket();
             currentTradingToNPC = null;
@@ -331,6 +339,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             Logger.log("-----[Debug END]-----");
             debugTimer=0;
         }
+
+        player.setHasMoved(moved);
 
         if (moved) {
             // update position
@@ -421,7 +431,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
     /// GAME LOGIC
     public void checkFireballCollisions() {
-        for (GameRenderer.FireballInstance fireball : gameRenderer.getActiveFireballs()) {
+        for (GameRenderer.AbilityInstance fireball : gameRenderer.getActiveFireballs()) {
             for (Player p : allPlayers.values()){
                 if (p.equals(fireball.getOwner())){
                     continue;

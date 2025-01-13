@@ -30,11 +30,29 @@ public class MyAssetManager {
         textures[3]=manager.get("basicWood.png",Texture.class);
         return textures;
     }
+
     public void loadPlayerAssets(){
         manager.load("assassin.png", Texture.class);
     }
     public Texture getPlayerAssets(){
         return manager.get("assassin.png", Texture.class);
+    }
+
+    public void loadMageAssets(){
+        manager.load("player/mage/Attack1.png",Texture.class);
+        manager.load("player/mage/Death.png",Texture.class);
+        manager.load("player/mage/Hit.png",Texture.class);
+        manager.load("player/mage/Idle.png",Texture.class);
+        manager.load("player/mage/Run.png",Texture.class);
+    }
+    public Texture[] getMageAssets(){
+        Texture[] mageTextures=new Texture[5];
+        mageTextures[0]=manager.get("player/mage/Attack1.png",Texture.class);
+        mageTextures[1]=manager.get("player/mage/Death.png",Texture.class);
+        mageTextures[2]=manager.get("player/mage/Hit.png",Texture.class);
+        mageTextures[3]=manager.get("player/mage/Idle.png",Texture.class);
+        mageTextures[4]=manager.get("player/mage/Run.png",Texture.class);
+        return mageTextures;
     }
 
     public void loadFireballAssets(){

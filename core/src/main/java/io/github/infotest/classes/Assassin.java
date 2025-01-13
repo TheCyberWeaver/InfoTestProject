@@ -17,7 +17,7 @@ public class Assassin extends Player {
     }
 
     @Override
-    public void render(Batch batch) {
-        super.render(batch);
+    public void render(Batch batch, float delta) {
+        super.render(batch, delta);
     }
 }

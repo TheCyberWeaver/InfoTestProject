@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
+import io.github.infotest.util.MyAssetManager;
 import io.github.infotest.util.ServerConnection;
 
 public abstract class Actor {
@@ -26,6 +27,7 @@ public abstract class Actor {
     // LibGDX related
     protected Texture texture;     // character texture
     protected static BitmapFont font;
+    public static MyAssetManager assetManager;
 
     public Actor(int maxHealthPoints, Vector2 initialPosition, float speed, Texture texture) {
         this.maxHealthPoints = maxHealthPoints;
@@ -101,7 +103,7 @@ public abstract class Actor {
         }
     }
 
-    public abstract void render(Batch batch);
+    public abstract void render(Batch batch, float delta);
     public abstract void update(float delta);
 
     public void kill(){
