@@ -25,4 +25,9 @@ public abstract class Item {
     public Texture getTexture() {
         return texture;
     }
+
+    @Override
+    public String toString(){
+        return name;
+    }
 }
