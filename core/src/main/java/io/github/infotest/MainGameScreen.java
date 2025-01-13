@@ -39,7 +39,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     // Map data
     public static int GLOBAL_SEED; // this will be assigned by the seed from server
     public static final int CELL_SIZE = 32;
-    public static final int MAP_SIZE = 3000;
+    public static final int MAP_SIZE = 1000;
     public static int numOfValidTextures = 4;
     public static int[][] GAME_MAP=new int[MAP_SIZE][MAP_SIZE];
 
@@ -313,15 +313,20 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         if(Gdx.input.isKeyPressed(Input.Keys.P) && isDevelopmentMode && debugTimer>=1){
 
             Logger.log("-----[Debug: showing player status]-----");
-            Logger.log("socketID | Name | HP | Items");
+            Logger.log("socketID | Name | HP | ItemsLength");
             for (Map.Entry<String, Player> stringPlayerEntry : allPlayers.entrySet()) {
                 Player tmpPlayer=stringPlayerEntry.getValue();
-                Logger.log(stringPlayerEntry.getKey()+" "+tmpPlayer.getName()+" "+tmpPlayer.getHealthPoints());
+                Logger.log(stringPlayerEntry.getKey()+" "+tmpPlayer.getName()+" "+tmpPlayer.getHealthPoints()+ " "+ tmpPlayer.getItems().size() );
                 String str="";
                 for (Item i : tmpPlayer.getItems()) {
-                    str+=i.toString()+" ";
+                    if (i==null) {
+                        str+="null ";
+                    }
+                    else{
+                        str+=i+" ";
+                    }
                 }
-                Logger.log("-> Items: "+str, false);
+                Logger.log("-> Items: "+str);
             }
             Logger.log("-----[Debug END]-----");
             debugTimer=0;

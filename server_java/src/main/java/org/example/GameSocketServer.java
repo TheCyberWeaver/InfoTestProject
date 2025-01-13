@@ -25,7 +25,7 @@ public class GameSocketServer {
     // Map data
 
     public static final int CELL_SIZE = 32;
-    public static final int MAP_SIZE = 3000;
+    public static final int MAP_SIZE = 1000;
     public static int numOfValidTextures = 4;
     public static int[][] GAME_MAP=new int[MAP_SIZE][MAP_SIZE];
 

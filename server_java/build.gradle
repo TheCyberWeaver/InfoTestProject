@@ -7,32 +7,10 @@ plugins {
 
 group 'org.example'
 version '1.0-SNAPSHOT'
-sourceCompatibility = '17' // 自行调整
 
 repositories {
     mavenCentral()
 }
-
-sourceSets {
-  main {
-    // 例如，你除了默认的 src/main/java 之外，还有一个 customSrc 也想标记为源码
-    java {
-      srcDirs = ['src/main/java']
-    }
-    resources {
-      srcDirs = ['src/main/resources']
-    }
-  }
-  test {
-    java {
-      srcDirs = ['src/test/java']
-    }
-    resources {
-      srcDirs = ['src/test/resources']
-    }
-  }
-}
-
 
 dependencies {
     implementation 'org.slf4j:slf4j-simple:2.0.16'
@@ -47,4 +25,5 @@ dependencies {
 application {
     // 入口类
     mainClass = 'org.example.GameSocketServer'
+    applicationDefaultJvmArgs = ["-Xmx1g"]
 }
