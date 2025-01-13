@@ -26,8 +26,8 @@ public class Mage extends Player {
     private static float fireballLT = 2f; // lifetime with 0.5 second on start and 0.7 s on hit and 0.8 on end without hit
 
 
-    public Mage(String id, String name, Vector2 playerPosition, Texture t) {
-        super(id, name, "Mage",60, 125, 50, playerPosition, 200,t);
+    public Mage(String id, String name, Vector2 playerPosition) {
+        super(id, name, "Mage",60, 125, 50, playerPosition, 200);
         Texture[] animationSheets = assetManager.getMageAssets();
         ATTACK_1 = GameRenderer.sheetsToAnimation(8, 1, animationSheets[0], 0.1f);
         DEATH = GameRenderer.sheetsToAnimation(7, 1, animationSheets[1], 0.1f);
@@ -84,7 +84,8 @@ public class Mage extends Player {
 
     @Override
     public void render(Batch batch, float delta) {
-        Vector2 predictedPosition = predictPosition();
+        super.render(batch, delta);
+        
         Animation<TextureRegion> oldState = STATE;
         if(isAttacking) {
             STATE = ATTACK_1;
@@ -119,9 +120,6 @@ public class Mage extends Player {
 
         animationTime += delta;
 
-        GlyphLayout layout = new GlyphLayout(font, name);
-        float textWidth = layout.width;
-        font.draw(batch, name, predictedPosition.x + 16 - (int)textWidth/2f, predictedPosition.y + 40);
     }
     public String toString() {
         return "Mage: "+name;

@@ -13,7 +13,8 @@ public class Archer extends Player {
     private static float arrowLT = 2f; // lifetime with 0.5 second on start and 0.7 s on hit and 0.8 on end without hit
 
     public Archer(String id,String name, Vector2 playerPosition, Texture t) {
-        super(id, name, "Archer",100, 50, 50, playerPosition, 200, t);
+        super(id, name, "Archer",100, 50, 50, playerPosition, 200);
+        setTexture(t);
     }
 
     @Override

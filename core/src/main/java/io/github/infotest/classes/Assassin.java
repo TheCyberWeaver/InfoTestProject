@@ -9,7 +9,8 @@ import io.github.infotest.util.ServerConnection;
 public class Assassin extends Player {
 
     public Assassin(String id,String name, Vector2 playerPosition, Texture t) {
-        super(id, name, "Assassin",50, 50, 150, playerPosition, 200, t);
+        super(id, name, "Assassin",50, 50, 150, playerPosition, 200);
+        setTexture(t);
     }
 
     @Override

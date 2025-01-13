@@ -311,7 +311,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.K)) {
-            player.kill();
+            localPlayer.kill();
         }
         if (moved && currentTradingToNPC != null) {
             currentTradingToNPC.closeMarket();
@@ -340,7 +340,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             debugTimer=0;
         }
 
-        player.setHasMoved(moved);
+        localPlayer.setHasMoved(moved);
 
         if (moved) {
             // update position

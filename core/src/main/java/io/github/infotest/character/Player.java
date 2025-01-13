@@ -14,6 +14,8 @@ import io.github.infotest.util.ServerConnection;
 
 import java.util.ArrayList;
 
+import static io.github.infotest.MainGameScreen.CELL_SIZE;
+
 public abstract class Player extends Actor{
 
     // basic things
@@ -53,8 +55,8 @@ public abstract class Player extends Actor{
     protected float timeSinceLastT1Skill;
 
 
-    public Player(String id, String name, String className, int maxHealthPoints, int maxMana, int maxAusdauer, Vector2 initialPosition, float speed, Texture t) {
-        super(maxHealthPoints,initialPosition,speed, t);
+    public Player(String id, String name, String className, int maxHealthPoints, int maxMana, int maxAusdauer, Vector2 initialPosition, float speed) {
+        super(maxHealthPoints,initialPosition,speed);
         this.id = id;
         this.name = name;
         this.className = className;
@@ -100,8 +102,7 @@ public abstract class Player extends Actor{
 
         GlyphLayout layout = new GlyphLayout(font, name);
         float textWidth = layout.width;
-
-        font.draw(batch, name, predictedPosition.x + 16 - (int)textWidth/2f, predictedPosition.y + 40);
+        font.draw(batch, name, predictedPosition.x + (CELL_SIZE /2f) - textWidth/2f  , predictedPosition.y + 80);
     }
 
     @Override

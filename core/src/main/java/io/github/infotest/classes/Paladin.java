@@ -7,7 +7,8 @@ import io.github.infotest.util.ServerConnection;
 
 public class Paladin extends Player {
     public Paladin(String id, String name, Vector2 playerPosition, Texture t) {
-        super(id, name, "Paladin",50, 50, 150, playerPosition, 200, t);
+        super(id, name, "Paladin",50, 50, 150, playerPosition, 200);
+        setTexture(t);
     }
     @Override
     public void castSkill(int skillID, ServerConnection serverConnection) {
