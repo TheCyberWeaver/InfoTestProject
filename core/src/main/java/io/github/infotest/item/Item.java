@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import io.github.infotest.util.MyAssetManager;
 
 public abstract class Item {
+    public String id;
     public String name; // name des Items
     public String description;
     private Texture texture; // Texture, wie das Item im Inventory/ market aussieht // ItemTexture: 14x14 Pixel

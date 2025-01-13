@@ -1,7 +1,6 @@
 package org.example.character;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Player class represents a game character with various attributes and actions
@@ -25,7 +24,7 @@ public class Player {
     /**
      * The items that the player is currently carrying
      */
-    public List<String> items;
+    public ArrayList<String> itemIDs;
 
     /**
      * The player's hit points
@@ -50,7 +49,7 @@ public class Player {
         this.name = name;
         this.position = new Position(0, 0);
         this.rotation = new Position(0, 0);
-        this.items = new ArrayList<>();
+        this.itemIDs = new ArrayList<>();
         this.hp = 100;
         this.classtype = "";
         this.level = 0;
@@ -80,11 +79,11 @@ public class Player {
     }
 
     public void pickItem(String item) {
-        items.add(item);
+        itemIDs.add(item);
     }
 
     public void dropItem(String item) {
-        items.remove(item);
+        itemIDs.remove(item);
     }
 
     public void takeDamage(float damage) {

@@ -145,7 +145,7 @@ public class GameSocketServer {
                 player.pickItem(item);
                 // Notify all clients
                 server.getBroadcastOperations().sendEvent("playerPickedItem",
-                    new PickDropData(socketId, player.items));
+                    new PickDropData(socketId, player.itemIDs));
             }
         });
 
@@ -156,7 +156,7 @@ public class GameSocketServer {
             if (player != null) {
                 player.dropItem(item);
                 server.getBroadcastOperations().sendEvent("playerDroppedItem",
-                    new PickDropData(socketId, player.items));
+                    new PickDropData(socketId, player.itemIDs));
             }
         });
 

@@ -7,7 +7,7 @@ public class PlayerData {
     public String id;
     public String name;
     public Position position;
-    public String[] items;
+    public String[] itemIDs;
     public double hp;
     public String classtype;
     public int level;

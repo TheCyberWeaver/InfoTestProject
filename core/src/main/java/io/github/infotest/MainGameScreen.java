@@ -313,10 +313,15 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         if(Gdx.input.isKeyPressed(Input.Keys.P) && isDevelopmentMode && debugTimer>=1){
 
             Logger.log("-----[Debug: showing player status]-----");
-            Logger.log("socketID | Name | HP");
+            Logger.log("socketID | Name | HP | Items");
             for (Map.Entry<String, Player> stringPlayerEntry : allPlayers.entrySet()) {
                 Player tmpPlayer=stringPlayerEntry.getValue();
                 Logger.log(stringPlayerEntry.getKey()+" "+tmpPlayer.getName()+" "+tmpPlayer.getHealthPoints());
+                String str="";
+                for (Item i : tmpPlayer.getItems()) {
+                    str+=i.toString()+" ";
+                }
+                Logger.log("-> Items: "+str, false);
             }
             Logger.log("-----[Debug END]-----");
             debugTimer=0;

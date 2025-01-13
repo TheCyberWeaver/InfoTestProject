@@ -262,7 +262,7 @@ public class ServerConnection {
                 // Old Player - update position
                 player.updateTargetPosition(new Vector2(x, y));
                 player.updateHPFromPlayerData((float)playerData.hp);
-                player.updateItemFromPlayerData(playerData.items, assetManager);
+                player.updateItemFromPlayerData(playerData.itemIDs, assetManager);
                 player.updateRotationFromPlayerData(playerData.rotation.x,playerData.rotation.y);
                 //Logger.log("[INFO]: Player Rotation update " + playerData.rotation.x+" "+playerData.rotation.y);
             }

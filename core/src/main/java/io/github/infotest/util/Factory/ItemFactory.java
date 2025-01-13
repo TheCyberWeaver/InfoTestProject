@@ -9,16 +9,16 @@ public class ItemFactory {
      * Creates an Item instance based on the itemName string.
      * You can expand this as needed for more item types.
      *
-     * @param itemName The string representing the item (e.g., "Sword", "Shield", etc.)
+     * @param itemID The string representing the item (e.g., "Sword", "Shield", etc.)
      * @return An instance of a class extending Item
      * @throws IllegalArgumentException if the item name is not recognized
      */
-    public static Item createItem(String itemName, MyAssetManager assetManager) {
-        switch (itemName) {
+    public static Item createItem(String itemID, MyAssetManager assetManager) {
+        switch (itemID) {
             case "Apple":
                 return new Apple(assetManager);
             default:
-                throw new IllegalArgumentException("Unknown item: " + itemName);
+                throw new IllegalArgumentException("Unknown item: " + itemID);
         }
     }
 }
