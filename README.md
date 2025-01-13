@@ -2,7 +2,7 @@
 
 A student project made by the members of Info class of Privates Gymnasium Schloss Torgelow
 ## Project Demo
-![img.png](assets/img/img.png)
+![img.png](assets/img/img.png)![img.png](assets/img/img.png)
 
 ## Install the Game
 you can download it on the release page(comming soon)
