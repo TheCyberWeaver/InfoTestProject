@@ -2,8 +2,8 @@
 
 A student project made by the members of Info class of Privates Gymnasium Schloss Torgelow
 ## Project Demo
-![img.png](assets/img/img.png)![img.png](assets/img/img.png)
-
+![img.png](assets/img/img.png)
+![img.png](assets/img/img_8.png)
 ## Install the Game
 you can download it on the release page(comming soon)
 [Install the Game](https://github.com/TheCyberWeaver/InfoTestProject/wiki/Install-the-Game)
