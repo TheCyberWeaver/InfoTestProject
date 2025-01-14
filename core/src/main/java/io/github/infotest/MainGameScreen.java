@@ -34,6 +34,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     private Vector3 clickPos = null;
     private boolean clicked = false;
 
+    private boolean isRenderingWithNightShader = false;
+
 
 
     // Map data
@@ -77,6 +79,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         assetManager.loadLoadingScreen();
         assetManager.loadMapAssets();
+        assetManager.loadPlayerAssets();
+        assetManager.loadMageAssets();
         assetManager.loadFireballAssets();
         assetManager.loadHealthBarAssets();
         assetManager.loadManaBarAssets();
@@ -86,6 +90,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         assetManager.loadNPCMarketAssets();
         assetManager.loadSignsAssets();
         assetManager.manager.finishLoading();
+
+
 
         // connect to server
         //serverConnection = new ServerConnection("http://www.thomas-hub.com:9595", assassinTexture);
@@ -133,6 +139,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         gameRenderer = new GameRenderer(assetManager);
         gameRenderer.initAnimations();
+        gameRenderer.initShaders();
 
         Logger.log("[MainGameScreen INFO]: Map generated after receiving seed: " + seed);
     }
@@ -157,6 +164,13 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             batch.setProjectionMatrix(camera.combined);
 
             batch.begin();
+
+            if(isRenderingWithNightShader){
+                gameRenderer.activateNightShader(batch, camera);
+            } else {
+                batch.setShader(null);
+            }
+
             gameRenderer.renderMap(batch, camera.zoom, localPlayer.getPosition());
             gameRenderer.renderPlayers(batch, allPlayers, delta);
             gameRenderer.renderGegner(batch, allGegner, delta);
@@ -205,6 +219,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
 
             batch.draw(assetManager.getPlayerAssets(), 0, 0, 0, 0, assetManager.getPlayerAssets().getWidth(), assetManager.getPlayerAssets().getWidth(), 32, 32);
+            batch.setShader(null);
             batch.end();
 
             for(Player p: allPlayers.values()){
@@ -230,6 +245,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         numberOfNPCInTheLastFrame = allNPCs.size();
         clicked = false;
+
     }
 
     Vector3 oldPosition = null;
@@ -288,10 +304,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         }
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             if (tempTime >= 0.5f){
-                NPC npc = new NPC("NPC"+(allNPCs.toArray().length+1),50,
-                    new Vector2(localPlayer.getPosition().x-6.5f, localPlayer.getPosition().y),
-                    0, 0, 0, assetManager);
-                allNPCs.add(npc);
+                isRenderingWithNightShader = !isRenderingWithNightShader;
                 tempTime = 0;
             }
         }
@@ -321,6 +334,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             Logger.log("-----[Debug END]-----");
             debugTimer=0;
         }
+
+        localPlayer.setHasMoved(moved);
 
         if (moved) {
             // update position
@@ -411,7 +426,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
     /// GAME LOGIC
     public void checkFireballCollisions() {
-        for (GameRenderer.FireballInstance fireball : gameRenderer.getActiveFireballs()) {
+        for (GameRenderer.AbilityInstance fireball : gameRenderer.getActiveFireballs()) {
             for (Player p : allPlayers.values()){
                 if (p.equals(fireball.getOwner())){
                     continue;
@@ -420,7 +435,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                 float dX = Math.abs(p.getX() - fireball.getX());
                 float dY = Math.abs(p.getY() - fireball.getY());
 
-                if (dX <= 16f && dY <= 16f && !fireball.hasHit()){
+                if (dX <= 32f && dY <= 64f && !fireball.hasHit()){
                     p.takeDamage(fireball.getDamage(),serverConnection);
 
                     fireball.setHit();
@@ -457,4 +472,11 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         }
     }
 
+    public boolean isRenderingWithNightShader() {
+        return isRenderingWithNightShader;
+    }
+
+    public void setRenderingWithNightShader(boolean renderingWithNightShader) {
+        isRenderingWithNightShader = renderingWithNightShader;
+    }
 }
