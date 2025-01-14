@@ -3,7 +3,7 @@ package io.github.infotest.character;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
-
+import static io.github.infotest.MainGameScreen.*;
 public abstract class Gegner extends  Actor{
 
     private final float killXP;
@@ -29,12 +29,13 @@ public abstract class Gegner extends  Actor{
     public void update(float delta) {
         allPlayers.value(player.getPosition);
         float distance = position.dst;
-        if (distance <= attackRange){
-            performAttack (playerPosition); 
-        } 
+        if (distance <= attackRange) {
+            performAttack(playerPosition);
+        }
+    }
 
-    public abstract performAttack();
-            
+    public abstract void performAttack();
+
     @Override
     public String toString() {
         return "";
