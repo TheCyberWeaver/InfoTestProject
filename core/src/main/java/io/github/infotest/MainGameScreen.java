@@ -275,94 +275,92 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         float speed = localPlayer.getSpeed();
 
         tempTime += delta;
-        if(localPlayer.isAlive()){
+        if (localPlayer.isAlive()) {
             if (Gdx.input.isKeyPressed(Input.Keys.A)) {
                 localPlayer.setX(localPlayer.getX() - speed * delta);
                 moved = true;
-                localPlayer.setRotation(new Vector2(-1,0));
+                localPlayer.setRotation(new Vector2(-1, 0));
             }
             if (Gdx.input.isKeyPressed(Input.Keys.D)) {
                 localPlayer.setX(localPlayer.getX() + speed * delta);
                 moved = true;
-                localPlayer.setRotation(new Vector2(1,0));
+                localPlayer.setRotation(new Vector2(1, 0));
             }
             if (Gdx.input.isKeyPressed(Input.Keys.W)) {
                 localPlayer.setY(localPlayer.getY() + speed * delta);
                 moved = true;
-                localPlayer.setRotation(new Vector2(0,1));
+                localPlayer.setRotation(new Vector2(0, 1));
             }
             if (Gdx.input.isKeyPressed(Input.Keys.S)) {
                 localPlayer.setY(localPlayer.getY() - speed * delta);
                 moved = true;
-                localPlayer.setRotation(new Vector2(0,-1));
+                localPlayer.setRotation(new Vector2(0, -1));
             }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.E)) {
-            localPlayer.castSkill(1,serverConnection);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)){
-            localPlayer.sprint(delta, isDevelopmentMode);
-        } else if(localPlayer.isSprinting()){
-            localPlayer.stopSprint();
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            if (tempTime >= 0.5f){
-                isRenderingWithNightShader = !isRenderingWithNightShader;
-                tempTime = 0;
+            if (Gdx.input.isKeyPressed(Input.Keys.E)) {
+                localPlayer.castSkill(1, serverConnection);
             }
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.F)){
-            NPC cNpc = getClosestNPC();
-            if(cNpc!=null){
-                float distance = localPlayer.getPosition().dst(cNpc.getPosition());
-                if (currentTradingToNPC == null && distance <= 100 && !cNpc.isTrading()) {
-                    cNpc.openMarket(batch);
-                    currentTradingToNPC = cNpc;
+            if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+                localPlayer.sprint(delta, isDevelopmentMode);
+            } else if (localPlayer.isSprinting()) {
+                localPlayer.stopSprint();
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+                if (tempTime >= 0.5f) {
+                    isRenderingWithNightShader = !isRenderingWithNightShader;
+                    tempTime = 0;
                 }
             }
-        }
-
-
-
-        if (Gdx.input.isKeyPressed(Input.Keys.K)) {
-            localPlayer.kill(serverConnection);
-            Logger.log(localPlayer.isAlive()+"");
-        }
-        if (moved && currentTradingToNPC != null) {
-            currentTradingToNPC.closeMarket();
-            currentTradingToNPC = null;
-        }
-        //Debug Player status
-        if(Gdx.input.isKeyPressed(Input.Keys.P) && isDevelopmentMode && debugTimer>=1){
-
-            Logger.log("-----[Debug: showing player status]-----");
-            Logger.log("socketID | Name | HP | ItemsLength | alive");
-            for (Map.Entry<String, Player> stringPlayerEntry : allPlayers.entrySet()) {
-                Player tmpPlayer=stringPlayerEntry.getValue();
-                Logger.log(stringPlayerEntry.getKey()+" "+tmpPlayer.getName()+" "+tmpPlayer.getHealthPoints()+ " "+ tmpPlayer.getItems().size() +" "+tmpPlayer.isAlive());
-                String str="";
-                for (Item i : tmpPlayer.getItems()) {
-                    if (i==null) {
-                        str+="null ";
-                    }
-                    else{
-                        str+=i+" ";
+            if (Gdx.input.isKeyPressed(Input.Keys.F)) {
+                NPC cNpc = getClosestNPC();
+                if (cNpc != null) {
+                    float distance = localPlayer.getPosition().dst(cNpc.getPosition());
+                    if (currentTradingToNPC == null && distance <= 100 && !cNpc.isTrading()) {
+                        cNpc.openMarket(batch);
+                        currentTradingToNPC = cNpc;
                     }
                 }
-                Logger.log("-> Items: "+str);
             }
-            Logger.log("-----[Debug END]-----");
-            debugTimer=0;
-        }
 
-        localPlayer.setHasMoved(moved);
 
-        if (moved && localPlayer.isAlive()) {
-            // update position
-            serverConnection.sendPlayerPosition(localPlayer.getX(), localPlayer.getY(), localPlayer.getRotation().x, localPlayer.getRotation().y);
+            if (Gdx.input.isKeyPressed(Input.Keys.K)) {
+                localPlayer.kill(serverConnection);
+                Logger.log(localPlayer.isAlive() + "");
+            }
+            if (moved && currentTradingToNPC != null) {
+                currentTradingToNPC.closeMarket();
+                currentTradingToNPC = null;
+            }
+            //Debug Player status
+            if (Gdx.input.isKeyPressed(Input.Keys.P) && isDevelopmentMode && debugTimer >= 1) {
+
+                Logger.log("-----[Debug: showing player status]-----");
+                Logger.log("socketID | Name | HP | ItemsLength | alive");
+                for (Map.Entry<String, Player> stringPlayerEntry : allPlayers.entrySet()) {
+                    Player tmpPlayer = stringPlayerEntry.getValue();
+                    Logger.log(stringPlayerEntry.getKey() + " " + tmpPlayer.getName() + " " + tmpPlayer.getHealthPoints() + " " + tmpPlayer.getItems().size() + " " + tmpPlayer.isAlive());
+                    String str = "";
+                    for (Item i : tmpPlayer.getItems()) {
+                        if (i == null) {
+                            str += "null ";
+                        } else {
+                            str += i + " ";
+                        }
+                    }
+                    Logger.log("-> Items: " + str);
+                }
+                Logger.log("-----[Debug END]-----");
+                debugTimer = 0;
+            }
+
+            localPlayer.setHasMoved(moved);
+
+            if (moved && localPlayer.isAlive()) {
+                // update position
+                serverConnection.sendPlayerPosition(localPlayer.getX(), localPlayer.getY(), localPlayer.getRotation().x, localPlayer.getRotation().y);
+            }
         }
     }
-
     @Override
     public void resize(int width, int height) {
         camera.setToOrtho(false, width, height);

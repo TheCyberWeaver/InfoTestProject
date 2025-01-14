@@ -31,8 +31,8 @@ public class Mage extends Player {
     private static float fireballLT = 2f; // lifetime with 0.5 second on start and 0.7 s on hit and 0.8 on end without hit
 
 
-    public Mage(String id, String name, Vector2 playerPosition, Texture t, MyAssetManager assetManager) {
-        super(id, name, "Mage",60, 125, 50, playerPosition, 200,t);
+    public Mage(String id, String name, Vector2 playerPosition, MyAssetManager assetManager) {
+        super(id, name, "Mage",60, 125, 50, playerPosition, 200);
         Texture[] animationSheets = assetManager.getMageAssets();
         ATTACK_1 = GameRenderer.sheetsToAnimation(8, 1, animationSheets[0], 0.1f);
         DEATH = GameRenderer.sheetsToAnimation(7, 1, animationSheets[1], 0.1f);

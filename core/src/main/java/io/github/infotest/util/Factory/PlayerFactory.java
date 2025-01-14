@@ -15,7 +15,7 @@ public class PlayerFactory {
             case "Assassin":
                 return new Assassin(id, playerName, initialPosition, assetManager.getPlayerAssets());
             case "Mage":
-                return new Mage(id,playerName, initialPosition);
+                return new Mage(id,playerName, initialPosition, assetManager);
             case "Defender":
                 return new Defender(id,playerName, initialPosition, assetManager.getPlayerAssets());
             case "Healer":
