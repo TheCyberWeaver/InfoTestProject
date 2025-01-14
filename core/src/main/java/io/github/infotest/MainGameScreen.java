@@ -35,6 +35,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     private Vector3 clickPos = null;
     private boolean clicked = false;
 
+    private boolean isRenderingWithNightShader = false;
+
 
 
     // Map data
@@ -90,7 +92,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         assetManager.loadSignsAssets();
         assetManager.manager.finishLoading();
 
-        Actor.assetManager = assetManager;
+
 
         // connect to server
         //serverConnection = new ServerConnection("http://www.thomas-hub.com:9595", assassinTexture);
@@ -140,6 +142,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         gameRenderer = new GameRenderer(assetManager);
         gameRenderer.initAnimations();
+        gameRenderer.initShaders();
 
         Logger.log("[MainGameScreen INFO]: Map generated after receiving seed: " + seed);
     }
@@ -164,6 +167,13 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             batch.setProjectionMatrix(camera.combined);
 
             batch.begin();
+
+            if(isRenderingWithNightShader){
+                gameRenderer.activateNightShader(batch, camera);
+            } else {
+                batch.setShader(null);
+            }
+
             gameRenderer.renderMap(batch, camera.zoom, localPlayer.getPosition());
             gameRenderer.renderPlayers(batch, allPlayers, delta);
             gameRenderer.renderGegner(batch, allGegner, delta);
@@ -212,6 +222,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
 
             batch.draw(assetManager.getPlayerAssets(), 0, 0, 0, 0, assetManager.getPlayerAssets().getWidth(), assetManager.getPlayerAssets().getWidth(), 32, 32);
+            batch.setShader(null);
             batch.end();
 
             for(Player p: allPlayers.values()){
@@ -237,6 +248,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         numberOfNPCInTheLastFrame = allNPCs.size();
         clicked = false;
+
     }
 
     Vector3 oldPosition = null;
@@ -285,31 +297,27 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                 localPlayer.setRotation(new Vector2(0,-1));
             }
 
-            if (Gdx.input.isKeyPressed(Input.Keys.E)) {
-                localPlayer.castSkill(1,serverConnection);
+        if (Gdx.input.isKeyPressed(Input.Keys.E)) {
+            localPlayer.castSkill(1,serverConnection);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)){
+            localPlayer.sprint(delta, isDevelopmentMode);
+        } else if(localPlayer.isSprinting()){
+            localPlayer.stopSprint();
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            if (tempTime >= 0.5f){
+                isRenderingWithNightShader = !isRenderingWithNightShader;
+                tempTime = 0;
             }
-            if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)){
-                localPlayer.sprint(delta, isDevelopmentMode);
-            } else if(localPlayer.isSprinting()){
-                localPlayer.stopSprint();
-            }
-            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-                if (tempTime >= 0.5f){
-                    NPC npc = new NPC("NPC"+(allNPCs.toArray().length+1),50,
-                        new Vector2(localPlayer.getPosition().x-6.5f, localPlayer.getPosition().y),
-                        0, 0, 0, assetManager);
-                    allNPCs.add(npc);
-                    tempTime = 0;
-                }
-            }
-            if (Gdx.input.isKeyPressed(Input.Keys.F)){
-                NPC cNpc = getClosestNPC();
-                if(cNpc!=null){
-                    float distance = localPlayer.getPosition().dst(cNpc.getPosition());
-                    if (currentTradingToNPC == null && distance <= 100 && !cNpc.isTrading()) {
-                        cNpc.openMarket(batch);
-                        currentTradingToNPC = cNpc;
-                    }
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.F)){
+            NPC cNpc = getClosestNPC();
+            if(cNpc!=null){
+                float distance = localPlayer.getPosition().dst(cNpc.getPosition());
+                if (currentTradingToNPC == null && distance <= 100 && !cNpc.isTrading()) {
+                    cNpc.openMarket(batch);
+                    currentTradingToNPC = cNpc;
                 }
             }
         }
@@ -484,4 +492,11 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         }
     }
 
+    public boolean isRenderingWithNightShader() {
+        return isRenderingWithNightShader;
+    }
+
+    public void setRenderingWithNightShader(boolean renderingWithNightShader) {
+        isRenderingWithNightShader = renderingWithNightShader;
+    }
 }

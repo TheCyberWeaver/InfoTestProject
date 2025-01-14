@@ -2,19 +2,25 @@ package io.github.infotest.util;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.GdxRuntimeException;
+import io.github.infotest.MainGameScreen;
 import io.github.infotest.character.Gegner;
 import io.github.infotest.character.NPC;
 import io.github.infotest.character.Player;
+import io.github.infotest.util.Overlay.UI_Layer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static io.github.infotest.MainGameScreen.CELL_SIZE;
-import static io.github.infotest.MainGameScreen.GAME_MAP;
+import static io.github.infotest.MainGameScreen.*;
 
 public class GameRenderer {
 
@@ -28,6 +34,8 @@ public class GameRenderer {
     private Animation<TextureRegion>[] fireballAnimations;
 
     private final MyAssetManager assetManager;
+
+    private ShaderProgram nightEffectShader;
 
 
     public GameRenderer(MyAssetManager assetManager) {
@@ -283,6 +291,57 @@ public class GameRenderer {
     public ArrayList<AbilityInstance> getActiveFireballs() {
         return activeFireballs;
     }
+
+    /// SHADER LOGIC
+    public void initShaders() {
+        Gdx.app.postRunnable(() -> {
+            nightEffectShader = new ShaderProgram(
+                Gdx.files.internal("shaders/night_effect.vert"),
+                Gdx.files.internal("shaders/night_shader.frag")
+            );
+
+            if (!nightEffectShader.isCompiled()) {
+                throw new IllegalStateException("Shader compilation failed: " + nightEffectShader.getLog());
+            }
+        });
+    }
+
+    private float lightRadius = 200.0f; // Radius des beleuchteten Bereichs
+    private float fadeStart = 600.0f;  // Fade-Distanz
+    private Vector2 playerScreenPos = new Vector2(); // Position des Spielers auf dem Bildschirm
+    private float altZOOM = 1;
+    public void updateShaderUniforms(Vector2 playerWorldPos, OrthographicCamera camera) {
+        // Berechne Spielerposition in Bildschirmkoordinaten
+        Vector3 screenPos = camera.project(new Vector3(playerWorldPos.x, playerWorldPos.y, 0));
+        playerScreenPos.set(screenPos.x, screenPos.y);
+
+        // Zoomfaktor berücksichtigen und Werte anpassen
+        if (camera.zoom != altZOOM) {
+            float zoomFactor = altZOOM / camera.zoom;
+            Logger.log(zoomFactor + "");
+            lightRadius *= zoomFactor;
+            fadeStart *= zoomFactor;
+            altZOOM = camera.zoom;
+        }
+
+        // Setze Uniform-Werte
+        nightEffectShader.bind();
+        // Übergebe die Spielerposition in Bildschirmkoordinaten an den Shader
+        nightEffectShader.setUniformf("u_playerPos", playerScreenPos.x, playerScreenPos.y);
+        // Radius und Fade-Werte setzen
+        nightEffectShader.setUniformf("u_lightRadius", lightRadius);
+        nightEffectShader.setUniformf("u_fadeStart", fadeStart);
+    }
+
+    public void activateNightShader(Batch batch, OrthographicCamera camera) {
+        // Hole die Spielerposition und aktualisiere die Uniforms
+        Vector2 playerWorldPos = localPlayer.getPosition();
+        updateShaderUniforms(playerWorldPos, camera);
+
+        // Shader für das Batch setzen
+        batch.setShader(nightEffectShader);
+    }
+
 
 
     /// Helper class for tracking ability instances

@@ -27,7 +27,6 @@ public abstract class Actor {
     // LibGDX related
     protected Texture texture;     // character texture
     protected static BitmapFont font;
-    public static MyAssetManager assetManager;
 
     public Actor(int maxHealthPoints, Vector2 initialPosition, float speed, Texture texture) {
         this.maxHealthPoints = maxHealthPoints;

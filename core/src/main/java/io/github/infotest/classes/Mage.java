@@ -6,7 +6,12 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.character.Player;
 import io.github.infotest.util.GameRenderer;
 import io.github.infotest.util.Logger;
+import io.github.infotest.util.MyAssetManager;
 import io.github.infotest.util.ServerConnection;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Mage extends Player {
 
@@ -19,15 +24,15 @@ public class Mage extends Player {
     protected Animation<TextureRegion> STATE;
 
     private static float fireballCost = 5f;
-    private static float fireballDamage = 16f;
+    private static float fireballDamage = 3f;
     private static float fireballCooldown;
     private static float fireballSpeed = 3f;
     private static float fireballScale = 1f;
     private static float fireballLT = 2f; // lifetime with 0.5 second on start and 0.7 s on hit and 0.8 on end without hit
 
 
-    public Mage(String id, String name, Vector2 playerPosition) {
-        super(id, name, "Mage",60, 125, 50, playerPosition, 200);
+    public Mage(String id, String name, Vector2 playerPosition, Texture t, MyAssetManager assetManager) {
+        super(id, name, "Mage",60, 125, 50, playerPosition, 200,t);
         Texture[] animationSheets = assetManager.getMageAssets();
         ATTACK_1 = GameRenderer.sheetsToAnimation(8, 1, animationSheets[0], 0.1f);
         DEATH = GameRenderer.sheetsToAnimation(7, 1, animationSheets[1], 0.1f);
@@ -57,8 +62,15 @@ public class Mage extends Player {
                     } else {
                         xOffset = 47;
                     }
+                    this.isAttacking = true;
 
-                    castFireball(this.position.x+xOffset, this.position.y+46, rotation);
+                    ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+                    int finalXOffset = xOffset;
+                    scheduler.schedule(() -> {
+                        castFireball(this.position.x + finalXOffset, this.position.y + 46, rotation);
+                        scheduler.shutdown(); // Scheduler nach Ausführung beenden
+                    }, 400, TimeUnit.MILLISECONDS);
+
                     if(localPlayer==this){
                         serverConnection.sendCastSkill(this, "Fireball");
                     }
@@ -78,23 +90,21 @@ public class Mage extends Player {
         playerRot.nor();
         float velocityX = 1.5f * playerRot.x;
         float velocityY = 1.5f * playerRot.y;
-        this.isAttacking = true;
         GameRenderer.fireball(x, y, velocityX, velocityY, playerRot, fireballScale, fireballDamage, fireballSpeed, fireballLT, this);
     }
 
     @Override
     public void render(Batch batch, float delta) {
-        super.render(batch, delta);
-
+        Vector2 predictedPosition = predictPosition();
         Animation<TextureRegion> oldState = STATE;
-        if(!isAlive){
-            STATE = DEATH;
-        }else if(isAttacking) {
+        if(isAttacking) {
             STATE = ATTACK_1;
         } else if(isHit){
             STATE = HIT;
         } else if(hasMoved){
             STATE = RUN;
+        } else if(!isAlive){
+            STATE = DEATH;
         } else {
             STATE = IDLE;
         }
@@ -119,6 +129,9 @@ public class Mage extends Player {
 
         animationTime += delta;
 
+        GlyphLayout layout = new GlyphLayout(font, name);
+        float textWidth = layout.width;
+        font.draw(batch, name, predictedPosition.x + 16 - (int)textWidth/2f, predictedPosition.y + 72);
     }
     public String toString() {
         return "Mage: "+name;
