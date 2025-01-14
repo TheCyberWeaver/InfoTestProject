@@ -27,11 +27,16 @@ public abstract class Gegner extends  Actor{
 
     @Override
     public void update(float delta) {
+        allPlayers.value(player.getPosition);
+        float distance = position.dst;
+        if (distance <= attackRange){
+            performAttack (playerPosition); 
+        } 
 
-    }
-
+    public abstract performAttack();
+            
     @Override
     public String toString() {
         return "";
     }
-}
+
