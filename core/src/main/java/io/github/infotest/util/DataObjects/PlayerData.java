@@ -9,6 +9,7 @@ public class PlayerData {
     public Position position;
     public String[] itemIDs;
     public double hp;
+    public boolean isAlive;
     public String classtype;
     public int level;
     public double mana;

@@ -31,6 +31,8 @@ public class Player {
      */
     public float hp;
 
+    public boolean isAlive;
+
     /**
      * The player's classType
      */
@@ -54,6 +56,7 @@ public class Player {
         this.classtype = "";
         this.level = 0;
         this.mana = 0;
+        this.isAlive = true;
     }
 
     public String getId() {

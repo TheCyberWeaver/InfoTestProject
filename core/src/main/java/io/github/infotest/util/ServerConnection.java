@@ -135,8 +135,9 @@ public class ServerConnection {
             }).on("playerLeft", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    if (args.length > 1 && args[1] instanceof String) {
-                        String leftPlayerId = (String) args[1];
+                    if (args.length > 0 && args[0] instanceof String) {
+                        String leftPlayerId = (String) args[0];
+                        //Logger.log("[ServerConnection Debug]: left Playerid "+leftPlayerId);
                         allPlayers.remove(leftPlayerId);
                     }
                 }
@@ -211,6 +212,7 @@ public class ServerConnection {
     private void doPlayerAction(JSONObject data) throws JSONException {
         String actionType = data.getString("actionType");
         String playerID   = data.getString("playerID");
+
         Player player = allPlayers.get(playerID);
         if(player == null ){
             Logger.log("[ServerConnection Warning]: Cannot find player with id " + playerID);
@@ -228,6 +230,9 @@ public class ServerConnection {
                 float damage = Float.parseFloat(data.getString("damage"));
                 player.takeDamage(damage);
                 Logger.log("[ServerConnection INFO]: Taking damage of " + damage);
+                break;
+            case "PlayerDeath":
+                player.kill();
                 break;
             default:
                 Logger.log("[SeverConnection Warning]: received Action not Known: " + actionType);
@@ -264,6 +269,7 @@ public class ServerConnection {
                 player.updateHPFromPlayerData((float)playerData.hp);
                 player.updateItemFromPlayerData(playerData.itemIDs, assetManager);
                 player.updateRotationFromPlayerData(playerData.rotation.x,playerData.rotation.y);
+                player.updateisAlive(playerData.isAlive);
                 //Logger.log("[INFO]: Player Rotation update " + playerData.rotation.x+" "+playerData.rotation.y);
             }
         }
@@ -282,7 +288,21 @@ public class ServerConnection {
         }
     }
 
+    public void sendPlayerDeath(Player player){
+        JSONObject actionData = new JSONObject();
+        try {
+            actionData.put("actionType", "PlayerDeath");
+            actionData.put("targetId", player.id);
+            //Logger.log("[ServerConnection INFO]: sendPlayerDeath actionData: " + actionData);
+            //skillData.put("damage", damage);
 
+            socket.emit("playerAction", actionData);
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void sendPlayerPosition(float x, float y, float Rx, float Ry) {
         //if (socket == null || !socket.connected()) return;

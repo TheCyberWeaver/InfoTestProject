@@ -166,4 +166,10 @@ public abstract class Actor {
     public void updateRotationFromPlayerData(double Rx, double Ry) {
         this.rotation = new Vector2((float)Rx,(float)Ry);
     }
+    public void updateisAlive(boolean alive) {
+        isAlive = alive;
+    }
+    public boolean isAlive() {
+        return isAlive;
+    }
 }

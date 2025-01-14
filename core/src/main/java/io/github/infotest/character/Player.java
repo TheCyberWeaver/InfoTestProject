@@ -262,6 +262,10 @@ public abstract class Player extends Actor{
             items.add(item);
         }
     }
+    public void kill(ServerConnection serverConnection) {
+        super.kill();
+        serverConnection.sendPlayerDeath(this);
+    }
     public void setRotation(Vector2 rotation) {
         this.rotation=rotation.cpy();
     }

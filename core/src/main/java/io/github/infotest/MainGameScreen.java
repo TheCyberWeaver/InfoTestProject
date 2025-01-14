@@ -134,6 +134,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         GLOBAL_SEED = seed;
         mapCreator.initializePerlinNoiseMap();
 
+        localPlayer.setId(serverConnection.getMySocketId());
+
         hasInitializedMap = true;
 
         gameRenderer = new GameRenderer(assetManager);
@@ -218,9 +220,9 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             //player.update(delta);
             checkFireballCollisions();
 
-            if (localPlayer.getHealthPoints() <= 0) {
-                localPlayer.kill();
-                respawn(localPlayer);
+            if (localPlayer.getHealthPoints() <= 0 && localPlayer.isAlive()) {
+                localPlayer.kill(serverConnection);
+                //respawn(localPlayer);
             }
         }
         else{
@@ -261,57 +263,62 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         float speed = localPlayer.getSpeed();
 
         tempTime += delta;
-
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            localPlayer.setX(localPlayer.getX() - speed * delta);
-            moved = true;
-            localPlayer.setRotation(new Vector2(-1,0));
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            localPlayer.setX(localPlayer.getX() + speed * delta);
-            moved = true;
-            localPlayer.setRotation(new Vector2(1,0));
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            localPlayer.setY(localPlayer.getY() + speed * delta);
-            moved = true;
-            localPlayer.setRotation(new Vector2(0,1));
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            localPlayer.setY(localPlayer.getY() - speed * delta);
-            moved = true;
-            localPlayer.setRotation(new Vector2(0,-1));
-        }
-
-        if (Gdx.input.isKeyPressed(Input.Keys.E)) {
-            localPlayer.castSkill(1,serverConnection);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)){
-            localPlayer.sprint(delta, isDevelopmentMode);
-        } else if(localPlayer.isSprinting()){
-            localPlayer.stopSprint();
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            if (tempTime >= 0.5f){
-                NPC npc = new NPC("NPC"+(allNPCs.toArray().length+1),50,
-                    new Vector2(localPlayer.getPosition().x-6.5f, localPlayer.getPosition().y),
-                    0, 0, 0, assetManager);
-                allNPCs.add(npc);
-                tempTime = 0;
+        if(localPlayer.isAlive()){
+            if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+                localPlayer.setX(localPlayer.getX() - speed * delta);
+                moved = true;
+                localPlayer.setRotation(new Vector2(-1,0));
             }
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.F)){
-            NPC cNpc = getClosestNPC();
-            if(cNpc!=null){
-                float distance = localPlayer.getPosition().dst(cNpc.getPosition());
-                if (currentTradingToNPC == null && distance <= 100 && !cNpc.isTrading()) {
-                    cNpc.openMarket(batch);
-                    currentTradingToNPC = cNpc;
+            if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+                localPlayer.setX(localPlayer.getX() + speed * delta);
+                moved = true;
+                localPlayer.setRotation(new Vector2(1,0));
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+                localPlayer.setY(localPlayer.getY() + speed * delta);
+                moved = true;
+                localPlayer.setRotation(new Vector2(0,1));
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+                localPlayer.setY(localPlayer.getY() - speed * delta);
+                moved = true;
+                localPlayer.setRotation(new Vector2(0,-1));
+            }
+
+            if (Gdx.input.isKeyPressed(Input.Keys.E)) {
+                localPlayer.castSkill(1,serverConnection);
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)){
+                localPlayer.sprint(delta, isDevelopmentMode);
+            } else if(localPlayer.isSprinting()){
+                localPlayer.stopSprint();
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+                if (tempTime >= 0.5f){
+                    NPC npc = new NPC("NPC"+(allNPCs.toArray().length+1),50,
+                        new Vector2(localPlayer.getPosition().x-6.5f, localPlayer.getPosition().y),
+                        0, 0, 0, assetManager);
+                    allNPCs.add(npc);
+                    tempTime = 0;
+                }
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.F)){
+                NPC cNpc = getClosestNPC();
+                if(cNpc!=null){
+                    float distance = localPlayer.getPosition().dst(cNpc.getPosition());
+                    if (currentTradingToNPC == null && distance <= 100 && !cNpc.isTrading()) {
+                        cNpc.openMarket(batch);
+                        currentTradingToNPC = cNpc;
+                    }
                 }
             }
         }
+
+
+
         if (Gdx.input.isKeyPressed(Input.Keys.K)) {
-            localPlayer.kill();
+            localPlayer.kill(serverConnection);
+            Logger.log(localPlayer.isAlive()+"");
         }
         if (moved && currentTradingToNPC != null) {
             currentTradingToNPC.closeMarket();
@@ -321,10 +328,10 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         if(Gdx.input.isKeyPressed(Input.Keys.P) && isDevelopmentMode && debugTimer>=1){
 
             Logger.log("-----[Debug: showing player status]-----");
-            Logger.log("socketID | Name | HP | ItemsLength");
+            Logger.log("socketID | Name | HP | ItemsLength | alive");
             for (Map.Entry<String, Player> stringPlayerEntry : allPlayers.entrySet()) {
                 Player tmpPlayer=stringPlayerEntry.getValue();
-                Logger.log(stringPlayerEntry.getKey()+" "+tmpPlayer.getName()+" "+tmpPlayer.getHealthPoints()+ " "+ tmpPlayer.getItems().size() );
+                Logger.log(stringPlayerEntry.getKey()+" "+tmpPlayer.getName()+" "+tmpPlayer.getHealthPoints()+ " "+ tmpPlayer.getItems().size() +" "+tmpPlayer.isAlive());
                 String str="";
                 for (Item i : tmpPlayer.getItems()) {
                     if (i==null) {
@@ -342,7 +349,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         localPlayer.setHasMoved(moved);
 
-        if (moved) {
+        if (moved && localPlayer.isAlive()) {
             // update position
             serverConnection.sendPlayerPosition(localPlayer.getX(), localPlayer.getY(), localPlayer.getRotation().x, localPlayer.getRotation().y);
         }
@@ -440,7 +447,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                 float dX = Math.abs(p.getX() - fireball.getX());
                 float dY = Math.abs(p.getY() - fireball.getY());
 
-                if (dX <= 16f && dY <= 16f && !fireball.hasHit()){
+                if (dX <= 32f && dY <= 64f && !fireball.hasHit()){
                     p.takeDamage(fireball.getDamage(),serverConnection);
 
                     fireball.setHit();

@@ -19,7 +19,7 @@ public class Mage extends Player {
     protected Animation<TextureRegion> STATE;
 
     private static float fireballCost = 5f;
-    private static float fireballDamage = 3f;
+    private static float fireballDamage = 16f;
     private static float fireballCooldown;
     private static float fireballSpeed = 3f;
     private static float fireballScale = 1f;
@@ -85,16 +85,16 @@ public class Mage extends Player {
     @Override
     public void render(Batch batch, float delta) {
         super.render(batch, delta);
-        
+
         Animation<TextureRegion> oldState = STATE;
-        if(isAttacking) {
+        if(!isAlive){
+            STATE = DEATH;
+        }else if(isAttacking) {
             STATE = ATTACK_1;
         } else if(isHit){
             STATE = HIT;
         } else if(hasMoved){
             STATE = RUN;
-        } else if(!isAlive){
-            STATE = DEATH;
         } else {
             STATE = IDLE;
         }
@@ -105,7 +105,6 @@ public class Mage extends Player {
             isAttacking = false;
             isHit = false;
             isSprinting = false;
-            isAlive = true;
         }
         Sprite currentFrame = new Sprite(STATE.getKeyFrame(animationTime));
 

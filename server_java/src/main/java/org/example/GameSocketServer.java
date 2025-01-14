@@ -178,8 +178,20 @@ public class GameSocketServer {
                 case "AOE":
                     // TODO
                     break;
-                case "Continuous":
-                    // TODO
+                case "PlayerDeath":
+                    String playerId = json.get("targetId").getAsString();
+                    Player target1 = players.get(playerId);
+                    if (target1 != null) {
+                        target1.isAlive=false;
+                        // Notify all clients
+                        server.getBroadcastOperations().sendEvent("playerAction",
+                            new ActionData(playerId, "PlayerDeath"));
+                    } else {
+                        System.out.println("[Debug]: target is NULL");
+                    }
+
+
+                    System.out.println("[Debug]: " + player.name + " is dead");
                     break;
                 case "Fireball":
                     // Broadcast to others that some player cast a Fireball
