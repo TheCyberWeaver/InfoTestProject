@@ -14,7 +14,7 @@ public class Main extends Game {
     private String serverUrl;
     public static boolean isDevelopmentMode=true;
 
-    public String  clientVersion="v3.1";
+    public String  clientVersion="v3.2";
 
 
     /*
