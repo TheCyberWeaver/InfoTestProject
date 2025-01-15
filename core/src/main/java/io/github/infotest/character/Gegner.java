@@ -52,7 +52,7 @@ public abstract class Gegner extends  Actor{
     }
 
 
-    public abstract void performAttack();
+    public abstract void performAttack(Player player);
 
     @Override
     public String toString() {
