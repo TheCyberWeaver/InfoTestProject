@@ -21,6 +21,11 @@ public class Gegner extends  Actor{
         }
     }
 
+    @Override
+    public void update(float delta) {
+
+    }
+
     public void getKilled(Player p){
         p.gainExperience(killXP);
     }
@@ -34,7 +39,9 @@ public class Gegner extends  Actor{
 //        }
 //    }
 
-    public abstract void performAttack();
+    public void performAttack() {
+
+    }
 
     @Override
     public String toString() {
