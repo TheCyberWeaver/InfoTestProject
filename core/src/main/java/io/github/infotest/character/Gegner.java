@@ -26,8 +26,8 @@ public abstract class Gegner extends  Actor{
     }
 
 
-        public Player findPlayer(allPlayers.value Player){
-      Player closestPlayer = null;
+    public Player findPlayer(allPlayers.value Player){
+        Player closestPlayer = null;
         float shortestDistance = Float.MAX_VALUE;
         if (allPlayers == null){
             return null;
@@ -42,16 +42,16 @@ public abstract class Gegner extends  Actor{
     }
 
 
-    //    @Override
-//    public void update(float delta) {
-//        allPlayers.value(player.getPosition);
-//        float distance = position.dst;
-//        if (distance <= attackRange) {
-//            performAttack(playerPosition);
-//        }
-//    }
+    @Override
+    public void update(float delta) {
+        allPlayers.value(player.getPosition);
+        float distance = position.dst;
+        if (distance <= attackRange) {
+            performAttack(playerPosition);
+        }
+    }
 
-    
+
     public abstract void performAttack();
 
     @Override
