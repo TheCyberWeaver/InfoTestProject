@@ -1,10 +1,13 @@
 package io.github.infotest.util;
 
 import com.badlogic.gdx.math.Vector2;
+import io.github.infotest.character.Gegner;
 import io.github.infotest.character.Player;
 import io.github.infotest.character.NPC;
+import io.github.infotest.util.DataObjects.GegnerData;
 import io.github.infotest.util.DataObjects.NPCData;
 import io.github.infotest.util.DataObjects.PlayerData;
+import io.github.infotest.util.Factory.GegnerFactory;
 import io.github.infotest.util.Factory.NPCFactory;
 import io.github.infotest.util.Factory.PlayerFactory;
 import io.socket.client.IO;
@@ -132,6 +135,25 @@ public class ServerConnection {
 
 
                 }
+            }).on("updateAllGegners", new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    if(args.length > 0){
+                        String updatedGegnersJson = args[0].toString();
+                        //   - key: socketId (e.g., "socketId_1")
+                        //   - value: <GegnerData>
+                        Gson gson = new Gson();
+                        Type typeOfHashMap = new TypeToken<ArrayList<GegnerData>>(){}.getType();
+                        ArrayList<GegnerData> GegnersList = gson.fromJson(updatedGegnersJson, typeOfHashMap);
+
+                        updateGegners(GegnersList);
+                    }
+                    else {
+                        Logger.log("[ServerConnection ERROR]: Received updateAllNPCs event with invalid data");
+                    }
+
+
+                }
             }).on("playerLeft", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
@@ -172,6 +194,19 @@ public class ServerConnection {
             e.printStackTrace();
         }
     }
+
+    private void updateGegners(ArrayList<GegnerData> gegnersList) {
+        allGegner=new ArrayList<>();
+        for (GegnerData gegnerData : gegnersList) {
+//            Logger.log("Debug:"+socketId+" | "+playerData.name);
+            float x = (float)gegnerData.position.x;
+            float y = (float)gegnerData.position.y;
+
+            Gegner gegner = GegnerFactory.createGegner(gegnerData.name,gegnerData.maxHP,new Vector2(x,y),gegnerData.type,assetManager);
+            allGegner.add(gegner);
+        }
+    }
+
     private void initClient(JSONObject data) {
         GLOBAL_SEED = (int) data.get("seed");
         Logger.log("[INFO]: Global seed : " + GLOBAL_SEED);
@@ -275,8 +310,6 @@ public class ServerConnection {
         }
     }
     private void updateNPCs(ArrayList<NPCData> NPCsMap){
-        // playersMap 中每一个 key 都是一个 socketId，
-        // value 则是对应的 PlayerData 对象
         allNPCs=new ArrayList<>();
         for (NPCData npcData : NPCsMap) {
 //            Logger.log("Debug:"+socketId+" | "+playerData.name);

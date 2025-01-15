@@ -1,6 +1,5 @@
 package io.github.infotest.util;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 
@@ -31,10 +30,10 @@ public class MyAssetManager {
         return textures;
     }
 
-    public void loadPlayerAssets(){
+    public void loadTestPlayerAssets(){
         manager.load("assassin.png", Texture.class);
     }
-    public Texture getPlayerAssets(){
+    public Texture getTestPlayerAssets(){
         return manager.get("assassin.png", Texture.class);
     }
 

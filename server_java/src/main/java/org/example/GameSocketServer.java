@@ -5,6 +5,7 @@ package org.example;
  */
 import com.corundumstudio.socketio.*;
 import com.google.gson.*;
+import org.example.character.Gegner;
 import org.example.character.Player;
 import org.example.character.NPC;
 import org.example.util.MapCreator;
@@ -30,11 +31,9 @@ public class GameSocketServer {
     public static int[][] GAME_MAP=new int[MAP_SIZE][MAP_SIZE];
 
     //NPC
-    private static ArrayList<NPC> npcs=new ArrayList<NPC>();
-    /**
-     * Stores all connected players
-     */
-    private static final Map<String, Player> players = new ConcurrentHashMap<>();
+    private static ArrayList<NPC> npcs=new ArrayList<>();
+    private static Map<String, Player> players = new ConcurrentHashMap<>();
+    private static ArrayList<Gegner> gegners = new ArrayList<>();
 
     public static void main(String[] args) {
         // 0. Initialize the Server
@@ -224,6 +223,30 @@ public class GameSocketServer {
         // 10. Start the server
         server.start();
         System.out.println("Server is running on port 9595");
+
+
+        // --- 在这里添加一个独立的线程来更新gegners ---
+        new Thread(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                // 1) 更新所有Gegner的状态
+                for (Gegner gegner : gegners) {
+                    // 这里假设 Gegner 有 updateLogic() 方法来处理自身的移动、攻击CD等
+                    gegner.update();
+                }
+
+                // 2) 将更新后的Gegner列表广播给所有连接的客户端
+                server.getBroadcastOperations().sendEvent("updateAllGegners", gegners);
+
+                // 3) 控制刷新频率，例如每 30ms 刷新一次（大约33FPS）
+                try {
+                    Thread.sleep(30);
+                } catch (InterruptedException e) {
+                    // 如果外部有需要关闭线程的情况，可在这里进行线程中断处理
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }).start();
+
         // To prevent the main thread from exiting, block here
         // This can be changed to a more elegant way
         try {
@@ -244,6 +267,7 @@ public class GameSocketServer {
     private static void broadcastAllPlayers(SocketIOServer server) {
         server.getBroadcastOperations().sendEvent("updateAllPlayers", players);
         server.getBroadcastOperations().sendEvent("updateAllNPCs", npcs);
+
     }
 
 

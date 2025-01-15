@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import static io.github.infotest.MainGameScreen.*;
-public abstract class Gegner extends  Actor{
+public class Gegner extends  Actor{
 
     private final float killXP;
 
