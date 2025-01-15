@@ -21,6 +21,8 @@ import io.github.infotest.util.GameRenderer;
 import io.github.infotest.util.MapCreator;
 
 import java.util.*;
+import com.badlogic.gdx.utils.Timer;
+import com.badlogic.gdx.utils.Timer.Task;
 
 import static io.github.infotest.GameSettings.keepInventory;
 import static io.github.infotest.Main.isDevelopmentMode;
@@ -233,6 +235,14 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
             if (localPlayer.getHealthPoints() <= 0 && localPlayer.isAlive()) {
                 localPlayer.kill(serverConnection);
+                // Schedule a task to show the EndScreen after 3 seconds
+                Timer.schedule(new Timer.Task() {
+                    @Override
+                    public void run() {
+                        // Switch to the EndScreen, passing player's survival time, etc.
+                        game.endGame(100);// TODO:
+                    }
+                }, 3f); // 3 seconds delay
                 //respawn(localPlayer);
             }
         }

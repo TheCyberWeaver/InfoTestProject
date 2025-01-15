@@ -24,7 +24,7 @@ public class Mage extends Player {
     protected Animation<TextureRegion> STATE;
 
     private static float fireballCost = 5f;
-    private static float fireballDamage = 3f;
+    private static float fireballDamage = 16f;
     private static float fireballCooldown;
     private static float fireballSpeed = 3f;
     private static float fireballScale = 1f;
