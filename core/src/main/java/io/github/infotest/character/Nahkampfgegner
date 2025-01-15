@@ -1,0 +1,16 @@
+import com.badlogic.gdx.math.Vector2;
+
+public class NahkampfGegner extends Gegner{
+  private float attackDamage = 2;
+  
+  
+  public NahkampfGegner (int maxHealthPoints, Vector2 initialPosition, float speed){
+    super(maxHealthPoints, initialPosition, speed, 1 ,5);
+   
+  }
+  
+  @Override 
+  public void performAttack(Player player){
+    player.takeDamage(2);
+  }
+}

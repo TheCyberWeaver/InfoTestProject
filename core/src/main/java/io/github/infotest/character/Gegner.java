@@ -27,6 +27,32 @@ public abstract class Gegner extends  Actor{
         p.gainExperience(killXP);
     }
 
+
+    public Player findPlayer(allPlayers.value Player){
+        Player closestPlayer = null;
+        float shortestDistance = Float.MAX_VALUE;
+        if (allPlayers == null){
+            return null;
+        } else{
+            distance = position.dst (player.getPosition());
+        }
+        if (distance < shortestDistance){
+            shortestDistance = distance;
+        }
+
+        return closestPlayer;
+    }
+
+
+    @Override
+    public void update(float delta) {
+        allPlayers.value(player.getPosition);
+        float distance = position.dst;
+        if (distance <= attackRange) {
+            performAttack(playerPosition);
+        }
+    }
+
     @Override
     public void update(float delta) {
         allPlayers.value(player.getPosition);
