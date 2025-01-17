@@ -14,7 +14,7 @@ public class Main extends Game {
     private String serverUrl;
 
 
-    public String  clientVersion="v3.2";
+    public String  clientVersion="v3.3";
     /*
         create() will be called once the application is started
      */
