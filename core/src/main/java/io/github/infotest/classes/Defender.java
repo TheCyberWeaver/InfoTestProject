@@ -12,6 +12,12 @@ public class Defender extends Player {
         setTexture(t);
     }
 
+    private void defend(){
+        while(!hasMoved){
+
+        }
+    }
+
     @Override
     public void castSkill(int skillID, ServerConnection serverConnection) {
 

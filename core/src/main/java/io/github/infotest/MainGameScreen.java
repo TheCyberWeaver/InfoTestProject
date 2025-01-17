@@ -1,6 +1,7 @@
 package io.github.infotest;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -29,7 +30,7 @@ import static io.github.infotest.GameSettings.keepInventory;
 
 public class MainGameScreen implements Screen, InputProcessor, ServerConnection.SeedListener {
     private SpriteBatch batch;
-    private ShapeRenderer shapeRenderer;
+    public static ShapeRenderer shapeRenderer;
     private MyAssetManager assetManager;
     private final OrthographicCamera camera;
     public static UI_Layer uiLayer;
@@ -39,14 +40,16 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
     private boolean isRenderingWithNightShader = false;
 
-
+    private boolean debug = false;
+    private EndScreen endScreen;
 
     // Map data
     public static int GLOBAL_SEED; // this will be assigned by the seed from server
     public static final int CELL_SIZE = 32;
     public static final int MAP_SIZE = 1000;
-    public static int numOfValidTextures = 4;
+    public static int numOfValidTextures = 5;
     public static int[][] GAME_MAP=new int[MAP_SIZE][MAP_SIZE];
+    public static int[][] ROTATION_MAP=new int[MAP_SIZE][MAP_SIZE];
 
     // User character
     public static Player localPlayer;
@@ -72,11 +75,13 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
     public MainGameScreen(Game game) {
         this.game = (Main) game;
-        camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        this.camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         create();
     }
 
     public void create() {
+        endScreen = new EndScreen(game, game.getScreen());
+
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
 
@@ -94,6 +99,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         assetManager.loadNPCWomenAssets();
         assetManager.loadNPCMarketAssets();
         assetManager.loadSignsAssets();
+        assetManager.loadArrowAssets();
         assetManager.manager.finishLoading();
 
 
@@ -144,7 +150,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         hasInitializedMap = true;
 
-        gameRenderer = new GameRenderer(assetManager);
+        gameRenderer = new GameRenderer(this, assetManager);
         gameRenderer.initAnimations();
         gameRenderer.initShaders();
 
@@ -152,8 +158,6 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     }
     @Override
     public void render(float delta) {
-
-
         if(!serverConnection.getMySocketId().isEmpty()){
            allPlayers.put(serverConnection.getMySocketId(), localPlayer);
         }
@@ -458,6 +462,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         batch.dispose();
 
         assetManager.manager.dispose();
+        shapeRenderer.dispose();
 
         // gameRenderer.dispose();
     }
@@ -491,30 +496,14 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             }
         }
     }
-    public void respawn(Player p){
-        p.setLastDeathPos(p.getPosition());
-        Vector2 spawnpoint = p.getSpawnpoint();
-        p.setPosition(new Vector2(spawnpoint.x, spawnpoint.y));
-        p.setAlive();
-
-        p.setHealthPoints(p.getMaxHealthPoints());
-        p.setMana(p.getMaxMana());
-
-        p.resetT1Timer();
-
-        if (!keepInventory){
-            for (Item i : p.getItems()){
-                i.drop(p.getLastDeathPos().x,p.getLastDeathPos().y);
-            }
-            p.clearInv();
-        }
-    }
 
     public boolean isRenderingWithNightShader() {
         return isRenderingWithNightShader;
     }
-
     public void setRenderingWithNightShader(boolean renderingWithNightShader) {
         isRenderingWithNightShader = renderingWithNightShader;
+    }
+    public float getZoom(){
+        return camera.zoom;
     }
 }

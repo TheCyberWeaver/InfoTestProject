@@ -16,6 +16,8 @@ import java.util.ArrayList;
 
 import static io.github.infotest.MainGameScreen.CELL_SIZE;
 
+import static io.github.infotest.GameSettings.*;
+
 public abstract class Player extends Actor{
 
     // basic things
@@ -53,6 +55,9 @@ public abstract class Player extends Actor{
     protected Vector2 lastDeathPos;
 
     protected float timeSinceLastT1Skill;
+
+    //Assassin Att
+    protected boolean seeAllActive = false;
 
 
     public Player(String id, String name, String className, int maxHealthPoints, int maxMana, int maxAusdauer, Vector2 initialPosition, float speed) {
@@ -190,6 +195,25 @@ public abstract class Player extends Actor{
         return true;
     }
 
+    public void respawn(){
+        this.setLastDeathPos(this.getPosition());
+        Vector2 spawnpoint = this.getSpawnpoint();
+        this.setPosition(new Vector2(spawnpoint.x, spawnpoint.y));
+        this.setAlive();
+
+        this.setHealthPoints(this.getMaxHealthPoints());
+        this.setMana(this.getMaxMana());
+
+        this.resetT1Timer();
+
+        if (!keepInventory){
+            for (Item i : this.getItems()){
+                i.drop(this.getLastDeathPos().x,this.getLastDeathPos().y);
+            }
+            this.clearInv();
+        }
+    }
+
 
     /// Getter / Setter
     public String getClassName() {
@@ -293,5 +317,9 @@ public abstract class Player extends Actor{
     }
     public void setHasMoved(boolean hasMoved) {
         this.hasMoved = hasMoved;
+    }
+
+    public boolean isSeeAllActive() {
+        return seeAllActive;
     }
 }

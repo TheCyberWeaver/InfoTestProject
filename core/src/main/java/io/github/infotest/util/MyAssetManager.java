@@ -17,17 +17,19 @@ public class MyAssetManager {
     }
 
     public void loadMapAssets(){
-        manager.load("normal_block.jpg",Texture.class);
-        manager.load("grass_block.jpg",Texture.class);
-        manager.load("stone_block.png",Texture.class);
-        manager.load("basicWood.png",Texture.class);
+        manager.load("worldTexture/Tile1.png",Texture.class);
+        manager.load("worldTexture/Tile2.png",Texture.class);
+        manager.load("worldTexture/Tile3.png",Texture.class);
+        manager.load("worldTexture/Tile4.png",Texture.class);
+        manager.load("worldTexture/Tile5.png",Texture.class);
     }
     public Texture[] getMapAssets(){
-        Texture[] textures=new Texture[4];
-        textures[0]=manager.get("normal_block.jpg",Texture.class);
-        textures[1]=manager.get("grass_block.jpg",Texture.class);
-        textures[2]=manager.get("stone_block.png",Texture.class);
-        textures[3]=manager.get("basicWood.png",Texture.class);
+        Texture[] textures=new Texture[5];
+        textures[0]=manager.get("worldTexture/Tile1.png",Texture.class);
+        textures[1]=manager.get("worldTexture/Tile2.png",Texture.class);
+        textures[2]=manager.get("worldTexture/Tile3.png",Texture.class);
+        textures[3]=manager.get("worldTexture/Tile4.png",Texture.class);
+        textures[4]=manager.get("worldTexture/Tile5.png",Texture.class);
         return textures;
     }
 
@@ -186,6 +188,13 @@ public class MyAssetManager {
     }
     public Texture getSignsAssets(){
         return manager.get("Ur_Inv_Is_Full_Sign.png", Texture.class);
+    }
+
+    public void loadArrowAssets(){
+        manager.load("arrow.png", Texture.class);
+    }
+    public Texture getArrowAssets(){
+        return manager.get("arrow.png", Texture.class);
     }
 
 }

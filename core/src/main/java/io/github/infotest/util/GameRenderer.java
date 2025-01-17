@@ -3,14 +3,17 @@ package io.github.infotest.util;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.TimeUtils;
 import io.github.infotest.MainGameScreen;
 import io.github.infotest.character.Gegner;
 import io.github.infotest.character.NPC;
@@ -18,7 +21,9 @@ import io.github.infotest.character.Player;
 import io.github.infotest.util.Overlay.UI_Layer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 import static io.github.infotest.MainGameScreen.*;
 
@@ -28,26 +33,28 @@ public class GameRenderer {
 
     // Fireball animation-related fields
     private static ArrayList<AbilityInstance> activeFireballs;
-    private static ArrayList<AbilityInstance> activeArrows;
+    private static HashMap<Player, Vector3> activeArrows;
     private float fireballFrameDuration = 0.1f;
 
     private Animation<TextureRegion>[] fireballAnimations;
 
+    private final MainGameScreen mainGameScreen;
     private final MyAssetManager assetManager;
 
     private ShaderProgram nightEffectShader;
 
 
-    public GameRenderer(MyAssetManager assetManager) {
+    public GameRenderer(MainGameScreen mainGameScreen, MyAssetManager assetManager) {
+        this.mainGameScreen = mainGameScreen;
         this.assetManager = assetManager;
-        this.textures=assetManager.getMapAssets();
+        this.textures = assetManager.getMapAssets();
 
         activeFireballs = new ArrayList<AbilityInstance>();
-        activeArrows = new ArrayList<AbilityInstance>();
+        activeArrows = new HashMap<Player, Vector3>();
 
     }
 
-    public void initAnimations(){
+    public void initAnimations() {
         Texture[] fireball_sheets = assetManager.getFireballAssets();
         fireballAnimations = new Animation[fireball_sheets.length];
         int frameCols;
@@ -99,27 +106,32 @@ public class GameRenderer {
         int widthCell = (int) Math.ceil(Gdx.graphics.getWidth() * zoom / CELL_SIZE);
         int heightCell = (int) Math.ceil(Gdx.graphics.getHeight() * zoom / CELL_SIZE);
 
-        int playerX = (int) (pos.x/CELL_SIZE);
-        int playerY = (int) (pos.y/CELL_SIZE);
+        int playerX = (int) (pos.x / CELL_SIZE);
+        int playerY = (int) (pos.y / CELL_SIZE);
 
-        for (int y =  -7; y < heightCell + 7; y++) {
+        for (int y = -7; y < heightCell + 7; y++) {
             for (int x = -7; x < widthCell + 7; x++) {
 
-                int worldX = playerX - widthCell/2 + x ;
-                int worldY = playerY - heightCell/2 + y ;
+                int worldX = playerX - widthCell / 2 + x;
+                int worldY = playerY - heightCell / 2 + y;
+                int rotation = 90 * ROTATION_MAP[worldY][worldX];
 
-                worldX = Math.max(0, Math.min(worldX, GAME_MAP[0].length - 1) );
-                worldY = Math.max(0, Math.min(worldY, GAME_MAP.length - 1) );
+                worldX = Math.max(0, Math.min(worldX, GAME_MAP[0].length - 1));
+                worldY = Math.max(0, Math.min(worldY, GAME_MAP.length - 1));
 
-                Texture cellTexture = textures[GAME_MAP[worldY][worldX]];
-                batch.draw(cellTexture, worldX * CELL_SIZE, worldY * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+
+                Sprite cellTexture = new Sprite(textures[GAME_MAP[worldY][worldX]]);
+                cellTexture.setPosition(worldX*CELL_SIZE, worldY*CELL_SIZE);
+                cellTexture.setRotation(rotation);
+                cellTexture.setRegionWidth(CELL_SIZE);
+                cellTexture.setRegionHeight(CELL_SIZE);
+                cellTexture.draw(batch);
             }
         }
-
     }
 
     public void renderPlayers(SpriteBatch batch, HashMap<String, Player> players, float deltaTime) {
-        if (players == null){
+        if (players == null) {
             Logger.log("players is null");
             return;
         }
@@ -130,7 +142,7 @@ public class GameRenderer {
     }
 
     public void renderGegner(SpriteBatch batch, ArrayList<Gegner> allGegner, float deltaTime) {
-        if (allGegner == null){
+        if (allGegner == null) {
             Logger.log("players is null");
             return;
         }
@@ -141,7 +153,7 @@ public class GameRenderer {
     }
 
     public void renderNPCs(SpriteBatch batch, ArrayList<NPC> allNPCs, float deltaTime) {
-        if (allNPCs == null){
+        if (allNPCs == null) {
             Logger.log("NPCs is null");
             return;
         }
@@ -151,9 +163,11 @@ public class GameRenderer {
     }
 
     float time = 0;
+
     public void renderAnimations(SpriteBatch batch, float deltaTime, ShapeRenderer shapeRenderer) {
         time += deltaTime;
         renderFireballs(batch, deltaTime, fireballAnimations, shapeRenderer);
+        renderArrows(batch, deltaTime);
     }
 
     public static void renderBar(SpriteBatch batch, Texture[] bar, float value, float maxValue, float x, float y, float scaleX, float scaleY) {
@@ -161,27 +175,27 @@ public class GameRenderer {
         Sprite spriteMiddle;
         Sprite spriteStart;
 
-        if (value >= maxValue-9) {
+        if (value >= maxValue - 1) {
             spriteEnd = new Sprite(bar[0]);
         } else {
             spriteEnd = new Sprite(bar[1]);
         }
         spriteEnd.flip(true, false);
         spriteEnd.setPosition(x, y);
-        spriteEnd.setScale(scaleX,scaleY);
+        spriteEnd.setScale(scaleX, scaleY);
         spriteEnd.draw(batch);
 
-        int segments = (int) Math.ceil(maxValue/10)-2;
+        int segments = (int) Math.ceil(maxValue / 2) - 2;
         float tempMax = maxValue;
-        for (int i=0;i<segments;i++){
-            tempMax -= 10;
-            if (value >= tempMax-9) {
+        for (int i = 0; i < segments; i++) {
+            tempMax -= 2;
+            if (value >= tempMax - 1) {
                 spriteMiddle = new Sprite(bar[2]);
             } else {
                 spriteMiddle = new Sprite(bar[3]);
             }
-            spriteMiddle.setScale(scaleX,scaleY);
-            spriteMiddle.setPosition(x - (spriteMiddle.getWidth()* (i + 1f))*scaleX+(scaleX-1)*(-6), y);
+            spriteMiddle.setScale(scaleX, scaleY);
+            spriteMiddle.setPosition(x - (spriteMiddle.getWidth() * (i + 1f)) * scaleX + (scaleX - 1) * (-6), y);
             spriteMiddle.draw(batch);
         }
         spriteMiddle = new Sprite(bar[2]);
@@ -191,15 +205,16 @@ public class GameRenderer {
         } else {
             spriteStart = new Sprite(bar[1]);
         }
-        spriteStart.setPosition(x-segments*spriteMiddle.getWidth()*scaleX-scaleX*20, y);
-        spriteStart.setScale(scaleX,scaleY);
+        spriteStart.setPosition(x - segments * spriteMiddle.getWidth() * scaleX - scaleX * 20, y);
+        spriteStart.setScale(scaleX, scaleY);
         spriteStart.draw(batch);
     }
 
     private float fadeTimer = 0f;
-    public boolean fadeTextureOut(Batch batch, float delta, Texture texture , float worldX, float worldY, float duration, float basis) {
+
+    public boolean fadeTextureOut(Batch batch, float delta, Texture texture, float worldX, float worldY, float duration, float basis) {
         float alpha = MyMath.getExpValue(basis, duration, fadeTimer);
-        if(Float.isNaN(alpha)){
+        if (Float.isNaN(alpha)) {
             fadeTimer = 0f;
             return false;
         }
@@ -209,17 +224,6 @@ public class GameRenderer {
         batch.setColor(1, 1, 1, 1);
         return true;
     }
-
-
-
-    /// ANIMATIONS
-    // Fireball
-    public static void fireball(float pX, float pY, float velocityX, float velocityY, Vector2 rotation, float scale,float damage, float speed, float lt, Player player) {
-        activeFireballs.add(new AbilityInstance(pX, pY, velocityX, velocityY, rotation, scale, damage, speed, lt, player));
-    }
-
-
-
 
 
     /// ANIMATION HELPER
@@ -236,18 +240,18 @@ public class GameRenderer {
             fireball.updatePosition(deltaTime);
             float rotation = fireball.rotation.angleDeg();
 
-            if (fireball.hasHit){
+            if (fireball.hasHit) {
                 fireball.endTimer += deltaTime;
                 TextureRegion currentFrame = fireballAnimation_endHit.getKeyFrame(fireball.endTimer);
                 drawFrame(batch, currentFrame, fireball, rotation);
                 if (fireball.endTimer > fireballAnimation_endHit.getAnimationDuration()) {
                     toRemove.add(fireball);
                 }
-            } else if (fireball.elapsedTime <= fireballAnimation_start.getAnimationDuration()){
+            } else if (fireball.elapsedTime <= fireballAnimation_start.getAnimationDuration()) {
                 TextureRegion currentFrame = fireballAnimation_start.getKeyFrame(fireball.elapsedTime);
                 drawFrame(batch, currentFrame, fireball, rotation);
             } else if (fireball.elapsedTime < fireball.lt) {
-                TextureRegion currentFrame = fireballAnimation_fly.getKeyFrame(fireball.elapsedTime-fireballAnimation_start.getAnimationDuration());
+                TextureRegion currentFrame = fireballAnimation_fly.getKeyFrame(fireball.elapsedTime - fireballAnimation_start.getAnimationDuration());
                 drawFrame(batch, currentFrame, fireball, rotation);
             } else if (fireball.elapsedTime > fireball.lt) {
                 TextureRegion currentFrame = fireballAnimation_endTime.getKeyFrame(fireball.endTimer);
@@ -260,6 +264,81 @@ public class GameRenderer {
         }
         activeFireballs.removeAll(toRemove);
     }
+
+    ShapeRenderer shapeRenderer = MainGameScreen.shapeRenderer;
+    private void renderArrows(SpriteBatch batch, float deltaTime) {
+        float r = 100f; // Radius des Kreises um den Spieler
+
+        for (Vector3 arrow : activeArrows.values()) {
+            Vector2 v = new Vector2(arrow.x, arrow.y);
+            Vector2 OA = new Vector2(localPlayer.getX(), localPlayer.getY());
+            float tWidth = assetManager.getArrowAssets().getWidth();
+
+            Vector2 middlePoint = new Vector2(v.x*r+OA.x,v.y*r+OA.y);
+            Vector2 addVector = new Vector2(v.y*tWidth/2, -(v.x*tWidth/2));
+
+            OrthographicCamera camera = new OrthographicCamera();
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Point);
+            shapeRenderer.setColor(Color.GREEN);
+            Vector3 a = camera.project(new Vector3(middlePoint.x, middlePoint.y, 0));
+            shapeRenderer.point(a.x+100, a.y+100, a.z);
+            shapeRenderer.end();
+            //Logger.log("localPlayer: (" + localPlayer.getX() + ", " + localPlayer.getY() + ")");
+
+            //TODO arrow rendering
+
+            Vector2 drawPos = new Vector2(middlePoint.x+addVector.x, middlePoint.y+addVector.y);
+
+            // Sprite vorbereiten
+            Sprite arrowTexture = new Sprite(assetManager.getArrowAssets());
+            //arrowTexture.setOrigin(arrowTexture.getWidth() / 2, arrowTexture.getHeight() / 2);
+            //arrowTexture.setScale(arrowTexture.getWidth() / arrow.z + 0.5f, arrowTexture.getHeight() / arrow.z);
+            arrowTexture.setRotation(v.angleDeg()+90); // Pfeil in Richtung des Ziels ausrichten
+            arrowTexture.setPosition(drawPos.x, drawPos.y);
+
+
+
+            //arrowTexture.draw(batch);
+        }
+        updateAllArrows();
+    }
+
+
+
+    /**
+     * Calculates the Distance and the normalized direction vector.
+     *
+     * @param p1 The 1. Player
+     * @param p2 The 2. Player
+     * @return Returns the normalized Vector in x and y and the distance as z in the Vector3
+     */
+    public static Vector3 calcDistAndDirection(Player p1, Player p2) {
+        Vector2 direction = new Vector2(p1.getX() - p2.getX(), p1.getY() - p2.getY());
+        direction.nor();
+        return new Vector3(
+            -direction.x,
+            -direction.y,
+            Vector2.dst(p1.getX(), p1.getY(), p2.getX(), p2.getY())
+        );
+    }
+    @Deprecated
+    public static boolean checkPlayerOnScreen(Player p) {
+        float dX = Math.abs(p.getX() - localPlayer.getX());
+        float dY = Math.abs(p.getY() - localPlayer.getY());
+        return dX < (float) Gdx.graphics.getWidth() / 2 && dY < (float) Gdx.graphics.getHeight() / 2;
+    }
+    /**
+     * Checks if the player is rendered on the Screen of the local Player
+     *
+     * @param p Player that should be checked
+     * @return True - Player on Screen; False - Player not on Screen
+     */
+    public static boolean checkPlayerOnScreen(Player p, float zoom) {
+        float dX = Math.abs(p.getX() - localPlayer.getX());
+        float dY = Math.abs(p.getY() - localPlayer.getY());
+        return dX < (float) Gdx.graphics.getWidth() * zoom / 2 && dY < (float) Gdx.graphics.getHeight() * zoom / 2;
+    }
+
 
     private void drawFrame(SpriteBatch batch, TextureRegion currentFrame, AbilityInstance fireball, float rotation) {
         float dX = fireball.x - 46f;
@@ -277,20 +356,44 @@ public class GameRenderer {
             rotation
         );
     }
-
-    public static Vector2 worldPosToScreenPos(Vector2 worldCords, float screenWidth, float screenHeight, float fX, float fY) {
-        float pX = worldCords.x;
-        float pY = worldCords.y;
-
-        float diffX = fX - pX;
-        float diffY = fY - pY;
-
-        return new Vector2(diffX + screenWidth/2, diffY + screenHeight/2);
-    }
-
     public ArrayList<AbilityInstance> getActiveFireballs() {
         return activeFireballs;
     }
+
+
+    /// ABILITY HELPER
+    public static void fireball(float pX, float pY, float velocityX, float velocityY, Vector2 rotation, float scale, float damage, float speed, float lt, Player player) {
+        activeFireballs.add(new AbilityInstance(pX, pY, velocityX, velocityY, rotation, scale, damage, speed, lt, player));
+    }
+
+    private void updateAllArrows() {
+        if (localPlayer.isSeeAllActive()) {
+            for (Player p : allPlayers.values()) {
+                if (!activeArrows.containsKey(p) && !checkPlayerOnScreen(p, mainGameScreen.getZoom())) {
+                    activeArrows.put(p, calcDistAndDirection(localPlayer, p));
+                }
+            }
+        }
+        for (Player p : activeArrows.keySet()) {
+            if (checkPlayerOnScreen(p, mainGameScreen.getZoom())) {
+                activeArrows.remove(p);
+                return;
+            } else {
+                Vector3 arrow = activeArrows.get(p);
+                Vector3 directAndDist = calcDistAndDirection(localPlayer, p);
+                activeArrows.replace(p, arrow, directAndDist);
+            }
+        }
+    }
+    public static void initArrows(Vector2 richtung, float distance, Player player) {
+        Vector3 temp = new Vector3(
+            richtung.x,
+            richtung.y,
+            distance
+        );
+        activeArrows.put(player, temp);
+    }
+
 
     /// SHADER LOGIC
     public void initShaders() {
@@ -310,6 +413,7 @@ public class GameRenderer {
     private float fadeStart = 600.0f;  // Fade-Distanz
     private Vector2 playerScreenPos = new Vector2(); // Position des Spielers auf dem Bildschirm
     private float altZOOM = 1;
+
     public void updateShaderUniforms(Vector2 playerWorldPos, OrthographicCamera camera) {
         // Berechne Spielerposition in Bildschirmkoordinaten
         Vector3 screenPos = camera.project(new Vector3(playerWorldPos.x, playerWorldPos.y, 0));
@@ -341,7 +445,6 @@ public class GameRenderer {
         // Shader für das Batch setzen
         batch.setShader(nightEffectShader);
     }
-
 
 
     /// Helper class for tracking ability instances
@@ -376,30 +479,34 @@ public class GameRenderer {
         }
 
         public void updatePosition(float deltaTime) {
-            if (!hasHit){
+            if (!hasHit) {
                 this.x += velocityX * deltaTime * speedFactor;
                 this.y += velocityY * deltaTime * speedFactor;
             }
         }
 
-        public float getX(){
+        public float getX() {
             return x;
         }
+
         public float getY() {
             return y;
         }
-        public float getDamage(){
+
+        public float getDamage() {
             return damage;
         }
-        public void setHit(){
+
+        public void setHit() {
             this.hasHit = true;
         }
-        public boolean hasHit(){
+
+        public boolean hasHit() {
             return hasHit;
         }
-        public Player getOwner(){
+
+        public Player getOwner() {
             return owner;
         }
     }
-
 }
