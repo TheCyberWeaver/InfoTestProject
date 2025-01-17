@@ -85,11 +85,6 @@ public class Logger {
         }
     }
 
-    /**
-     * Static initializer block:
-     * Initializes the logger to the default file (overwrites each run).
-     * Comment this out if you prefer to call init(...) manually.
-     */
     static {
         init(DEFAULT_LOG_FILE, false);
     }
