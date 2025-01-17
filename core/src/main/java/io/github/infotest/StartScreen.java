@@ -48,7 +48,7 @@ public class StartScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
 
         // skin - default UI skin TODO: find more beautiful skins
-        Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+        Skin skin = new Skin(Gdx.files.internal("ui/skin/freezing-ui.json"));
 
         // Title Label
         Label titleLabel = new Label("Select Your Name and Your Role", skin);

@@ -116,7 +116,6 @@ public class Mage extends Player {
         if(animationTime>=STATE.getAnimationDuration()){
             isAttacking = false;
             isHit = false;
-            isSprinting = false;
         }
         Sprite currentFrame = new Sprite(STATE.getKeyFrame(animationTime));
 

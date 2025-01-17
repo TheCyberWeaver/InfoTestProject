@@ -28,7 +28,6 @@ public abstract class Player extends Actor{
     protected float experience;
     protected ArrayList<Item> items;
 
-    protected boolean devMode;
 
     protected float mana;
     protected float maxMana;
@@ -130,15 +129,14 @@ public abstract class Player extends Actor{
         timeSinceLastT1Skill += delta;
     }
 
-    public void sprint(float delta, boolean isDevelopmentMode){
-        devMode = isDevelopmentMode;
+    public void sprint(float delta){
         if (ausdauer > 1f) {
             this.isSprinting = true;
-            if (!devMode) {
+            if (!isDevelopmentMode) {
                 this.ausdauer -= ausdauerCost * delta;
             }
             this.speed = this.sprintingSpeed;
-            if (devMode) {
+            if (isDevelopmentMode) {
                 this.speed = 750f;
             }
         } else {
@@ -149,7 +147,7 @@ public abstract class Player extends Actor{
     public void stopSprint(){
         this.isSprinting = false;
         this.speed = this.normalSpeed;
-        if (devMode) {
+        if (isDevelopmentMode) {
             this.speed = 500f;
         }
     }
