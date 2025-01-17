@@ -7,9 +7,9 @@ import java.util.Random;
 import static io.github.infotest.MainGameScreen.*;
 
 public class MapCreator {
-    private int seed;
-    private Perlin perlinClass;
-    private Random rndm;
+    private final int seed;
+    private final Perlin perlinClass;
+    private final Random rndm;
 
     public MapCreator(int pSeed) {
         seed = pSeed;
@@ -25,7 +25,20 @@ public class MapCreator {
         // convert perlin noise to valid GAME_MAP
         for (int y = 0; y < MAP_SIZE; y++) {
             for (int x = 0; x < MAP_SIZE; x++) {
-                GAME_MAP[y][x] = ((int) (perlinNoise[y][x]*(numOfValidTextures)));
+                float perlinNoiseValue = perlinNoise[y][x];
+                if (perlinNoiseValue>0.85){
+                    GAME_MAP[y][x] = numOfValidTextures-1;
+                } else if (perlinNoiseValue<0.85 && perlinNoiseValue>0.70){
+                    GAME_MAP[y][x] = numOfValidTextures-2;
+                } else if (perlinNoiseValue<0.70 && perlinNoiseValue>0.65){
+                    GAME_MAP[y][x] = numOfValidTextures-3;
+                } else if (perlinNoiseValue<0.65 && perlinNoiseValue>0.40){
+                    GAME_MAP[y][x] = numOfValidTextures-4;
+                } else {
+                    GAME_MAP[y][x] = numOfValidTextures-5;
+                }
+
+                ROTATION_MAP[y][x] = (int)(rndm.nextFloat()*5);
             }
         }
 

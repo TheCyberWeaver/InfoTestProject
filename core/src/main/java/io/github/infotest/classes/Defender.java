@@ -11,6 +11,12 @@ public class Defender extends Player {
         super(id, name, "Defender", 250, 25, 100, initialPosition, 200,  texture);
     }
 
+    private void defend(){
+        while(!hasMoved){
+
+        }
+    }
+
     @Override
     public void castSkill(int skillID, ServerConnection serverConnection) {
 
