@@ -13,6 +13,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static io.github.infotest.MainGameScreen.allPlayers;
+
 public class Mage extends Player {
 
     public final Animation<TextureRegion> ATTACK_1;
@@ -49,7 +51,7 @@ public class Mage extends Player {
 
     @Override
     public void castSkill(int skillID,ServerConnection serverConnection) {
-        Player localPlayer=serverConnection.getPlayers().get(serverConnection.getMySocketId());
+        Player localPlayer=allPlayers.get(serverConnection.getMySocketId());
         switch(skillID) {
             case 1:
                 if(timeSinceLastT1Skill >= fireballCooldown && drainMana(fireballCost) ||  localPlayer!=this) {

@@ -34,7 +34,7 @@ public class Main extends Game {
         setScreen(new MainGameScreen(this));
     }
     public void endGame(float survivalTime) {
-        setScreen(new EndScreen(this, 100));
+        setScreen(new EndScreen(this, survivalTime));
     }
 
     public String getUsername() {

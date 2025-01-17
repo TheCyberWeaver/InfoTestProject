@@ -13,7 +13,6 @@ import io.socket.emitter.Emitter;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -36,10 +35,10 @@ public class ServerConnection {
     // key is socketId
     // value is player object
 
-    private String clientVersion;
+    private final String clientVersion;
 
 
-    private MyAssetManager assetManager;
+    private final MyAssetManager assetManager;
 
     public interface SeedListener {
         void onSeedReceived(int seed);
@@ -79,7 +78,7 @@ public class ServerConnection {
                     if (args.length > 1 && args[1] instanceof JSONObject) {
                         //Logger.log("[ServerConnection Debug]: "+args[0].toString());
                         JSONObject data = (JSONObject) args[1];
-                        Logger.log("[ServerConnection INFO] Received init data: " + data.toString());
+                        Logger.log("[ServerConnection INFO] Received init data: " + data);
                         try{
                             initClient(data);
                         }catch (Exception e){
@@ -264,9 +263,8 @@ public class ServerConnection {
                 uiLayer.showDeathMessage(attackerName, deadPlayerName);
             }
             else{
-                String deathReason= deathMessage;
                 String deadPlayerName = allPlayers.get(targetId).getName();
-                uiLayer.showDeathMessage(deathReason, deadPlayerName);
+                uiLayer.showDeathMessage(deathMessage, deadPlayerName);
             }
         }
         else{
@@ -313,8 +311,8 @@ public class ServerConnection {
         allNPCs=new ArrayList<>();
         for (NPCData npcData : NPCsMap) {
 //            Logger.log("Debug:"+socketId+" | "+playerData.name);
-            float x = (float)npcData.position.x;
-            float y = (float)npcData.position.y;
+            float x = npcData.position.x;
+            float y = npcData.position.y;
 
             NPC npc = NPCFactory.createNPC(npcData.name,npcData.maxHP,new Vector2(x,y),npcData.gender,npcData.type,assetManager);
             allNPCs.add(npc);
@@ -362,7 +360,7 @@ public class ServerConnection {
             initData.put("classtype",player.getClassName());
             initData.put("items",player.getItems());
 
-            Logger.log("[ServerConnection INFO]: Sending Init Data: "+initData.toString());
+            Logger.log("[ServerConnection INFO]: Sending Init Data: "+ initData);
 
             socket.emit("init", initData);
             //Logger.log("Updated position: " + pos);
@@ -374,7 +372,7 @@ public class ServerConnection {
         JSONObject skillData = new JSONObject();
         try {
             skillData.put("actionType", skillName);
-            skillData.put("targetId", "");
+            skillData.put("targetId", player.id);
             //skillData.put("damage", damage);
 
             socket.emit("playerAction", skillData);
@@ -431,16 +429,6 @@ public class ServerConnection {
         }
 
         return new int[]{major, minor};
-    }
-
-    public HashMap<String, Player> getPlayers() {
-        return allPlayers;
-    }
-    public ArrayList<NPC> getNPCs() {
-        return allNPCs;
-    }
-    public int getGlobalSeed() {
-        return GLOBAL_SEED;
     }
     public String getMySocketId() {
         return mySocketId;

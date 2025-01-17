@@ -9,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 /**
@@ -21,10 +20,10 @@ public class EndScreen implements Screen {
 
     private final Main game;
     private Stage stage;
-    private float survivalTime; // in seconds
+    private final float survivalTime; // in seconds
 
-    private SpriteBatch batch;
-    private Texture texture;
+    private final SpriteBatch batch;
+    private final Texture texture;
 
     public EndScreen(Main game, float survivalTime) {
         this.game = game;

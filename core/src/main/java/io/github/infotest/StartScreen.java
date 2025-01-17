@@ -8,7 +8,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -30,8 +29,8 @@ public class StartScreen implements Screen {
     private CheckBox devModeCheckBox;
     private Viewport viewport;
 
-    private SpriteBatch batch;
-    private Texture texture;
+    private final SpriteBatch batch;
+    private final Texture texture;
 
     public StartScreen(Main game) {
         this.game = game;
@@ -71,8 +70,6 @@ public class StartScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
 
-                String selectedRole = roleSelectBox.getSelected();
-                //Logger.log("Selected:" + selectedRole);
             }
         });
 
@@ -132,7 +129,7 @@ public class StartScreen implements Screen {
         String selectedServer = serverSelectBox.getSelected();
 
 
-        String selectedServerUrl="";
+        String selectedServerUrl;
         switch (selectedServer){
             case "Thomas' Server":
                 selectedServerUrl="http://www.thomas-hub.com:9595";

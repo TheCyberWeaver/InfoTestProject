@@ -2,28 +2,21 @@ package io.github.infotest.util;
 
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.TimeUtils;
 import io.github.infotest.MainGameScreen;
 import io.github.infotest.character.Gegner;
 import io.github.infotest.character.NPC;
 import io.github.infotest.character.Player;
-import io.github.infotest.util.Overlay.UI_Layer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 
 import static io.github.infotest.MainGameScreen.*;
 
@@ -34,7 +27,7 @@ public class GameRenderer {
     // Fireball animation-related fields
     private static ArrayList<AbilityInstance> activeFireballs;
     private static HashMap<Player, Vector3> activeArrows;
-    private float fireballFrameDuration = 0.1f;
+    private final float fireballFrameDuration = 0.1f;
 
     private Animation<TextureRegion>[] fireballAnimations;
 
@@ -49,7 +42,7 @@ public class GameRenderer {
         this.assetManager = assetManager;
         this.textures = assetManager.getMapAssets();
 
-        activeFireballs = new ArrayList<AbilityInstance>();
+        activeFireballs = new ArrayList<>();
         activeArrows = new HashMap<Player, Vector3>();
 
     }
@@ -411,7 +404,7 @@ public class GameRenderer {
 
     private float lightRadius = 200.0f; // Radius des beleuchteten Bereichs
     private float fadeStart = 600.0f;  // Fade-Distanz
-    private Vector2 playerScreenPos = new Vector2(); // Position des Spielers auf dem Bildschirm
+    private final Vector2 playerScreenPos = new Vector2(); // Position des Spielers auf dem Bildschirm
     private float altZOOM = 1;
 
     public void updateShaderUniforms(Vector2 playerWorldPos, OrthographicCamera camera) {

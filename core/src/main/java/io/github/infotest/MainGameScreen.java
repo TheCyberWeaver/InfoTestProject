@@ -1,7 +1,6 @@
 package io.github.infotest;
 
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -23,10 +22,8 @@ import io.github.infotest.util.MapCreator;
 
 import java.util.*;
 import com.badlogic.gdx.utils.Timer;
-import com.badlogic.gdx.utils.Timer.Task;
 
-import static io.github.infotest.GameSettings.isDevelopmentMode;
-import static io.github.infotest.GameSettings.keepInventory;
+import static io.github.infotest.GameSettings.*;
 
 public class MainGameScreen implements Screen, InputProcessor, ServerConnection.SeedListener {
     private SpriteBatch batch;
@@ -40,8 +37,6 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
     private boolean isRenderingWithNightShader = false;
 
-    private boolean debug = false;
-    private EndScreen endScreen;
 
     // Map data
     public static int GLOBAL_SEED; // this will be assigned by the seed from server
@@ -363,12 +358,12 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                 for (Map.Entry<String, Player> stringPlayerEntry : allPlayers.entrySet()) {
                     Player tmpPlayer = stringPlayerEntry.getValue();
                     Logger.log(stringPlayerEntry.getKey() + " " + tmpPlayer.getName() + " " + tmpPlayer.getHealthPoints() + " " + tmpPlayer.getItems().size() + " " + tmpPlayer.isAlive());
-                    String str = "";
+                    StringBuilder str = new StringBuilder();
                     for (Item i : tmpPlayer.getItems()) {
                         if (i == null) {
-                            str += "null ";
+                            str.append("null ");
                         } else {
-                            str += i + " ";
+                            str.append(i).append(" ");
                         }
                     }
                     Logger.log("-> Items: " + str);
