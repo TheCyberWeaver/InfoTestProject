@@ -80,7 +80,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     }
 
     public void create() {
-        endScreen = new EndScreen(game, game.getScreen());
+        //endScreen = new EndScreen(game, game.getScreen());
 
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
