@@ -84,7 +84,7 @@ public class StartScreen implements Screen {
         });
 
         devModeCheckBox = new CheckBox("Dev Mode", skin);
-        devModeCheckBox.setChecked(true);
+        devModeCheckBox.setChecked(isDevelopmentMode);
         devModeCheckBox.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
