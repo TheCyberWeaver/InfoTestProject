@@ -383,6 +383,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     @Override
     public void resize(int width, int height) {
         camera.setToOrtho(false, width, height);
+        uiLayer.resize(width, height);
     }
 
     @Override

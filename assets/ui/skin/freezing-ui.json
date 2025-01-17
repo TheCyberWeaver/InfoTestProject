@@ -80,7 +80,8 @@ com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
 	default: {
 		checkboxOn: checkbox copy
 		checkboxOff: checkbox
-		font: font
+		font: font,
+        fontColor: black
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
@@ -94,11 +95,11 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	default: {
 		font: font
-		fontColor: white
+		fontColor: black
 	}
 	button: {
-		font: button
-		fontColor: white
+		font: button,
+		fontColor: black
 	}
 	title: {
 		font: title
@@ -110,9 +111,9 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
 	default: {
-		font: font
-		fontColorSelected: white
-		fontColorUnselected: white
+		font: font,
+		fontColorSelected: black,
+		fontColorUnselected: black
 		selection: selection
 		background: list
 	}
@@ -140,7 +141,7 @@ com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
 com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
 	default: {
 		font: font
-		fontColor: white
+		fontColor: black
 		background: select-box
 		scrollStyle: default
 		listStyle: default

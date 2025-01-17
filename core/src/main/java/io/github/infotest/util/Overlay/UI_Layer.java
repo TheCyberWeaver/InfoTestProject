@@ -60,31 +60,28 @@ public class UI_Layer implements ApplicationListener {
 
     @Override
     public void resize(int width, int height) {
-        uiCamera.viewportWidth = width;
-        uiCamera.viewportHeight = height;
-        uiCamera.update(); // Update UI camera on resize
+        viewport.update(width, height, true);
     }
 
     public void render() {
 
-        float screenScaleX = windowSize.x/Gdx.graphics.getWidth();
-        float screenScaleY = windowSize.y/Gdx.graphics.getHeight();
-        float nScale = 1f;
+        viewport.apply();
+        batch.setProjectionMatrix(uiCamera.combined);
 
         if (hasInitializedMap) {
             batch.begin();
             GameRenderer.renderBar(batch, healthbar, localPlayer.getHealthPoints(), localPlayer.getMaxHealthPoints(),
-                Gdx.graphics.getWidth()-50,
-                Gdx.graphics.getHeight()-70,
-                nScale * screenScaleX, nScale * screenScaleY);
+                viewport.getWorldWidth()-50,
+                viewport.getWorldHeight()-70,
+                1, 1);
             GameRenderer.renderBar(batch, manabar, localPlayer.getMana(), localPlayer.getMaxMana(),
-                Gdx.graphics.getWidth()-50,
-                Gdx.graphics.getHeight()-70 - 60,
-                nScale * screenScaleX, nScale * screenScaleY);
+                viewport.getWorldWidth()-50,
+                viewport.getWorldHeight()-70 - 60,
+                1, 1);
             GameRenderer.renderBar(batch, ausdauerbar, localPlayer.getAusdauer(), localPlayer.getMaxAusdauer(),
-                Gdx.graphics.getWidth()-50,
-                Gdx.graphics.getHeight()-70 - 60*2,
-                nScale * screenScaleX, nScale * screenScaleY);
+                viewport.getWorldWidth()-50,
+                viewport.getWorldHeight()-70 - 60*2,
+                1, 1);
             batch.end();
         }
     }
