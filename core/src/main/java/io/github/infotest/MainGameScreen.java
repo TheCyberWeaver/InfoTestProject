@@ -301,7 +301,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         if (Gdx.input.isKeyPressed(Input.Keys.E)) {
             localPlayer.castSkill(1,serverConnection);
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)){
+        if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && moved){
             localPlayer.sprint(delta, isDevelopmentMode);
         } else if(localPlayer.isSprinting()){
             localPlayer.stopSprint();
