@@ -107,11 +107,11 @@ public class GameRenderer {
 
                 int worldX = playerX - widthCell / 2 + x;
                 int worldY = playerY - heightCell / 2 + y;
-                int rotation = 90 * ROTATION_MAP[worldY][worldX];
+
 
                 worldX = Math.max(0, Math.min(worldX, GAME_MAP[0].length - 1));
                 worldY = Math.max(0, Math.min(worldY, GAME_MAP.length - 1));
-
+                int rotation = 90 * ROTATION_MAP[worldY][worldX];
 
                 Sprite cellTexture = new Sprite(textures[GAME_MAP[worldY][worldX]]);
                 cellTexture.setPosition(worldX*CELL_SIZE, worldY*CELL_SIZE);

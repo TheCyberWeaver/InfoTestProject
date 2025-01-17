@@ -69,22 +69,22 @@ public class UI_Layer implements ApplicationListener {
 
         float screenScaleX = windowSize.x/Gdx.graphics.getWidth();
         float screenScaleY = windowSize.y/Gdx.graphics.getHeight();
-        float nScale = 0.75f;
+        float nScale = 1f;
 
         if (hasInitializedMap) {
             batch.begin();
             GameRenderer.renderBar(batch, healthbar, localPlayer.getHealthPoints(), localPlayer.getMaxHealthPoints(),
-                1250,
-                900,
+                Gdx.graphics.getWidth()-50,
+                Gdx.graphics.getHeight()-70,
                 nScale * screenScaleX, nScale * screenScaleY);
             GameRenderer.renderBar(batch, manabar, localPlayer.getMana(), localPlayer.getMaxMana(),
-                1250,
-                850,
+                Gdx.graphics.getWidth()-50,
+                Gdx.graphics.getHeight()-70 - 60,
                 nScale * screenScaleX, nScale * screenScaleY);
             GameRenderer.renderBar(batch, ausdauerbar, localPlayer.getAusdauer(), localPlayer.getMaxAusdauer(),
-                1250,
-                800,
-                nScale * screenScaleX, screenScaleY);
+                Gdx.graphics.getWidth()-50,
+                Gdx.graphics.getHeight()-70 - 60*2,
+                nScale * screenScaleX, nScale * screenScaleY);
             batch.end();
         }
     }
