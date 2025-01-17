@@ -142,6 +142,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         mapCreator.initializePerlinNoiseMap();
 
         localPlayer.setId(serverConnection.getMySocketId());
+        allPlayers.put(serverConnection.getMySocketId(), localPlayer);
 
         hasInitializedMap = true;
 
@@ -153,9 +154,6 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     }
     @Override
     public void render(float delta) {
-        if(!serverConnection.getMySocketId().isEmpty()){
-           allPlayers.put(serverConnection.getMySocketId(), localPlayer);
-        }
 
         //Logger.log(player);
 
@@ -475,8 +473,9 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                 float dY = Math.abs(p.getY() - fireball.getY());
 
                 if (dX <= 32f && dY <= 64f && !fireball.hasHit()){
-                    p.takeDamage(fireball.getDamage(),serverConnection);
-
+                    if(!p.equals(localPlayer)){
+                        p.takeDamage(fireball.getDamage(),serverConnection);
+                    }
                     fireball.setHit();
                 }
             }

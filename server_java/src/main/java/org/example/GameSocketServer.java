@@ -129,8 +129,7 @@ public class GameSocketServer {
                 player.setPosition(x, y);
                 player.setRotation(rx, ry);
 
-                // Notify all clients to update the player list
-                broadcastAllPlayers(server);
+
             } else {
                 // Send a log message to the current client
                 client.sendEvent("loggingINFO", "Position cannot be updated. Player is not in playerlist");
@@ -228,6 +227,23 @@ public class GameSocketServer {
         // 10. Start the server
         server.start();
         System.out.println("Server is running on port 9595");
+
+        //broadcastAllPlayers constantly
+        new Thread(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                // 定时广播：此处如果只做广播，则无需更新逻辑，仅调用 broadcastAllPlayers
+                broadcastAllPlayers(server);
+
+                // 控制广播频率，比如每 1 秒广播一次
+                try {
+                    Thread.sleep(40);  // 1秒，可自定义
+                } catch (InterruptedException e) {
+                    // 可以根据需要处理线程中断
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }).start();
+
         // To prevent the main thread from exiting, block here
         // This can be changed to a more elegant way
         try {

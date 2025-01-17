@@ -90,7 +90,9 @@ public class ServerConnection {
                         Logger.log("[ServerConnection ERROR]: Received init event with invalid data");
                     }
                 }
-            }).on("updateAllPlayers", new Emitter.Listener() {
+            });
+
+            socket.on("updateAllPlayers", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
                     if (args.length > 0 && args[0] instanceof JSONObject) {
@@ -181,7 +183,7 @@ public class ServerConnection {
             socket.connect();
 
         } catch (URISyntaxException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
     private void initClient(JSONObject data) {
@@ -282,9 +284,7 @@ public class ServerConnection {
             float x = (float)playerData.position.x;
             float y = (float)playerData.position.y;
 
-            if (socketId.equals(mySocketId)) {
-                continue;
-            }
+
             Player player = allPlayers.get(socketId);
             if (player == null) {
 
