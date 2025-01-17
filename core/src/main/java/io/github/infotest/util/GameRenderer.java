@@ -297,7 +297,6 @@ public class GameRenderer {
     }
 
 
-
     /**
      * Calculates the Distance and the normalized direction vector.
      *
