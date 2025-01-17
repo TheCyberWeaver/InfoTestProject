@@ -6,6 +6,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -15,6 +17,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.infotest.util.Logger;
+
+import static io.github.infotest.GameSettings.*;
+import static io.github.infotest.Main.isDevelopmentMode;
 
 public class StartScreen implements Screen {
 
@@ -26,8 +31,13 @@ public class StartScreen implements Screen {
     private CheckBox devModeCheckBox;
     private Viewport viewport;
 
+    private SpriteBatch batch;
+    private Texture texture;
+
     public StartScreen(Main game) {
         this.game = game;
+        this.batch = new SpriteBatch();
+        texture=new Texture("ui/startscreen.png");
     }
 
     @Override
@@ -82,7 +92,7 @@ public class StartScreen implements Screen {
         devModeCheckBox.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.isDevelopmentMode=devModeCheckBox.isChecked();
+                isDevelopmentMode=devModeCheckBox.isChecked();
             }
         });
 
@@ -121,11 +131,7 @@ public class StartScreen implements Screen {
         String playerName = nameTextField.getText();
         String selectedRole = roleSelectBox.getSelected();
         String selectedServer = serverSelectBox.getSelected();
-        // Validation
-        if (playerName == null || playerName.trim().isEmpty()) {
-            Logger.log("[StartScreen WARNING]: Name cannot be empty!");
-            return;
-        }
+
 
         String selectedServerUrl="";
         switch (selectedServer){
@@ -139,6 +145,17 @@ public class StartScreen implements Screen {
                 selectedServerUrl="http://www.thomas-hub.com:9595";
                 break;
         }
+        if (isDevelopmentMode) {
+            playerName=defaultPlayerName;
+            selectedRole=defaultPlayerClass;
+            selectedServerUrl=defaultServer;
+        }
+        // Validation
+        if (playerName == null || playerName.trim().isEmpty()) {
+            Logger.log("[StartScreen WARNING]: Name cannot be empty!");
+            return;
+        }
+
         // Log
         Logger.log("-------Init Setup-------");
         Logger.log("User Name:" + playerName);
@@ -154,7 +171,11 @@ public class StartScreen implements Screen {
         // clear screen
         Gdx.gl.glClearColor(0.439f, 0.5f, 0.5625f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+        batch.begin();
+        batch.draw(texture,
+            0, 0,
+            Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        batch.end();
         handleInput();
 
         // draw stage

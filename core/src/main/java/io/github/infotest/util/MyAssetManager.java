@@ -10,10 +10,10 @@ public class MyAssetManager {
 
     }
     public void loadLoadingScreen(){
-        manager.load("assassin.png", Texture.class);
+        manager.load("ui/loadingscreen.png", Texture.class);
     }
     public Texture getLoadingScreenTexture(){
-        return manager.get("assassin.png", Texture.class);
+        return manager.get("ui/loadingscreen.png", Texture.class);
     }
 
     public void loadMapAssets(){

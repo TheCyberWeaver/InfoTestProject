@@ -65,8 +65,10 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     private final Main game;
     public static boolean hasInitializedMap = false;
 
-
+    //Timer
     private float debugTimer=0;
+    private float survivalTimer=0;
+
 
     public MainGameScreen(Game game) {
         this.game = (Main) game;
@@ -240,7 +242,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                     @Override
                     public void run() {
                         // Switch to the EndScreen, passing player's survival time, etc.
-                        game.endGame(100);// TODO:
+                        game.endGame(survivalTimer);
                     }
                 }, 3f); // 3 seconds delay
                 //respawn(localPlayer);
@@ -254,6 +256,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             batch.end();
         }
         debugTimer+=delta;
+        survivalTimer += delta;
         uiLayer.render();
 
         numberOfNPCInTheLastFrame = allNPCs.size();

@@ -15,14 +15,11 @@ public class Main extends Game {
     public static boolean isDevelopmentMode=true;
 
     public String  clientVersion="v3.2";
-
-
     /*
         create() will be called once the application is started
      */
     @Override
     public void create() {
-
         setScreen(new StartScreen(this)); //set to start screen
     }
 

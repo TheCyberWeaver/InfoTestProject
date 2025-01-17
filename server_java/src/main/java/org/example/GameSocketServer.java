@@ -180,12 +180,20 @@ public class GameSocketServer {
                     break;
                 case "PlayerDeath":
                     String playerId = json.get("targetId").getAsString();
+                    String deathMessage = json.get("deathMessage").getAsString();
+
                     Player target1 = players.get(playerId);
                     if (target1 != null) {
                         target1.isAlive=false;
                         // Notify all clients
-                        server.getBroadcastOperations().sendEvent("playerAction",
-                            new ActionData(playerId, "PlayerDeath"));
+                        ActionData actionData ;
+                        if(deathMessage != null) {
+                            actionData = new ActionData(playerId, "PlayerDeath",deathMessage);
+                        }
+                        else{
+                            actionData = new ActionData(playerId, "PlayerDeath");
+                        }
+                        server.getBroadcastOperations().sendEvent("playerAction",actionData);
                     } else {
                         System.out.println("[Debug]: target is NULL");
                     }
@@ -279,10 +287,16 @@ public class GameSocketServer {
     static class ActionData {
         public String playerID;
         public String actionType;
+        public String data;
 
         public ActionData(String playerID, String actionType){
             this.playerID = playerID;
             this.actionType = actionType;
+        }
+        public ActionData(String playerID, String actionType, String data){
+            this.playerID = playerID;
+            this.actionType = actionType;
+            this.data = data;
         }
     }
 
