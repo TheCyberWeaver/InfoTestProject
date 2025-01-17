@@ -24,8 +24,8 @@ import java.util.*;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
 
+import static io.github.infotest.GameSettings.isDevelopmentMode;
 import static io.github.infotest.GameSettings.keepInventory;
-import static io.github.infotest.Main.isDevelopmentMode;
 
 public class MainGameScreen implements Screen, InputProcessor, ServerConnection.SeedListener {
     private SpriteBatch batch;
@@ -338,7 +338,14 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
             if (Gdx.input.isKeyPressed(Input.Keys.K)) {
                 localPlayer.kill(serverConnection);
-                Logger.log(localPlayer.isAlive() + "");
+                // Schedule a task to show the EndScreen after 3 seconds
+                Timer.schedule(new Timer.Task() {
+                    @Override
+                    public void run() {
+                        // Switch to the EndScreen, passing player's survival time, etc.
+                        game.endGame(survivalTimer);
+                    }
+                }, 3f); // 3 seconds delay
             }
             if (moved && currentTradingToNPC != null) {
                 currentTradingToNPC.closeMarket();

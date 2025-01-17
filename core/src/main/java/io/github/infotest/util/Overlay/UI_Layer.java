@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.*;
 import io.github.infotest.item.Item;
 import io.github.infotest.util.GameRenderer;
+import io.github.infotest.util.Logger;
 import io.github.infotest.util.MyAssetManager;
 
 import java.util.ArrayList;
@@ -122,6 +123,10 @@ public class UI_Layer implements ApplicationListener {
         this.fadeDuration = fadeDuration;
         this.signTimer = 0f;
         this.base = base;
+    }
+    public void showDeathMessage(String attacker, String target) {
+        Logger.log("[UI Debug]: showDeathMessage: " + attacker + " kills " + target);
+        //TODO: show deathmessage on the screen
     }
     public boolean isRenderingSign(){
         return isRenderingSign;

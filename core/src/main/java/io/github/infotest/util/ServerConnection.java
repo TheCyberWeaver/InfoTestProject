@@ -77,7 +77,7 @@ public class ServerConnection {
                 @Override
                 public void call(Object... args) {
                     if (args.length > 1 && args[1] instanceof JSONObject) {
-                        Logger.log("[ServerConnection Debug]: "+args[0].toString());
+                        //Logger.log("[ServerConnection Debug]: "+args[0].toString());
                         JSONObject data = (JSONObject) args[1];
                         Logger.log("[ServerConnection INFO] Received init data: " + data.toString());
                         try{
@@ -132,6 +132,19 @@ public class ServerConnection {
 
 
                 }
+            }).on("deathBroadcastMessage", new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    if (args.length > 0 && args[0] instanceof JSONObject) {
+                        JSONObject data = (JSONObject) args[0];
+                        try {
+                            showDeathMessage(data);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }).on("playerLeft", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
@@ -174,7 +187,7 @@ public class ServerConnection {
     }
     private void initClient(JSONObject data) {
         GLOBAL_SEED = (int) data.get("seed");
-        Logger.log("[INFO]: Global seed : " + GLOBAL_SEED);
+        //Logger.log("[ServerConnection INFO]: Global seed : " + GLOBAL_SEED);
         // call back
         if (seedListener != null) {
             seedListener.onSeedReceived(GLOBAL_SEED);
@@ -239,6 +252,26 @@ public class ServerConnection {
                 break;
         }
 
+    }
+    private void showDeathMessage (JSONObject data) throws JSONException {
+        String deathMessage = data.getString("deathMessage");
+        String targetId   = data.getString("targetId");
+
+        if (deathMessage != null) {
+            if (allPlayers.get(deathMessage)!=null) {
+                String attackerName= allPlayers.get(deathMessage).getName();
+                String deadPlayerName = allPlayers.get(targetId).getName();
+                uiLayer.showDeathMessage(attackerName, deadPlayerName);
+            }
+            else{
+                String deathReason= deathMessage;
+                String deadPlayerName = allPlayers.get(targetId).getName();
+                uiLayer.showDeathMessage(deathReason, deadPlayerName);
+            }
+        }
+        else{
+            Logger.log("[SeverConnection Error]: DeathMessage is null");
+        }
     }
 
     private void updatePlayers(Map<String, PlayerData> playersMap){
@@ -329,7 +362,7 @@ public class ServerConnection {
             initData.put("classtype",player.getClassName());
             initData.put("items",player.getItems());
 
-            Logger.log("[ServerConnection INFO]: Init Data: "+initData.toString());
+            Logger.log("[ServerConnection INFO]: Sending Init Data: "+initData.toString());
 
             socket.emit("init", initData);
             //Logger.log("Updated position: " + pos);

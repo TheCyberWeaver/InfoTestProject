@@ -12,7 +12,7 @@ public class Main extends Game {
     private String username;
     private String playerClass;
     private String serverUrl;
-    public static boolean isDevelopmentMode=true;
+
 
     public String  clientVersion="v3.2";
     /*

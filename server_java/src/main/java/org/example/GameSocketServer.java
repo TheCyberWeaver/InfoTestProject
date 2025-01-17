@@ -163,8 +163,8 @@ public class GameSocketServer {
         // 9. Handle various player actions
         server.addEventListener("playerAction", Object.class, (client, data, ackSender) -> {
             String socketId = client.getSessionId().toString();
-            Player player = players.get(socketId);
-            if (player == null) {
+            Player messageFromPlayer = players.get(socketId);
+            if (messageFromPlayer == null) {
                 return;
             }
             Gson gson = new Gson();
@@ -186,18 +186,20 @@ public class GameSocketServer {
                         // Notify all clients
                         server.getBroadcastOperations().sendEvent("playerAction",
                             new ActionData(playerId, "PlayerDeath"));
+
+                        broadcastDeathMessage(server, target1.lastAttackedBy,playerId);
                     } else {
                         System.out.println("[Debug]: target is NULL");
                     }
 
 
-                    System.out.println("[Debug]: " + player.name + " is dead");
+                    System.out.println("[Debug]: " + messageFromPlayer.name + " is dead");
                     break;
                 case "Fireball":
                     // Broadcast to others that some player cast a Fireball
                     server.getBroadcastOperations().sendEvent("playerAction",
                         new ActionData(socketId, "Fireball"));
-                    System.out.println("[Debug]: " + player.name + " casts a Fireball");
+                    System.out.println("[Debug]: " + messageFromPlayer.name + " casts a Fireball");
                     break;
                 case "TakeDamage":
                     // Retrieve targetId and damage from data
@@ -206,9 +208,11 @@ public class GameSocketServer {
                     Player target = players.get(targetId);
                     if (target != null) {
                         target.takeDamage(damage);
+                        target.lastAttackedBy=socketId;
                         // Notify all clients
                         server.getBroadcastOperations().sendEvent("takeDamage",
                             new TakeDamageData(targetId, "TakeDamage", damage));
+
                         System.out.println("[Debug]: " + target.name + " takes " + damage + " Damage");
                     } else {
                         System.out.println("[Debug]: target is NULL");
@@ -238,6 +242,9 @@ public class GameSocketServer {
         mapCreator.initializePerlinNoiseMap();
         npcs = mapCreator.spawnNPCs();
     }
+    private static void broadcastDeathMessage(SocketIOServer server, String deathMessage,String targetId){
+        server.getBroadcastOperations().sendEvent("deathBroadcastMessage", new deathMessageData(deathMessage, targetId));
+    }
     /**
      * Push the latest player list to all clients
      */
@@ -259,6 +266,17 @@ public class GameSocketServer {
             this.serverVersion = serverVersion;
         }
     }
+
+    static class deathMessageData {
+        public String deathMessage;
+        public String targetId;
+
+        public deathMessageData(String deathMessage, String targetId){
+            this.deathMessage = deathMessage;
+            this.targetId = targetId;
+        }
+    }
+
 
     /**
      * Data object for pickItem & dropItem

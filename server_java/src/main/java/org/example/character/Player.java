@@ -46,6 +46,8 @@ public class Player {
      */
     public Position rotation;
 
+    public String lastAttackedBy = "[Nothing]";
+
     public Player(String id, String name) {
         this.id = id;
         this.name = name;

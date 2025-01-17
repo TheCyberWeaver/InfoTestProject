@@ -19,7 +19,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.infotest.util.Logger;
 
 import static io.github.infotest.GameSettings.*;
-import static io.github.infotest.Main.isDevelopmentMode;
 
 public class StartScreen implements Screen {
 

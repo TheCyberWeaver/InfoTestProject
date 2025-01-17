@@ -6,7 +6,9 @@ public class GameSettings {
     /**
      * Dev
      */
-    public static final String defaultPlayerName = "Player Admin";
+    public static boolean isDevelopmentMode=true;
+    //These settings will only be used if isDevelopmentMode==true
+    public static final String defaultPlayerName = "Player " + (int)(Math.random() * 1000);
     public static final String defaultPlayerClass = "Mage";
     public static final String defaultServer = "http://localhost:9595";
 }
