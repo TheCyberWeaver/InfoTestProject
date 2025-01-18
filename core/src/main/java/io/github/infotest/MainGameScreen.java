@@ -137,7 +137,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     public void onSeedReceived(int seed) {
         // map initialization
         MapCreator mapCreator = new MapCreator(seed);
-        GLOBAL_SEED = seed;
+        //GLOBAL_SEED = seed;
         mapCreator.initializePerlinNoiseMap();
 
         localPlayer.setId(serverConnection.getMySocketId());

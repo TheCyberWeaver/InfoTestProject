@@ -170,6 +170,9 @@ public class GameSocketServer {
             JsonObject json = gson.toJsonTree(data).getAsJsonObject();
             String actionType = json.get("actionType").getAsString();
 
+
+            String targetId;
+            Player targetPlayer;
             switch (actionType) {
                 case "Normal":
                     // TODO
@@ -178,15 +181,31 @@ public class GameSocketServer {
                     // TODO
                     break;
                 case "PlayerDeath":
-                    String playerId = json.get("targetId").getAsString();
-                    Player target1 = players.get(playerId);
-                    if (target1 != null) {
-                        target1.isAlive=false;
+                    targetId = json.get("targetId").getAsString();
+                    targetPlayer = players.get(targetId);
+                    if (targetPlayer != null) {
+                        targetPlayer.isAlive=false;
                         // Notify all clients
                         server.getBroadcastOperations().sendEvent("playerAction",
-                            new ActionData(playerId, "PlayerDeath"));
+                            new ActionData(targetId, "PlayerDeath"));
 
-                        broadcastDeathMessage(server, target1.lastAttackedBy,playerId);
+                        broadcastDeathMessage(server, targetPlayer.lastAttackedBy,targetId);
+                    } else {
+                        System.out.println("[Debug]: target is NULL");
+                    }
+
+
+                    System.out.println("[Debug]: " + messageFromPlayer.name + " is dead");
+                    break;
+                case "PlayerMessage":
+                    targetId = json.get("targetId").getAsString();
+                    targetPlayer = players.get(targetId);
+                    if (targetPlayer != null) {
+                        // Notify all clients
+                        server.getBroadcastOperations().sendEvent("playerAction",
+                            new ActionData(targetId, "PlayerMessage"));
+
+                        broadcastDeathMessage(server, targetPlayer.lastAttackedBy,targetId);
                     } else {
                         System.out.println("[Debug]: target is NULL");
                     }
@@ -202,17 +221,17 @@ public class GameSocketServer {
                     break;
                 case "TakeDamage":
                     // Retrieve targetId and damage from data
-                    String targetId = json.get("targetId").getAsString();
+                    targetId = json.get("targetId").getAsString();
                     float damage = json.get("damage").getAsFloat();
-                    Player target = players.get(targetId);
-                    if (target != null) {
-                        target.takeDamage(damage);
-                        target.lastAttackedBy=socketId;
+                    targetPlayer = players.get(targetId);
+                    if (targetPlayer != null) {
+                        targetPlayer.takeDamage(damage);
+                        targetPlayer.lastAttackedBy=socketId;
                         // Notify all clients
                         server.getBroadcastOperations().sendEvent("takeDamage",
                             new TakeDamageData(targetId, "TakeDamage", damage));
 
-                        System.out.println("[Debug]: " + target.name + " takes " + damage + " Damage");
+                        System.out.println("[Debug]: " + targetPlayer.name + " takes " + damage + " Damage");
                     } else {
                         System.out.println("[Debug]: target is NULL");
                     }
@@ -236,7 +255,7 @@ public class GameSocketServer {
 
                 // 控制广播频率，比如每 1 秒广播一次
                 try {
-                    Thread.sleep(40);  // 1秒，可自定义
+                    Thread.sleep(20);  // 1秒，可自定义
                 } catch (InterruptedException e) {
                     // 可以根据需要处理线程中断
                     Thread.currentThread().interrupt();

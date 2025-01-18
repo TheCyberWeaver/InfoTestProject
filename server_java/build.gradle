@@ -18,7 +18,7 @@ dependencies {
     // Netty-SocketIO
     implementation 'com.corundumstudio.socketio:netty-socketio:2.0.12'
     // JSON 序列化库，比如 Gson 或 Jackson 任选其一
-    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'com.google.code.gson:gson:2.10.1'
     // 或者：implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
 }
 

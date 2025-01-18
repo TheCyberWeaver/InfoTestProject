@@ -95,8 +95,13 @@ public class ServerConnection {
             socket.on("updateAllPlayers", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    if (args.length > 0 && args[0] instanceof JSONObject) {
-                        String updatedPlayersJson = args[0].toString();
+                    if (args.length > 0 && args[0] instanceof JSONObject && hasInitializedMap) {
+                        String updatedPlayersJson;
+                        if(args[0].toString().equals("updateAllPlayers")){  //DO NOT try to optimize any of this code, only god and I knew how it worked.
+                            updatedPlayersJson = args[1].toString();
+                        }else{
+                            updatedPlayersJson = args[0].toString();
+                        }
                         // Logger.log("[ServerConnection Debug]: "+updatedPlayersJson);
                         //   - key: socketId (e.g., "socketId_1")
                         //   - value: <PlayerData>
@@ -116,14 +121,24 @@ public class ServerConnection {
                 @Override
                 public void call(Object... args) {
 //                    if (args.length > 0 && args[0] instanceof JSONObject) {
-                    if(args.length > 0){
-                        String updatedNPCsJson = args[0].toString();
+                    if(args.length > 0 && hasInitializedMap){
+                        // DO NOT optimize any of this code, only god knew why it worked.
+                        // Therefore, if you are trying to optimize this routine, and it fails (most surely),
+                        // please increase this counter as a warning for the next person:
+                        // total_hours_wasted_here = 5
+                        String updatedNPCsJson;
+                        if(args[0].toString().equals("updateAllNPCs")){
+                            updatedNPCsJson = args[1].toString();
+                        }else{
+                            updatedNPCsJson = args[0].toString();
+                        }
+
                         //Logger.log("[ServerConnection Debug]: "+updatedNPCsJson);
                         //   - key: socketId (e.g., "socketId_1")
                         //   - value: <NPCData>
                         Gson gson = new Gson();
-                        Type typeOfHashMap = new TypeToken<ArrayList<NPCData>>(){}.getType();
-                        ArrayList<NPCData> NPCsList = gson.fromJson(updatedNPCsJson, typeOfHashMap);
+                        Type type = new TypeToken<ArrayList<NPCData>>(){}.getType();
+                        ArrayList<NPCData> NPCsList = gson.fromJson(updatedNPCsJson, type);
 
                         updateNPCs(NPCsList);
                     }
@@ -136,7 +151,7 @@ public class ServerConnection {
             }).on("deathBroadcastMessage", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    if (args.length > 0 && args[0] instanceof JSONObject) {
+                    if (args.length > 0 && args[0] instanceof JSONObject && hasInitializedMap) {
                         JSONObject data = (JSONObject) args[0];
                         try {
                             showDeathMessage(data);
@@ -149,7 +164,7 @@ public class ServerConnection {
             }).on("playerLeft", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    if (args.length > 0 && args[0] instanceof String) {
+                    if (args.length > 0 && args[0] instanceof String && hasInitializedMap) {
                         String leftPlayerId = (String) args[0];
                         //Logger.log("[ServerConnection Debug]: left Playerid "+leftPlayerId);
                         allPlayers.remove(leftPlayerId);
@@ -158,7 +173,7 @@ public class ServerConnection {
             }).on("playerAction", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    if (args.length > 0 && args[0] instanceof JSONObject) {
+                    if (args.length > 0 && args[0] instanceof JSONObject && hasInitializedMap) {
                         JSONObject data = (JSONObject) args[0];
                         try {
                             //Logger.log("[ServerConnection INFO]: " + data.toString());
