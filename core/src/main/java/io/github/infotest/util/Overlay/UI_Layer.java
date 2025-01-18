@@ -3,10 +3,12 @@ package io.github.infotest.util.Overlay;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -48,6 +50,7 @@ public class UI_Layer implements ApplicationListener {
     private float deathMsgDuration = 3f;      // How long the message is fully visible
     private float deathMsgFadeDuration = 1f; // How long the message takes to fade out
     private boolean isDeathMessageVisible = false;
+    private GlyphLayout glyphLayout; // For text measurement
 
     public UI_Layer( MyAssetManager assetManager) {
         this.assetManager = assetManager;
@@ -66,9 +69,10 @@ public class UI_Layer implements ApplicationListener {
         this.batch = new SpriteBatch();
         this.shapeRenderer = new ShapeRenderer();
 
-        // Create or load your BitmapFont
-        font = new BitmapFont(); // or use an asset if you have one
-        font.getData().setScale(2.0f); // Scale it up if desired
+        font = new BitmapFont();
+        font.getData().setScale(2.0f);
+
+        glyphLayout = new GlyphLayout();
     }
 
     @Override
@@ -109,41 +113,58 @@ public class UI_Layer implements ApplicationListener {
         return windowSize;
     }
 
-    private  void renderDeathMessage(){
+    private void renderDeathMessage() {
         if (isDeathMessageVisible && deathMessage != null) {
-            // Update timer
             deathMsgTimer += Gdx.graphics.getDeltaTime();
 
-            // Calculate alpha for fade-out
-            float alpha = 1.0f;
+            // 2) Calculate current alpha
+            float alpha = 1f;
             if (deathMsgTimer > deathMsgDuration) {
-                // Start fading out
                 float fadeTime = deathMsgTimer - deathMsgDuration;
                 if (fadeTime > deathMsgFadeDuration) {
-                    // Faded completely -> hide the message
                     isDeathMessageVisible = false;
                     alpha = 0f;
                 } else {
-                    // Interpolate alpha from 1 to 0
                     alpha = 1f - (fadeTime / deathMsgFadeDuration);
                 }
             }
 
-            // Draw message if still visible
+            // 3) Only render if alpha > 0
             if (alpha > 0f) {
+                // Measure text with glyphLayout, if you want proper sizing
+                glyphLayout.setText(font, deathMessage);
+                float textWidth = glyphLayout.width;
+                float textHeight = glyphLayout.height;
+
+                // Position top-left or wherever
+                float padding = 20f;
+                float x = 40f;
+                float y = viewport.getWorldHeight() - 40f;
+
+                float rectWidth  = textWidth + padding * 2;
+                float rectHeight = textHeight + padding * 2;
+                float rectX = x;
+                float rectY = y - textHeight - padding*2;
+
+                // --- IMPORTANT: End the batch before shape rendering ---
+                batch.end();
+
+                // 4) Draw semi‐transparent background rectangle
+                Gdx.gl.glEnable(GL20.GL_BLEND); // For proper alpha blending
+                shapeRenderer.setProjectionMatrix(uiCamera.combined);
+                shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+                shapeRenderer.setColor(0f, 0f, 0f, 0.5f * alpha);
+                shapeRenderer.rect(rectX, rectY, rectWidth, rectHeight);
+                shapeRenderer.end();
+
+                // 5) Re‐begin the batch for text
+                batch.begin();
                 font.setColor(1f, 1f, 1f, alpha);
-
-                // Position: center of the screen, adjust to your preference
-                float x = viewport.getWorldWidth() * 0.5f;
-                float y = viewport.getWorldHeight() * 0.5f;
-
-                // Center the text by measuring
-                float textWidth = font.getRegion().getRegionWidth();
-                float textHeight = font.getCapHeight();
-                font.draw(batch, deathMessage, 20, viewport.getWorldHeight()-20);
+                font.draw(batch, glyphLayout, x + padding, y - padding);
             }
         }
     }
+
 
     public void renderMarket(Batch batch, Texture texture) {
         float screenScaleX = Gdx.graphics.getWidth()/windowSize.x * nScale;
@@ -173,9 +194,9 @@ public class UI_Layer implements ApplicationListener {
         this.base = base;
     }
     public void showDeathMessage(String attacker, String target) {
-        Logger.log("[UI Debug]: showDeathMessage: " + attacker + " kills " + target);
+        //Logger.log("[UI Debug]: showDeathMessage: " + attacker + " killed " + target);
         // Construct the message
-        deathMessage = attacker + " kills " + target;
+        deathMessage = attacker + " killed " + target;
         isDeathMessageVisible = true;
         deathMsgTimer = 0f;  // reset timer
     }
@@ -216,6 +237,10 @@ public class UI_Layer implements ApplicationListener {
             tex.dispose();
         }
         batch.dispose();
+        // Dispose font if you created it in create()
+        if (font != null) {
+            font.dispose();
+        }
     }
 
 }
