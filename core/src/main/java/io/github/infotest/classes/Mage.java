@@ -97,6 +97,7 @@ public class Mage extends Player {
 
     @Override
     public void render(Batch batch, float delta) {
+        super.render(batch, delta);
         Vector2 predictedPosition = predictPosition();
         Animation<TextureRegion> oldState = STATE;
         if(isAttacking) {
@@ -129,10 +130,6 @@ public class Mage extends Player {
         currentFrame.draw(batch);
 
         animationTime += delta;
-
-        GlyphLayout layout = new GlyphLayout(font, name);
-        float textWidth = layout.width;
-        font.draw(batch, name, predictedPosition.x + 16 - (int)textWidth/2f, predictedPosition.y + 72);
     }
     public String toString() {
         return "Mage: "+name;

@@ -95,7 +95,7 @@ public class ServerConnection {
             socket.on("updateAllPlayers", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    if (args.length > 0 && args[0] instanceof JSONObject && hasInitializedMap) {
+                    if (args.length > 0  && hasInitializedMap) {
                         String updatedPlayersJson;
                         if(args[0].toString().equals("updateAllPlayers")){  //DO NOT try to optimize any of this code, only god and I knew how it worked.
                             updatedPlayersJson = args[1].toString();

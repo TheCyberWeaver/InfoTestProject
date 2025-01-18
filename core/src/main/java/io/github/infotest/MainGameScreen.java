@@ -65,8 +65,11 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     //Timer
     private float debugTimer=0;
     private float survivalTimer=0;
+    private float showMessageTimer=0;
+    private float currentTradingToNPCTimer=0;
 
-
+    //Settings
+    private float waitAfterDeath=7f;
     public MainGameScreen(Game game) {
         this.game = (Main) game;
         this.camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -94,6 +97,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         assetManager.loadNPCMarketAssets();
         assetManager.loadSignsAssets();
         assetManager.loadArrowAssets();
+        assetManager.loadWhitePixel();
         assetManager.manager.finishLoading();
 
 
@@ -257,12 +261,14 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                     // Switch to the EndScreen, passing player's survival time, etc.
                     game.endGame(survivalTimer);
                 }
-            }, 3f); // 3 seconds delay
+            }, waitAfterDeath); // 3 seconds delay
             //respawn(localPlayer);
         }
 
         debugTimer+=delta;
         survivalTimer += delta;
+        showMessageTimer += delta;
+        currentTradingToNPCTimer+=delta;
 
         numberOfNPCInTheLastFrame = allNPCs.size();
         clicked = false;
@@ -329,17 +335,28 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                 }
             }
             if (Gdx.input.isKeyPressed(Input.Keys.F)) {
-                NPC cNpc = getClosestNPC();
-                if (cNpc != null) {
-                    float distance = localPlayer.getPosition().dst(cNpc.getPosition());
-                    if (currentTradingToNPC == null && distance <= 100 && !cNpc.isTrading()) {
-                        cNpc.openMarket(batch);
-                        currentTradingToNPC = cNpc;
+                if(currentTradingToNPC==null && currentTradingToNPCTimer>=0.3){
+                    currentTradingToNPCTimer=0;
+                    NPC cNpc = getClosestNPC();
+                    if (cNpc != null) {
+                        float distance = localPlayer.getPosition().dst(cNpc.getPosition());
+                        if (currentTradingToNPC == null && distance <= 100 && !cNpc.isTrading()) {
+                            cNpc.openMarket(batch);
+                            currentTradingToNPC = cNpc;
+                        }
                     }
                 }
+                else if(currentTradingToNPC!=null && currentTradingToNPCTimer>=0.3){
+                    currentTradingToNPCTimer=0;
+                    currentTradingToNPC.closeMarket();
+                    currentTradingToNPC = null;
+                }
+
             }
-
-
+            if (moved && currentTradingToNPC != null) {
+                currentTradingToNPC.closeMarket();
+                currentTradingToNPC = null;
+            }
             if (Gdx.input.isKeyPressed(Input.Keys.K)) {
                 localPlayer.kill(serverConnection);
                 // Schedule a task to show the EndScreen after 3 seconds
@@ -351,14 +368,9 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                     }
                 }, 3f); // 3 seconds delay
             }
-            if (moved && currentTradingToNPC != null) {
-                currentTradingToNPC.closeMarket();
-                currentTradingToNPC = null;
-            }
+
             //Debug Player status
             if (Gdx.input.isKeyPressed(Input.Keys.P) && isDevelopmentMode && debugTimer >= 1) {
-
-                localPlayer.showMessage("Test Message",serverConnection);
 
                 Logger.log("-----[Debug: showing player status]-----");
                 Logger.log("socketID | Name | HP | ItemsLength | alive");
@@ -376,11 +388,20 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                     Logger.log("-> Items: " + str);
                 }
                 Logger.log("-----[Debug END]-----");
+
                 debugTimer = 0;
             }
 
-            localPlayer.setHasMoved(moved);
 
+            if (Gdx.input.isKeyPressed(Input.Keys.T) && showMessageTimer >= 1) {
+
+                localPlayer.showMessage("You Sucks!!!",serverConnection);
+                //TODO show different messages
+                showMessageTimer = 0;
+            }
+
+
+            localPlayer.setHasMoved(moved);
             if (moved && localPlayer.isAlive()) {
                 // update position
                 serverConnection.sendPlayerPosition(localPlayer.getX(), localPlayer.getY(), localPlayer.getRotation().x, localPlayer.getRotation().y);

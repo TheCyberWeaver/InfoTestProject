@@ -47,8 +47,8 @@ public class UI_Layer implements ApplicationListener {
     private BitmapFont font;
     private String deathMessage = null;
     private float deathMsgTimer = 0f;
-    private float deathMsgDuration = 3f;      // How long the message is fully visible
-    private float deathMsgFadeDuration = 1f; // How long the message takes to fade out
+    private float deathMsgDuration = 5f;      // How long the message is fully visible
+    private float deathMsgFadeDuration = 2f; // How long the message takes to fade out
     private boolean isDeathMessageVisible = false;
     private GlyphLayout glyphLayout; // For text measurement
 
