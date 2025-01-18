@@ -482,7 +482,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                 float dY = Math.abs(p.getY() - fireball.getY());
 
                 if (dX <= 32f && dY <= 64f && !fireball.hasHit()){
-                    if(!p.equals(localPlayer)){
+                    if(!p.equals(localPlayer)&&fireball.getOwner().equals(localPlayer)){
                         p.takeDamage(fireball.getDamage(),serverConnection);
                     }
                     fireball.setHit();

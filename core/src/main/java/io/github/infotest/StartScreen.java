@@ -47,7 +47,7 @@ public class StartScreen implements Screen {
         // set input to  stage, so that we can catch UI events
         Gdx.input.setInputProcessor(stage);
 
-        // skin - default UI skin TODO: find more beautiful skins
+        // skin - default UI skin
         Skin skin = new Skin(Gdx.files.internal("ui/skin/freezing-ui.json"));
 
         // Title Label

@@ -6,7 +6,7 @@ The game contains several screens
 Screens:
 StartScreen
 MainGameScreen
-TODO: EndGameScreen
+EndGameScreen
  */
 public class Main extends Game {
     private String username;

@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -40,6 +41,14 @@ public class UI_Layer implements ApplicationListener {
     private float fadeDuration = 2;
     private float base;
 
+    //DeathMessage
+    private BitmapFont font;
+    private String deathMessage = null;
+    private float deathMsgTimer = 0f;
+    private float deathMsgDuration = 3f;      // How long the message is fully visible
+    private float deathMsgFadeDuration = 1f; // How long the message takes to fade out
+    private boolean isDeathMessageVisible = false;
+
     public UI_Layer( MyAssetManager assetManager) {
         this.assetManager = assetManager;
         this.uiCamera = new OrthographicCamera(); // Create a new OrthographicCamera for UI
@@ -56,6 +65,10 @@ public class UI_Layer implements ApplicationListener {
     public void create() {
         this.batch = new SpriteBatch();
         this.shapeRenderer = new ShapeRenderer();
+
+        // Create or load your BitmapFont
+        font = new BitmapFont(); // or use an asset if you have one
+        font.getData().setScale(2.0f); // Scale it up if desired
     }
 
     @Override
@@ -82,6 +95,8 @@ public class UI_Layer implements ApplicationListener {
                 viewport.getWorldWidth()-50,
                 viewport.getWorldHeight()-70 - 60*2,
                 1, 1);
+            renderDeathMessage();
+
             batch.end();
         }
     }
@@ -92,6 +107,42 @@ public class UI_Layer implements ApplicationListener {
     }
     public Vector2 getWindowSize() {
         return windowSize;
+    }
+
+    private  void renderDeathMessage(){
+        if (isDeathMessageVisible && deathMessage != null) {
+            // Update timer
+            deathMsgTimer += Gdx.graphics.getDeltaTime();
+
+            // Calculate alpha for fade-out
+            float alpha = 1.0f;
+            if (deathMsgTimer > deathMsgDuration) {
+                // Start fading out
+                float fadeTime = deathMsgTimer - deathMsgDuration;
+                if (fadeTime > deathMsgFadeDuration) {
+                    // Faded completely -> hide the message
+                    isDeathMessageVisible = false;
+                    alpha = 0f;
+                } else {
+                    // Interpolate alpha from 1 to 0
+                    alpha = 1f - (fadeTime / deathMsgFadeDuration);
+                }
+            }
+
+            // Draw message if still visible
+            if (alpha > 0f) {
+                font.setColor(1f, 1f, 1f, alpha);
+
+                // Position: center of the screen, adjust to your preference
+                float x = viewport.getWorldWidth() * 0.5f;
+                float y = viewport.getWorldHeight() * 0.5f;
+
+                // Center the text by measuring
+                float textWidth = font.getRegion().getRegionWidth();
+                float textHeight = font.getCapHeight();
+                font.draw(batch, deathMessage, 20, viewport.getWorldHeight()-20);
+            }
+        }
     }
 
     public void renderMarket(Batch batch, Texture texture) {
@@ -123,7 +174,10 @@ public class UI_Layer implements ApplicationListener {
     }
     public void showDeathMessage(String attacker, String target) {
         Logger.log("[UI Debug]: showDeathMessage: " + attacker + " kills " + target);
-        //TODO: show deathmessage on the screen
+        // Construct the message
+        deathMessage = attacker + " kills " + target;
+        isDeathMessageVisible = true;
+        deathMsgTimer = 0f;  // reset timer
     }
     public boolean isRenderingSign(){
         return isRenderingSign;
