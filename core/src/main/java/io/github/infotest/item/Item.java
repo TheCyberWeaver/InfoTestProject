@@ -1,6 +1,7 @@
 package io.github.infotest.item;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import io.github.infotest.util.MyAssetManager;
 
 public abstract class Item {
@@ -26,6 +27,9 @@ public abstract class Item {
         return texture;
     }
 
+    public void render(Batch batch, float x, float y,float scale) {
+        batch.draw(texture, x, y, 80*scale, 80*scale);
+    }
     @Override
     public String toString(){
         return name;

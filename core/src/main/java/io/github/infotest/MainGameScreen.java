@@ -97,7 +97,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         assetManager.loadNPCMarketAssets();
         assetManager.loadSignsAssets();
         assetManager.loadArrowAssets();
-        assetManager.loadWhitePixel();
+        assetManager.loadItemBarAssets();
+        assetManager.loadItemAssets();
         assetManager.manager.finishLoading();
 
 
@@ -199,7 +200,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             // Render Market and Items
             if (currentTradingToNPC != null) {
                 uiLayer.renderMarket(batch, currentTradingToNPC.getMarketTexture());
-                uiLayer.renderItems(batch, currentTradingToNPC.getMarket(), currentTradingToNPC.getNPC_marketMapValue(currentTradingToNPC.getMarketTextureID()));
+                uiLayer.renderMarketItems(batch, currentTradingToNPC.getMarket(), currentTradingToNPC.getNPC_marketMapValue(currentTradingToNPC.getMarketTextureID()));
                 handleUIInput(batch, delta);
             }
             // Render INV_FULL sign

@@ -15,7 +15,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.*;
 import io.github.infotest.item.Item;
 import io.github.infotest.util.GameRenderer;
-import io.github.infotest.util.Logger;
 import io.github.infotest.util.MyAssetManager;
 
 import java.util.ArrayList;
@@ -100,7 +99,7 @@ public class UI_Layer implements ApplicationListener {
                 viewport.getWorldHeight()-70 - 60*2,
                 1, 1);
             renderDeathMessage();
-
+            renderItemBarAndItems();
             batch.end();
         }
     }
@@ -113,6 +112,19 @@ public class UI_Layer implements ApplicationListener {
         return windowSize;
     }
 
+    private void renderItemBarAndItems(){
+        Texture texture=assetManager.getItemBarAssets();
+        float scale=0.75f;
+        float itemBarStartX=viewport.getWorldWidth()/2-texture.getWidth()*scale/2f;
+        batch.draw(texture,itemBarStartX,0,texture.getWidth()*scale,texture.getHeight()*scale);
+
+        for(int itemIndex=0 ; itemIndex<localPlayer.getItems().size() ; itemIndex++) {
+            Item item=localPlayer.getItems().get(itemIndex);
+            if(item!=null){
+                item.render(batch,itemBarStartX+scale*(134+itemIndex*121),80*scale, scale);
+            }
+        }
+    }
     private void renderDeathMessage() {
         if (isDeathMessageVisible && deathMessage != null) {
             deathMsgTimer += Gdx.graphics.getDeltaTime();
@@ -172,7 +184,7 @@ public class UI_Layer implements ApplicationListener {
         float screenY = localPlayer.getY()-75f* screenScaleX;
         batch.draw(texture, screenX, screenY, texture.getWidth()*screenScaleX, texture.getHeight()* screenScaleX);
     }
-    public void renderItems(Batch batch, Item[] items, ArrayList<Vector2> offset){
+    public void renderMarketItems(Batch batch, Item[] items, ArrayList<Vector2> offset){
         float screenScaleX = Gdx.graphics.getWidth()/windowSize.x * nScale;
         for (int i=0; i<items.length; i++){
             Item item = items[i];

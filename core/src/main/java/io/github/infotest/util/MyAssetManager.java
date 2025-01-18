@@ -196,11 +196,14 @@ public class MyAssetManager {
         return manager.get("arrow.png", Texture.class);
     }
 
-    public void loadWhitePixel(){
-        manager.load("ui/whitePixel.png", Texture.class);
+    public void loadItemBarAssets(){
+        manager.load("ui/itembar.png", Texture.class);
     }
-    public Texture getWhitePixel(){
-        return manager.get("ui/whitePixel.png", Texture.class);
+    public Texture getItemBarAssets(){
+        return manager.get("ui/itembar.png", Texture.class);
+    }
+    public void loadItemAssets(){
+        manager.load("items/apple.png", Texture.class);
     }
 
 }
