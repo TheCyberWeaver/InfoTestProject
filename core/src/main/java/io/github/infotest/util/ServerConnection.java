@@ -377,7 +377,7 @@ public class ServerConnection {
             initData.put("name", player.getName());
             initData.put("hp",player.getHealthPoints());
             initData.put("classtype",player.getClassName());
-            initData.put("items",player.getItems());
+            initData.put("item",player.getItems());
 
             Logger.log("[ServerConnection INFO]: Sending Init Data: "+ initData);
 

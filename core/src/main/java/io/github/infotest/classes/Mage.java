@@ -25,12 +25,15 @@ public class Mage extends Player {
 
     protected Animation<TextureRegion> STATE;
 
+    private MyAssetManager assetManager;
+
     private static float fireballCost = 5f;
     private static float fireballDamage = 16f;
     private static float fireballCooldown;
     private static float fireballSpeed = 20f;
     private static float fireballScale = 3f;
     private static float fireballLT = 2f; // lifetime with 0.5 second on start and 0.7 s on hit and 0.8 on end without hit
+
 
 
     public Mage(String id, String name, Vector2 playerPosition, MyAssetManager assetManager) {
@@ -45,8 +48,11 @@ public class Mage extends Player {
         RUN.setPlayMode(Animation.PlayMode.LOOP);
 
         fireballCooldown = ATTACK_1.getAnimationDuration()+0.5f;
+        T1CoolDownTime =fireballCooldown;
 
         STATE = IDLE;
+
+        this.assetManager=assetManager;
     }
 
     @Override
@@ -86,6 +92,10 @@ public class Mage extends Player {
         }
     }
 
+    @Override
+    public Texture getMainSkillSymbol() {
+        return assetManager.getFireballSymbol();
+    }
 
 
     public void castFireball(float x, float y, Vector2 playerRot) {

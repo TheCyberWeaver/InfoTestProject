@@ -55,5 +55,10 @@ public class MyMath {
 
         return Float.NaN; // Sicherheitsrückgabe
     }
-
+    public static float interpolate(float a, float b, float x) {
+        if (x < 0 || x > 1) {
+            return Float.NaN;
+        }
+        return a+x*(b-a);
+    }
 }

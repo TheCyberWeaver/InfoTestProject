@@ -70,7 +70,18 @@ public class MyAssetManager {
         fireball_sheets[3]=manager.get("fireball_sheet_endHit.png", Texture.class);
         return fireball_sheets;
     }
-
+    public void loadFireballSymbol(){
+        manager.load("player/mage/mageFireballSymbol.png", Texture.class);
+    }
+    public Texture getFireballSymbol(){
+        return manager.get("player/mage/mageFireballSymbol.png", Texture.class);
+    }
+    public void loadSkillBarAsset(){
+        manager.load("ui/skillbar.png", Texture.class);
+    }
+    public Texture getSkillBarAsset(){
+        return manager.get("ui/skillbar.png", Texture.class);
+    }
     public void loadHealthBarAssets(){
         manager.load("healthbar_full_start.png", Texture.class);
         manager.load("healthbar_empty_start.png", Texture.class);
@@ -203,7 +214,7 @@ public class MyAssetManager {
         return manager.get("ui/itembar.png", Texture.class);
     }
     public void loadItemAssets(){
-        manager.load("items/apple.png", Texture.class);
+        manager.load("item/apple.png", Texture.class);
     }
 
 }

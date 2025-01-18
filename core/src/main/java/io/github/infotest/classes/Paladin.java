@@ -16,6 +16,11 @@ public class Paladin extends Player {
     }
 
     @Override
+    public Texture getMainSkillSymbol() {
+        return null;
+    }
+
+    @Override
     public String toString() {
         return "Paladin";
     }

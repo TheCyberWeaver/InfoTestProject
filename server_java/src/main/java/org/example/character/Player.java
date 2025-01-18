@@ -22,7 +22,7 @@ public class Player {
     public Position position;
 
     /**
-     * The items that the player is currently carrying
+     * The item that the player is currently carrying
      */
     public ArrayList<String> itemIDs;
 

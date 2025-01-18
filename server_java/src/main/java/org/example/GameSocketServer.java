@@ -72,7 +72,7 @@ public class GameSocketServer {
             String socketId = client.getSessionId().toString();
 
             // data is the JSON sent by the client
-            // In Node.js, it is {x, y, name, hp, classtype, items} ...
+            // In Node.js, it is {x, y, name, hp, classtype, item} ...
             // Here we use Gson to parse
             Gson gson = new Gson();
             JsonObject json = gson.toJsonTree(data).getAsJsonObject();
@@ -82,7 +82,7 @@ public class GameSocketServer {
             float y           = json.get("y").getAsFloat();
             float hp          = json.get("hp").getAsFloat();
             String classtype  = json.get("classtype").getAsString();
-            JsonArray items   = json.get("items").getAsJsonArray();
+            JsonArray items   = json.get("item").getAsJsonArray();
 
             // Create a Player
             Player newPlayer = new Player(socketId, name);
@@ -90,9 +90,9 @@ public class GameSocketServer {
             newPlayer.classtype = classtype;
             newPlayer.setPosition(x, y);
 
-            // Retrieve items from the JSON array
-//            for (int i=0; i<items.size(); i++){
-//                newPlayer.pickItem(items.get(i).getAsString());
+            // Retrieve item from the JSON array
+//            for (int i=0; i<item.size(); i++){
+//                newPlayer.pickItem(item.get(i).getAsString());
 //            }
             players.put(socketId, newPlayer);
             System.out.println("[INFO]: " + newPlayer.name + " " + newPlayer.classtype + " joins the world");

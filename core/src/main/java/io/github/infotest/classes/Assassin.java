@@ -38,6 +38,11 @@ public class Assassin extends Player {
         }
     }
 
+    @Override
+    public Texture getMainSkillSymbol() {
+        return null;
+    }
+
     public void closeCombat(){
 
     }

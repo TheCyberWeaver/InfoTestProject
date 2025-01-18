@@ -86,19 +86,28 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         assetManager.loadLoadingScreen();
         assetManager.loadMapAssets();
+        assetManager.loadSkillBarAsset();
+
         assetManager.loadPlayerAssets();
+
         assetManager.loadMageAssets();
         assetManager.loadFireballAssets();
+        assetManager.loadFireballSymbol();
+
         assetManager.loadHealthBarAssets();
         assetManager.loadManaBarAssets();
         assetManager.loadAusdauerBarAssets();
+
         assetManager.loadNPCMaleAssets();
         assetManager.loadNPCWomenAssets();
         assetManager.loadNPCMarketAssets();
+
         assetManager.loadSignsAssets();
         assetManager.loadArrowAssets();
+
         assetManager.loadItemBarAssets();
         assetManager.loadItemAssets();
+
         assetManager.manager.finishLoading();
 
 

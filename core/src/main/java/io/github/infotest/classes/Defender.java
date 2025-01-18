@@ -22,4 +22,9 @@ public class Defender extends Player {
     public void castSkill(int skillID, ServerConnection serverConnection) {
 
     }
+
+    @Override
+    public Texture getMainSkillSymbol() {
+        return null;
+    }
 }

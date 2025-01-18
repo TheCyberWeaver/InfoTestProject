@@ -8,7 +8,7 @@ public class Apple extends Item {
     public String color;
 
     public Apple(MyAssetManager assetManager) {
-        super("apple","just an apple", assetManager.manager.get("items/apple.png"));
+        super("apple","just an apple", assetManager.manager.get("item/apple.png"));
     }
 
 }

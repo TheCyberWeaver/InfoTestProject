@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.Vector2;
-import io.github.infotest.Main;
 import io.github.infotest.item.Item;
 import io.github.infotest.util.Factory.ItemFactory;
 import io.github.infotest.util.Logger;
@@ -53,7 +52,7 @@ public abstract class Player extends Actor{
     protected Vector2 spawnpoint;
     protected Vector2 lastDeathPos;
 
-    protected float timeSinceLastT1Skill;
+
 
     //Assassin Att
     protected boolean seeAllActive = false;
@@ -65,6 +64,9 @@ public abstract class Player extends Actor{
     private float speechBubbleDuration = 4f;  // how many seconds to show
     // near top of Player class
     protected GlyphLayout glyphLayout = new GlyphLayout();
+
+    protected float T1CoolDownTime =0f;
+    protected float timeSinceLastT1Skill;
 
     public Player(String id, String name, String className, int maxHealthPoints, int maxMana, int maxAusdauer, Vector2 initialPosition, float speed) {
         super(maxHealthPoints,initialPosition,speed);
@@ -162,6 +164,7 @@ public abstract class Player extends Actor{
 
     }
 
+
     @Override
     public void update(float delta){
 
@@ -178,7 +181,6 @@ public abstract class Player extends Actor{
                 ausdauer = maxAusdauer;
             }
         }
-
         timeSinceLastT1Skill += delta;
     }
 
@@ -280,8 +282,15 @@ public abstract class Player extends Actor{
         System.out.println("[Player Debug]: " + name + " says: " + message);
     }
 
+    public abstract Texture getMainSkillSymbol();
 
     /// Getter / Setter
+    public float getT1SkillCoolDownTime(){
+        return T1CoolDownTime;
+    }
+    public float getT1SkillCoolDownTimer(){
+        return timeSinceLastT1Skill;
+    }
     public String getClassName() {
         return className;
     }

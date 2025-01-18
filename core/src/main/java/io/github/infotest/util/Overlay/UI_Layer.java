@@ -15,7 +15,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.*;
 import io.github.infotest.item.Item;
 import io.github.infotest.util.GameRenderer;
+import io.github.infotest.util.Logger;
 import io.github.infotest.util.MyAssetManager;
+import io.github.infotest.util.MyMath;
 
 import java.util.ArrayList;
 
@@ -99,6 +101,10 @@ public class UI_Layer implements ApplicationListener {
                 viewport.getWorldHeight()-70 - 60*2,
                 1, 1);
             renderDeathMessage();
+
+            renderSkillSymbol();
+            renderSkillBar();
+
             renderItemBarAndItems();
             batch.end();
         }
@@ -111,7 +117,32 @@ public class UI_Layer implements ApplicationListener {
     public Vector2 getWindowSize() {
         return windowSize;
     }
+    private void renderSkillSymbol() {
 
+        float startX=-15;
+        float startY=10;
+        float size=220;
+        if(localPlayer.getMainSkillSymbol()!=null){
+            batch.draw(localPlayer.getMainSkillSymbol(), startX,startY,size,size);
+        }
+
+        //render skill cooldown
+        batch.end();
+        // 4) Draw semi‐transparent background rectangle
+        Gdx.gl.glEnable(GL20.GL_BLEND); // For proper alpha blending
+        shapeRenderer.setProjectionMatrix(uiCamera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(0f, 0f, 0f, 0.5f);
+        float percentage=Math.min(localPlayer.getT1SkillCoolDownTimer(),localPlayer.getT1SkillCoolDownTime())/localPlayer.getT1SkillCoolDownTime();
+        //Logger.log("percentage: "+percentage);
+        shapeRenderer.rect(0, 0, size, MyMath.interpolate(0,size,1-percentage));
+        shapeRenderer.end();
+
+        batch.begin();
+    }
+    private void renderSkillBar(){
+        batch.draw(assetManager.getSkillBarAsset(),0,0,500,500);
+    }
     private void renderItemBarAndItems(){
         Texture texture=assetManager.getItemBarAssets();
         float scale=0.75f;
