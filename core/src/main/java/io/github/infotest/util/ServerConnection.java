@@ -263,6 +263,10 @@ public class ServerConnection {
             case "PlayerDeath":
                 player.kill();
                 break;
+            case "PlayerShowMessage":
+                String message = data.getString("message");
+                player.showMessage(message);
+                break;
             default:
                 Logger.log("[SeverConnection Warning]: received Action not Known: " + actionType);
                 break;
@@ -409,6 +413,24 @@ public class ServerConnection {
             }
             else{
                 Logger.log("[ServerConnection Error]: sendTakeDamage: key is null"+player.getName());
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    public void sendShowPlayerMessage(Player player, String message){
+        JSONObject ShowPlayerMessageeData = new JSONObject();
+        try {
+            String id= player.id;
+            if(id!=null){
+                ShowPlayerMessageeData.put("actionType", "PlayerShowMessage");
+                ShowPlayerMessageeData.put("targetId", id);
+                ShowPlayerMessageeData.put("message", message);
+                socket.emit("playerAction", ShowPlayerMessageeData);
+            }
+            else{
+                Logger.log("[ServerConnection Error]: sendShowPlayerMessage: key is null"+player.getName());
             }
 
         } catch (JSONException e) {

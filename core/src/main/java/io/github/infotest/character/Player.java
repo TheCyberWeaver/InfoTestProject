@@ -211,7 +211,14 @@ public abstract class Player extends Actor{
             this.clearInv();
         }
     }
-
+    public void showMessage(String message,ServerConnection serverConnection) {
+        showMessage(message);
+        serverConnection.sendShowPlayerMessage(this,message);
+    }
+    public void showMessage(String message) {
+        //TODO show Message around the player
+        System.out.println("[Player Debug]: "+name+" "+message);
+    }
 
     /// Getter / Setter
     public String getClassName() {

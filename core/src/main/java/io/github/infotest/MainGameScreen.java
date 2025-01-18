@@ -358,6 +358,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             //Debug Player status
             if (Gdx.input.isKeyPressed(Input.Keys.P) && isDevelopmentMode && debugTimer >= 1) {
 
+                localPlayer.showMessage("Test Message",serverConnection);
+
                 Logger.log("-----[Debug: showing player status]-----");
                 Logger.log("socketID | Name | HP | ItemsLength | alive");
                 for (Map.Entry<String, Player> stringPlayerEntry : allPlayers.entrySet()) {

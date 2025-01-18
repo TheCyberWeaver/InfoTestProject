@@ -197,20 +197,18 @@ public class GameSocketServer {
 
                     System.out.println("[Debug]: " + messageFromPlayer.name + " is dead");
                     break;
-                case "PlayerMessage":
+                case "PlayerShowMessage":
                     targetId = json.get("targetId").getAsString();
+                    String message = json.get("message").getAsString();
                     targetPlayer = players.get(targetId);
                     if (targetPlayer != null) {
                         // Notify all clients
                         server.getBroadcastOperations().sendEvent("playerAction",
-                            new ActionData(targetId, "PlayerMessage"));
+                            new playerMessageData(message, targetId,"PlayerShowMessage"));
 
-                        broadcastDeathMessage(server, targetPlayer.lastAttackedBy,targetId);
                     } else {
                         System.out.println("[Debug]: target is NULL");
                     }
-
-
                     System.out.println("[Debug]: " + messageFromPlayer.name + " is dead");
                     break;
                 case "Fireball":
@@ -255,7 +253,7 @@ public class GameSocketServer {
 
                 // 控制广播频率，比如每 1 秒广播一次
                 try {
-                    Thread.sleep(20);  // 1秒，可自定义
+                    Thread.sleep(16);  //
                 } catch (InterruptedException e) {
                     // 可以根据需要处理线程中断
                     Thread.currentThread().interrupt();
@@ -277,6 +275,7 @@ public class GameSocketServer {
         mapCreator.initializePerlinNoiseMap();
         npcs = mapCreator.spawnNPCs();
     }
+
     private static void broadcastDeathMessage(SocketIOServer server, String deathMessage,String targetId){
         server.getBroadcastOperations().sendEvent("deathBroadcastMessage", new deathMessageData(deathMessage, targetId));
     }
@@ -288,7 +287,14 @@ public class GameSocketServer {
         server.getBroadcastOperations().sendEvent("updateAllNPCs", npcs);
     }
 
+    static class playerMessageData extends ActionData {
+        public String message;
 
+        public playerMessageData(String message, String playerID, String actionType) {
+            super(playerID,actionType);
+            this.message = message;
+        }
+    }
     static class deathMessageData {
         public String deathMessage;
         public String targetId;
