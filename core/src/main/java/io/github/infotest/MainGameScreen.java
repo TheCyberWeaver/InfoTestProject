@@ -416,6 +416,11 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                 // update position
                 serverConnection.sendPlayerPosition(localPlayer.getX(), localPlayer.getY(), localPlayer.getRotation().x, localPlayer.getRotation().y);
             }
+
+            if(!isDevelopmentMode){
+                if(camera.zoom<=defaultCameraZoom)camera.zoom+=0.005;
+                if(camera.zoom>=defaultCameraZoom)camera.zoom-=0.005;
+            }
         }
     }
     @Override

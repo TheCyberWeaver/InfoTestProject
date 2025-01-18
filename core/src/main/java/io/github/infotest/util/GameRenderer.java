@@ -401,7 +401,7 @@ public class GameRenderer {
         });
     }
 
-    private float lightRadius = 200.0f; // Radius des beleuchteten Bereichs
+    private float lightRadius = 250.0f; // Radius des beleuchteten Bereichs
     private float fadeStart = 600.0f;  // Fade-Distanz
     private final Vector2 playerScreenPos = new Vector2(); // Position des Spielers auf dem Bildschirm
     private float altZOOM = 1;
