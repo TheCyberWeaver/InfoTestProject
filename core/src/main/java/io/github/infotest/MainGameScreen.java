@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import io.github.infotest.character.Actor;
 import io.github.infotest.character.Gegner;
 import io.github.infotest.character.NPC;
 import io.github.infotest.character.Player;
@@ -226,24 +225,9 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             batch.setShader(null);
             batch.end();
 
-            for(Player p: allPlayers.values()){
-                p.update(delta);
-            }
-            //player.update(delta);
-            checkFireballCollisions();
+            doGameLogic(delta);
 
-            if (localPlayer.getHealthPoints() <= 0 && localPlayer.isAlive()) {
-                localPlayer.kill(serverConnection);
-                // Schedule a task to show the EndScreen after 3 seconds
-                Timer.schedule(new Timer.Task() {
-                    @Override
-                    public void run() {
-                        // Switch to the EndScreen, passing player's survival time, etc.
-                        game.endGame(survivalTimer);
-                    }
-                }, 3f); // 3 seconds delay
-                //respawn(localPlayer);
-            }
+
         }
         else{
             batch.begin();
@@ -252,13 +236,36 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             batch.end();
         }
+
+        uiLayer.render();
+
+    }
+    private void doGameLogic(float delta) {
+
+        for(Player p: allPlayers.values()){
+            p.update(delta);
+        }
+
+        checkFireballCollisions();
+
+        if (localPlayer.getHealthPoints() <= 0 && localPlayer.isAlive()) {
+            localPlayer.kill(serverConnection);
+            // Schedule a task to show the EndScreen after 3 seconds
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    // Switch to the EndScreen, passing player's survival time, etc.
+                    game.endGame(survivalTimer);
+                }
+            }, 3f); // 3 seconds delay
+            //respawn(localPlayer);
+        }
+
         debugTimer+=delta;
         survivalTimer += delta;
-        uiLayer.render();
 
         numberOfNPCInTheLastFrame = allNPCs.size();
         clicked = false;
-
     }
 
     Vector3 oldPosition = null;
