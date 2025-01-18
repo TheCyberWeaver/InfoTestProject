@@ -74,7 +74,7 @@ public class StartScreen implements Screen {
         });
 
         serverSelectBox = new SelectBox<>(skin);
-        serverSelectBox.setItems("Thomas' Server (v3.1)", "Local Server"); // 设置选项
+        serverSelectBox.setItems("Thomas' Server (v3.3)", "Local Server (v3.4)"); // 设置选项
         serverSelectBox.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {

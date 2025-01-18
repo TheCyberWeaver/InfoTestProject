@@ -20,7 +20,7 @@ public class GameSocketServer {
      * fixed seed:114514 (Meaning of this number could be found on internet)
      */
     private static final int seed = 114514;
-    private static final String serverVersion = "v3.3";
+    private static final String serverVersion = "v3.4";
 
     // Map data
 
