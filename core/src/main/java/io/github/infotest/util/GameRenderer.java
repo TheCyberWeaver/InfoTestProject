@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import io.github.infotest.GameSettings;
 import io.github.infotest.MainGameScreen;
 import io.github.infotest.character.Gegner;
 import io.github.infotest.character.NPC;
@@ -17,12 +18,16 @@ import io.github.infotest.character.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 import static io.github.infotest.MainGameScreen.*;
 
 public class GameRenderer {
 
     private final Texture[] textures;
+    private final Texture[] fadeTexture;
+    private final Texture[] decoTexture;
+    private final Texture[] treeTexture;
 
     // Fireball animation-related fields
     private static ArrayList<AbilityInstance> activeFireballs;
@@ -41,6 +46,9 @@ public class GameRenderer {
         this.mainGameScreen = mainGameScreen;
         this.assetManager = assetManager;
         this.textures = assetManager.getMapAssets();
+        this.fadeTexture = assetManager.getMapFadeAssets();
+        this.decoTexture = assetManager.getMapDecoAssets();
+        this.treeTexture = assetManager.getMapTreeAssets();
 
         activeFireballs = new ArrayList<>();
         activeArrows = new HashMap<Player, Vector3>();
@@ -96,6 +104,20 @@ public class GameRenderer {
 
 
     public void renderMap(SpriteBatch batch, float zoom, Vector2 pos) {
+        // Define fade textures for different tiles
+        Texture[] tile1FADE = new Texture[5];
+        System.arraycopy(fadeTexture, 0, tile1FADE, 0, 5);
+
+        Texture[] tile2FADE = new Texture[5];
+        System.arraycopy(fadeTexture, 5, tile2FADE, 0, 5);
+
+        Texture[] tile4FADE = new Texture[5];
+        System.arraycopy(fadeTexture, 10, tile4FADE, 0, 5);
+
+        Texture[] tile5FADE = new Texture[5];
+        System.arraycopy(fadeTexture, 15, tile5FADE, 0, 5);
+
+        // Calculate visible tiles
         int widthCell = (int) Math.ceil(Gdx.graphics.getWidth() * zoom / CELL_SIZE);
         int heightCell = (int) Math.ceil(Gdx.graphics.getHeight() * zoom / CELL_SIZE);
 
@@ -108,18 +130,183 @@ public class GameRenderer {
                 int worldX = playerX - widthCell / 2 + x;
                 int worldY = playerY - heightCell / 2 + y;
 
-
+                // Clamp coordinates to map bounds
                 worldX = Math.max(0, Math.min(worldX, GAME_MAP[0].length - 1));
                 worldY = Math.max(0, Math.min(worldY, GAME_MAP.length - 1));
-                int rotation = 90 * ROTATION_MAP[worldY][worldX];
 
+                int rotation = 90 * ROTATION_MAP[worldY][worldX];
                 Sprite cellTexture = new Sprite(textures[GAME_MAP[worldY][worldX]]);
-                cellTexture.setPosition(worldX*CELL_SIZE, worldY*CELL_SIZE);
+                cellTexture.setPosition(worldX * CELL_SIZE, worldY * CELL_SIZE);
                 cellTexture.setRotation(rotation);
                 cellTexture.setRegionWidth(CELL_SIZE);
                 cellTexture.setRegionHeight(CELL_SIZE);
                 cellTexture.draw(batch);
+
+                // Render high graphics (fade transitions)
+                if (GameSettings.highGrafik) {
+                    String str = FADE_MAP[worldY][worldX];
+                    int topLeft = -1, top = -1, topRight = -1, right = -1;
+                    int bottomRight = -1, bottom = -1, bottomLeft = -1, left = -1;
+
+                    // Parse fade map string
+                    int altIndex = 0;
+                    for (int i = 0; i < 8; i++) {
+                        int index = str.indexOf(';', altIndex);
+                        if (index == -1) break;
+
+                        String s = str.substring(altIndex, index);
+                        altIndex = index + 1;
+
+                        if (s.isEmpty()) continue;
+
+                        int tileID = Integer.parseInt(String.valueOf(s.charAt(0)));
+                        if (s.contains("c")) {
+                            switch (Integer.parseInt(String.valueOf(s.charAt(s.length() - 1)))) {
+                                case 1:
+                                    topLeft = tileID;
+                                    break;
+                                case 2:
+                                    topRight = tileID;
+                                    break;
+                                case 3:
+                                    bottomRight = tileID;
+                                    break;
+                                case 4:
+                                    bottomLeft = tileID;
+                                    break;
+                            }
+                        }
+                        if (s.contains("t")) top = tileID;
+                        if (s.contains("r")) right = tileID;
+                        if (s.contains("b")) bottom = tileID;
+                        if (s.contains("l")) left = tileID;
+                    }
+
+                    // Render transitions
+                    drawTransition(batch, worldX, worldY, tile1FADE, tile2FADE, tile4FADE, tile5FADE, topLeft, 180);
+                    drawTransition(batch, worldX, worldY, tile1FADE, tile2FADE, tile4FADE, tile5FADE, top, 0);
+                    drawTransition(batch, worldX, worldY, tile1FADE, tile2FADE, tile4FADE, tile5FADE, topRight, 90);
+                    drawTransition(batch, worldX, worldY, tile1FADE, tile2FADE, tile4FADE, tile5FADE, right, 0);
+                    drawTransition(batch, worldX, worldY, tile1FADE, tile2FADE, tile4FADE, tile5FADE, bottomRight, 0);
+                    drawTransition(batch, worldX, worldY, tile1FADE, tile2FADE, tile4FADE, tile5FADE, bottom, 0);
+                    drawTransition(batch, worldX, worldY, tile1FADE, tile2FADE, tile4FADE, tile5FADE, bottomLeft, -90);
+                    drawTransition(batch, worldX, worldY, tile1FADE, tile2FADE, tile4FADE, tile5FADE, left, 0);
+                }
             }
+        }
+        if (GameSettings.highGrafik) {
+            for (int y = -7; y < heightCell + 7; y++) {
+                for (int x = -7; x < widthCell + 7; x++) {
+
+                    int worldX = playerX - widthCell / 2 + x;
+                    int worldY = playerY - heightCell / 2 + y;
+
+                    // Clamp coordinates to map bounds
+                    worldX = Math.max(0, Math.min(worldX, GAME_MAP[0].length - 1));
+                    worldY = Math.max(0, Math.min(worldY, GAME_MAP.length - 1));
+
+                    int decoValue = DECO_MAP[worldY][worldX];
+                    if (decoValue > 0 && decoValue < decoTexture.length) {
+                        float decoX = worldX * CELL_SIZE;
+                        float decoY = worldY * CELL_SIZE;
+
+                        // Adjust position for larger decoration
+                        if (decoValue == 10) {
+                            decoX -= CELL_SIZE/2.0f; // Offset for larger decoration
+                        }
+
+                        Vector2 offset = DECO_OFFSET_MAP[worldY][worldX];
+                        float offsetX = offset.x;
+                        float offsetY = offset.y;
+
+                        float scale = DECO_SCALE_MAP[worldY][worldX];
+
+                        batch.draw(new TextureRegion(decoTexture[decoValue]),
+                            decoX+offsetX, decoY+offsetY, 0, 0,
+                            CELL_SIZE * scale, CELL_SIZE * scale, scale, scale, 0);
+                    }
+                }
+            }
+        }
+    }
+
+    private void drawTransition(SpriteBatch batch, int worldX, int worldY, Texture[] tile1FADE, Texture[] tile2FADE, Texture[] tile4FADE, Texture[] tile5FADE, int tileType, float rotation) {
+        Sprite transitionSprite = null;
+
+        switch (tileType) {
+            case 1:
+                transitionSprite = new Sprite(tile1FADE[0]);
+                break;
+            case 2:
+                transitionSprite = new Sprite(tile2FADE[0]);
+                break;
+            case 4:
+                transitionSprite = new Sprite(tile4FADE[0]);
+                break;
+            case 5:
+                transitionSprite = new Sprite(tile5FADE[0]);
+                break;
+        }
+
+        if (transitionSprite != null) {
+            transitionSprite.setOrigin(transitionSprite.getWidth() / 2, transitionSprite.getHeight() / 2);
+            transitionSprite.setRotation(rotation);
+            transitionSprite.setPosition(worldX * CELL_SIZE, worldY * CELL_SIZE);
+            transitionSprite.draw(batch);
+        }
+    }
+
+    public void renderTrees(Batch batch, float zoom, Vector2 pos){
+        int widthCell = (int) Math.ceil(Gdx.graphics.getWidth() * zoom / CELL_SIZE);
+        int heightCell = (int) Math.ceil(Gdx.graphics.getHeight() * zoom / CELL_SIZE);
+
+        int playerX = (int) (pos.x / CELL_SIZE);
+        int playerY = (int) (pos.y / CELL_SIZE);
+        for (int y = -7; y < heightCell + 7; y++) {
+            for (int x = -7; x < widthCell + 7; x++) {
+                int worldX = playerX - widthCell / 2 + x;
+                int worldY = playerY - heightCell / 2 + y;
+
+                // Clamp coordinates to map bounds
+                worldX = Math.max(0, Math.min(worldX, GAME_MAP[0].length - 1));
+                worldY = Math.max(0, Math.min(worldY, GAME_MAP.length - 1));
+
+
+                if (worldY > 0) {
+                    if (GAME_MAP[worldY-1][worldX] == 2){
+                        batch.draw(treeTexture[2], worldX*32, worldY*32);
+                    }
+                }
+                if (GAME_MAP[worldY][worldX] == 2) {
+                    if (worldY > 0 && GAME_MAP[worldY-1][worldX] == 2) {
+                        batch.draw(treeTexture[1], worldX * 32, worldY * 32);
+                    } else if (worldY == 0) {
+                        batch.draw(treeTexture[0], worldX * 32, 0);
+                    } else if (worldY == MAP_SIZE) {
+                        batch.draw(treeTexture[2], worldX * 32, (worldY + 1) * 32);
+                    } else {
+                        batch.draw(treeTexture[0], worldX * 32, worldY * 32);
+                    }
+                }
+
+                if (worldY > 0) {
+                    if (GAME_MAP[worldY-1][worldX] == 3){
+                        batch.draw(treeTexture[5], worldX*32, worldY*32);
+                    }
+                }
+                if (GAME_MAP[worldY][worldX] == 3) {
+                    if (worldY > 0 && GAME_MAP[worldY-1][worldX] == 3) {
+                        batch.draw(treeTexture[4], worldX * 32, worldY * 32);
+                    } else if (worldY == 0) {
+                        batch.draw(treeTexture[3], worldX * 32, 0);
+                    } else if (worldY == MAP_SIZE) {
+                        batch.draw(treeTexture[5], worldX * 32, (worldY + 1) * 32);
+                    } else {
+                        batch.draw(treeTexture[3], worldX * 32, worldY * 32);
+                    }
+                }
+            }
+
         }
     }
 
