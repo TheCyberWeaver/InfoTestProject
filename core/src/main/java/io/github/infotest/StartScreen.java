@@ -131,14 +131,14 @@ public class StartScreen implements Screen {
 
         String selectedServerUrl;
         switch (selectedServer){
-            case "Thomas' Server":
+            case "Thomas' Server (v3.3)":
                 selectedServerUrl="http://www.thomas-hub.com:9595";
                 break;
-            case "Local Server":
+            case "Local Server (v3.4)":
                 selectedServerUrl="http://localhost:9595";
                 break;
             default:
-                selectedServerUrl="http://www.thomas-hub.com:9595";
+                selectedServerUrl="http://localhost:9595";
                 break;
         }
         if (isDevelopmentMode) {
