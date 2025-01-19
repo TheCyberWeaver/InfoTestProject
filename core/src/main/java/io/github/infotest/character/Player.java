@@ -32,6 +32,8 @@ public abstract class Player extends Actor{
     protected float maxMana;
     protected float manaRegen = 2f;
 
+    protected int gold=0;
+
     protected int INV_SIZE = 7;
 
     protected float ausdauer;

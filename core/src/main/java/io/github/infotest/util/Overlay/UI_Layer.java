@@ -106,6 +106,8 @@ public class UI_Layer implements ApplicationListener {
             renderSkillBar();
 
             renderItemBarAndItems();
+
+            renderGoldBar();
             batch.end();
         }
     }
@@ -116,6 +118,10 @@ public class UI_Layer implements ApplicationListener {
     }
     public Vector2 getWindowSize() {
         return windowSize;
+    }
+    private void renderGoldBar(){
+        Texture texture=assetManager.getGoldBarAsset();
+        batch.draw(texture,viewport.getWorldWidth()-texture.getWidth()-20,20);
     }
     private void renderSkillSymbol() {
 

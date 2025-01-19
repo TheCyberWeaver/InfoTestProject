@@ -9,6 +9,7 @@ public class NPCData {
     public String name;
     public int gender;
     public int type;
+    public int marketTextureID;
     public int hp;
     public int maxHP;
     public MyVector2 position;

@@ -82,6 +82,12 @@ public class MyAssetManager {
     public Texture getSkillBarAsset(){
         return manager.get("ui/skillbar.png", Texture.class);
     }
+    public void loadGoldBarAsset(){
+        manager.load("ui/goldbar.png", Texture.class);
+    }
+    public Texture getGoldBarAsset(){
+        return manager.get("ui/goldbar.png", Texture.class);
+    }
     public void loadHealthBarAssets(){
         manager.load("healthbar_full_start.png", Texture.class);
         manager.load("healthbar_empty_start.png", Texture.class);

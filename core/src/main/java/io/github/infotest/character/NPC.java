@@ -35,7 +35,7 @@ public class NPC extends Actor {
 
     public int maxItemsNumber=3;
 
-    public NPC(String id, String name, int maxHealthPoints, Vector2 startPosition, float speed, int gender, int type ,MyAssetManager assetManager) {
+    public NPC(String id, String name, int maxHealthPoints, Vector2 startPosition, float speed, int gender, int type, int marketTextureID ,MyAssetManager assetManager) {
         super(maxHealthPoints, startPosition, speed);
         this.name = name;
         this.id=id;
@@ -48,7 +48,7 @@ public class NPC extends Actor {
 //        items[0] = new Apple(assetManager);
 //        items[1] = new Apple(assetManager);
 //        items[2] = new Apple(assetManager);
-        updateMarket(0, items);
+        updateMarket(marketTextureID, items);
     }
 
     private void initMarketMap(){

@@ -52,7 +52,7 @@ public class MapCreator {
         //Example:
         int centralPointX = MAP_SIZE *CELL_SIZE / 2; // centralPointX=48000
         int centralPointY = MAP_SIZE *CELL_SIZE / 2; // centralPointY=48000
-        npcs.add(new NPC("Unknown",100,new Vector2(centralPointX,centralPointY),0,2));
+        npcs.add(new NPC("Unknown",100,new Vector2(centralPointX,centralPointY),0,2,0));
 
 
         return npcs;

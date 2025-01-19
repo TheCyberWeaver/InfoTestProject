@@ -342,7 +342,7 @@ public class ServerConnection {
 //                Logger.log("Debug:"+socketId+" | "+playerData.name);
                 float x = npcData.position.x;
                 float y = npcData.position.y;
-                NPC npc = NPCFactory.createNPC(npcData.id, npcData.name,npcData.maxHP,new Vector2(x,y),npcData.gender,npcData.type,assetManager);
+                NPC npc = NPCFactory.createNPC(npcData.id, npcData.name,npcData.maxHP,new Vector2(x,y),npcData.gender,npcData.type, npcData.marketTextureID,assetManager);
                 npc.updateItems(npcData.itemIDs);
                 allNPCs.add(npc);
             }

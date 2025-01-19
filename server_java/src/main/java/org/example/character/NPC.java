@@ -13,6 +13,7 @@ public class NPC {
     // 2.: Type: 0-7 NPC Type
     public int gender;
     public int type;
+    public int marketTextureID;
     //public ArrayList<Item> market;
 
     public int maxHP;
@@ -21,7 +22,7 @@ public class NPC {
 
     public ArrayList<String> itemIDs=new ArrayList<>();
 
-    public NPC(String name, int maxHealthPoints, Vector2 startPosition, int gender, int type) {
+    public NPC(String name, int maxHealthPoints, Vector2 startPosition, int gender, int type, int marketTextureID) {
         this.name = name;
         this.id= UUID.randomUUID().toString();
         this.maxHP = maxHealthPoints;
@@ -29,6 +30,7 @@ public class NPC {
         this.position = new Vector2(startPosition);
         this.gender = gender%2;
         this.type = type%8;
+        this.marketTextureID = marketTextureID;
 
         itemIDs.add("Apple_1");
         itemIDs.add("Apple_2");
