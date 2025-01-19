@@ -217,10 +217,15 @@ public class UI_Layer implements ApplicationListener {
     }
     public void renderMarketItems(Batch batch, Item[] items, ArrayList<Vector2> offset){
         float screenScaleX = Gdx.graphics.getWidth()/windowSize.x * nScale;
+
         for (int i=0; i<items.length; i++){
+
             Item item = items[i];
             Vector2 itemOffset = offset.get(i);
             if (item != null){
+
+
+
                 batch.draw(item.getTexture(),
                     localPlayer.getX()+(itemOffset.x-51f)*screenScaleX,
                     localPlayer.getY()+(itemOffset.y-76f)*screenScaleX,

@@ -329,11 +329,10 @@ public class ServerConnection {
     private void updateNPCs(ArrayList<NPCData> NPCsMap){
         // playersMap 中每一个 key 都是一个 socketId，
         // value 则是对应的 PlayerData 对象
-        allNPCs=new ArrayList<>();
         for (NPCData npcData : NPCsMap) {
             boolean found = false;
             for(NPC npc : allNPCs){
-                if (npcData.id==npc.id){
+                if (npcData.id.equals(npc.id)){
                     found = true;
                     npc.updateItems(npcData.itemIDs);
                     break;

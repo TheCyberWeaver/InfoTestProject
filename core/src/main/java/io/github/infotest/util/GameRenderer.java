@@ -145,12 +145,13 @@ public class GameRenderer {
         }
     }
 
-    public void renderNPCs(SpriteBatch batch, ArrayList<NPC> allNPCs, float deltaTime) {
+    public void renderNPCs(SpriteBatch batch, float deltaTime) {
         if (allNPCs == null) {
             Logger.log("NPCs is null");
             return;
         }
-        for (NPC npc : allNPCs) {
+        for (int i=0; i<allNPCs.size(); i++) {
+            NPC npc = allNPCs.get(i);
             npc.render(batch, deltaTime);
         }
     }

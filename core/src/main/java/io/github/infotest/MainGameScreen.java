@@ -203,12 +203,25 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
             }
 
-            gameRenderer.renderNPCs(batch, allNPCs, delta);
+            gameRenderer.renderNPCs(batch, delta);
             gameRenderer.renderAnimations(batch,delta,shapeRenderer);
 
             // Render Market and Items
             if (currentTradingToNPC != null) {
                 uiLayer.renderMarket(batch, currentTradingToNPC.getMarketTexture());
+
+//                String str="";
+//                for(Item i:currentTradingToNPC.getMarket()){
+//                    str+=i;
+//                }
+//                Logger.log("[MainGameScreen INFO 1]: " + str);
+//
+//                str="";
+//                for(Item i:allNPCs.get(0).getMarket()){
+//                    str+=i;
+//                }
+//                Logger.log("[MainGameScreen INFO 2]: " + str);
+
                 uiLayer.renderMarketItems(batch, currentTradingToNPC.getMarket(), currentTradingToNPC.getNPC_marketMapValue(currentTradingToNPC.getMarketTextureID()));
                 handleUIInput(batch, delta);
             }
