@@ -24,6 +24,6 @@ dependencies {
 
 application {
     // 入口类
-    mainClass = 'org.example.GameSocketServer'
+    mainClass = 'org.example.ServerLauncher'
     applicationDefaultJvmArgs = ["-Xmx1g"]
 }

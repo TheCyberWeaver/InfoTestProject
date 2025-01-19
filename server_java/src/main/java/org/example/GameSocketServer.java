@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GameSocketServer {
-
+    private static boolean running = false;
     /**
      * fixed seed:114514 (Meaning of this number could be found on internet)
      */
@@ -39,7 +39,8 @@ public class GameSocketServer {
      */
     private static final Map<String, Player> players = new ConcurrentHashMap<>();
 
-    public static void main(String[] args) {
+    public static void runServer() {
+        running = true;
         // 0. Initialize the Server
         serverInitialization();
 
@@ -319,14 +320,13 @@ public class GameSocketServer {
             }
         }).start();
 
-        // To prevent the main thread from exiting, block here
-        // This can be changed to a more elegant way
-        try {
-            Thread.sleep(Integer.MAX_VALUE);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        server.stop();
+
+    }
+    public static void stopServer() {
+        // 你可以手动在这里把 running 置为 false，并且关闭 server
+        running = false;
+        // TODO: 如果你保留了 SocketIOServer server 的引用，就在这里执行 server.stop();
+        System.out.println("[Info] GameSocketServer 停止了");
     }
     private static void serverInitialization(){
         MapCreator mapCreator=new MapCreator(seed);
@@ -409,5 +409,10 @@ public class GameSocketServer {
             this.actionType = actionType;
             this.damage = damage;
         }
+    }
+
+    // 这个加一个 getter，供 GUI 显示
+    public static String getServerVersion(){
+        return serverVersion;
     }
 }
