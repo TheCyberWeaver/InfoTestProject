@@ -31,6 +31,9 @@ public class GameSocketServer {
 
     //NPC
     private static ArrayList<NPC> npcs= new ArrayList<>();
+
+    private static boolean needPlayerUpdate = true;
+    private static boolean needNPCUpdate = true;
     /**
      * Stores all connected players
      */
@@ -97,6 +100,9 @@ public class GameSocketServer {
             players.put(socketId, newPlayer);
             System.out.println("[INFO]: " + newPlayer.name + " " + newPlayer.classtype + " joins the world");
 
+
+            needNPCUpdate=true;
+            needPlayerUpdate=true;
             // Notify all clients to update the player list
             broadcastAllPlayers(server);
         });
@@ -109,7 +115,7 @@ public class GameSocketServer {
                 System.out.println("[INFO]: " + p.name + " " + p.classtype + " leaves the world");
             }
             players.remove(socketId);
-
+            needPlayerUpdate=true;
             // Send the playerLeft event to all clients
             server.getBroadcastOperations().sendEvent("playerLeft", socketId);
         });
@@ -128,7 +134,7 @@ public class GameSocketServer {
 
                 player.setPosition(x, y);
                 player.setRotation(rx, ry);
-
+                needPlayerUpdate=true;
 
             } else {
                 // Send a log message to the current client
@@ -239,6 +245,7 @@ public class GameSocketServer {
                     client.sendEvent("errorMsg", "Unknown attack type: " + actionType);
                     break;
             }
+            needPlayerUpdate=true;
         });
         server.addEventListener("playerTradeWithNPC", Object.class, (client, data, ackSender) -> {
             System.out.println("playerTradeWithNPC: " + data);
@@ -266,6 +273,8 @@ public class GameSocketServer {
             }else{
                 System.out.println("[Trading error]: player or NPC is NULL");
             }
+            needNPCUpdate=true;
+            needPlayerUpdate=true;
         });
 
 
@@ -311,8 +320,14 @@ public class GameSocketServer {
      * Push the latest player list to all clients
      */
     private static void broadcastAllPlayers(SocketIOServer server) {
-        server.getBroadcastOperations().sendEvent("updateAllPlayers", players);
-        server.getBroadcastOperations().sendEvent("updateAllNPCs", npcs);
+        if(needPlayerUpdate){
+            server.getBroadcastOperations().sendEvent("updateAllPlayers", players);
+            needPlayerUpdate=false;
+        }
+        if(needNPCUpdate){
+            server.getBroadcastOperations().sendEvent("updateAllNPCs", npcs);
+            needNPCUpdate=false;
+        }
     }
 
     static class playerMessageData extends ActionData {
