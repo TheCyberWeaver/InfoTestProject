@@ -40,10 +40,17 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     // Map data
     public static int GLOBAL_SEED; // this will be assigned by the seed from server
     public static final int CELL_SIZE = 32;
-    public static final int MAP_SIZE = 1000;
-    public static int numOfValidTextures = 5;
+    public static final int MAP_SIZE = 100;
+    public static int numOfValidTextures = 6;
+    public static int numOfValidDeco = 13;
+
     public static int[][] GAME_MAP=new int[MAP_SIZE][MAP_SIZE];
     public static int[][] ROTATION_MAP=new int[MAP_SIZE][MAP_SIZE];
+    public static String[][] FADE_MAP=new String[MAP_SIZE][MAP_SIZE];
+    public static int[][] DECO_MAP=new int[MAP_SIZE][MAP_SIZE];
+    public static float[][] DECO_PROB = new float[numOfValidTextures][numOfValidDeco];
+    public static float[][] DECO_SCALE_MAP=new float[MAP_SIZE][MAP_SIZE];
+    public static Vector2[][] DECO_OFFSET_MAP=new Vector2[MAP_SIZE][MAP_SIZE];
 
     // User character
     public static Player localPlayer;
@@ -73,7 +80,94 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     public MainGameScreen(Game game) {
         this.game = (Main) game;
         this.camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        initDeco_prob();
         create();
+    }
+
+    private void initDeco_prob(){
+        DECO_PROB[0][0] = 0.1f;
+        DECO_PROB[0][1] = 0.15f;
+        DECO_PROB[0][2] = 0.05f;
+        DECO_PROB[0][3] = 0.005f;
+        DECO_PROB[0][4] = 0f;
+        DECO_PROB[0][5] = 0f;
+        DECO_PROB[0][6] = 0f;
+        DECO_PROB[0][7] = 0f;
+        DECO_PROB[0][8] = 0f;
+        DECO_PROB[0][9] = 0f;
+        DECO_PROB[0][10] = 0.1f;
+        DECO_PROB[0][11] = 0.1f;
+        DECO_PROB[0][12] = 0.1f;
+
+        DECO_PROB[1][0] = 0.1f;
+        DECO_PROB[1][1] = 0.15f;
+        DECO_PROB[1][2] = 0.1f;
+        DECO_PROB[1][3] = 0.1f;
+        DECO_PROB[1][4] = 0.05f;
+        DECO_PROB[1][5] = 0.05f;
+        DECO_PROB[1][6] = 0.075f;
+        DECO_PROB[1][7] = 0.075f;
+        DECO_PROB[1][8] = 0.005f;
+        DECO_PROB[1][9] = 0f;
+        DECO_PROB[1][10] = 0.1f;
+        DECO_PROB[1][11] = 0.2f;
+        DECO_PROB[1][12] = 0.2f;
+
+        DECO_PROB[2][0] = 0f;
+        DECO_PROB[2][1] = 0f;
+        DECO_PROB[2][2] = 0f;
+        DECO_PROB[2][3] = 0f;
+        DECO_PROB[2][4] = 0f;
+        DECO_PROB[2][5] = 0f;
+        DECO_PROB[2][6] = 0f;
+        DECO_PROB[2][7] = 0f;
+        DECO_PROB[2][8] = 0f;
+        DECO_PROB[2][9] = 0f;
+        DECO_PROB[2][10] = 0f;
+        DECO_PROB[2][11] = 0f;
+        DECO_PROB[2][12] = 0f;
+
+        DECO_PROB[3][0] = 0f;
+        DECO_PROB[3][1] = 0f;
+        DECO_PROB[3][2] = 0f;
+        DECO_PROB[3][3] = 0f;
+        DECO_PROB[3][4] = 0f;
+        DECO_PROB[3][5] = 0f;
+        DECO_PROB[3][6] = 0f;
+        DECO_PROB[3][7] = 0f;
+        DECO_PROB[3][8] = 0f;
+        DECO_PROB[3][9] = 0f;
+        DECO_PROB[3][10] = 0f;
+        DECO_PROB[3][11] = 0f;
+        DECO_PROB[3][12] = 0f;
+
+        DECO_PROB[4][0] = 0f;
+        DECO_PROB[4][1] = 0f;
+        DECO_PROB[4][2] = 0f;
+        DECO_PROB[4][3] = 0f;
+        DECO_PROB[4][4] = 0f;
+        DECO_PROB[4][5] = 0f;
+        DECO_PROB[4][6] = 0f;
+        DECO_PROB[4][7] = 0f;
+        DECO_PROB[4][8] = 0f;
+        DECO_PROB[4][9] = 0f;
+        DECO_PROB[4][10] = 0f;
+        DECO_PROB[4][11] = 0f;
+        DECO_PROB[4][12] = 0f;
+
+        DECO_PROB[5][0] = 0f;
+        DECO_PROB[5][1] = 0f;
+        DECO_PROB[5][2] = 0f;
+        DECO_PROB[5][3] = 0f;
+        DECO_PROB[5][4] = 0f;
+        DECO_PROB[5][5] = 0f;
+        DECO_PROB[5][6] = 0f;
+        DECO_PROB[5][7] = 0f;
+        DECO_PROB[5][8] = 0f;
+        DECO_PROB[5][9] = 0f;
+        DECO_PROB[5][10] = 0f;
+        DECO_PROB[5][11] = 0f;
+        DECO_PROB[5][12] = 0f;
     }
 
     public void create() {
@@ -85,9 +179,14 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         assetManager = new MyAssetManager();
 
         assetManager.loadLoadingScreen();
+
         assetManager.loadMapAssets();
         assetManager.loadSkillBarAsset();
         assetManager.loadGoldBarAsset();
+
+        assetManager.loadMapFadeAssets();
+        assetManager.loadMapDecoAssets();
+        assetManager.loadMapTreeAssets();
 
         assetManager.loadPlayerAssets();
 
@@ -108,6 +207,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
         assetManager.loadItemBarAssets();
         assetManager.loadItemAssets();
+
 
         assetManager.manager.finishLoading();
 
@@ -206,6 +306,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
             gameRenderer.renderNPCs(batch, delta);
             gameRenderer.renderAnimations(batch,delta,shapeRenderer);
+            gameRenderer.renderTrees(batch, camera.zoom, localPlayer.getPosition());
 
             // Render Market and Items
             if (currentTradingToNPC != null) {
