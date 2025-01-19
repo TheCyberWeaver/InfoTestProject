@@ -1,4 +1,6 @@
 package org.example;
+//Author: GPT o1
+
 public class GameSocketServerRunnable implements Runnable {
     private boolean running = true;
 

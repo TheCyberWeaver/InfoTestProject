@@ -39,6 +39,7 @@ public class GameSocketServer {
      */
     private static final Map<String, Player> players = new ConcurrentHashMap<>();
 
+    private static SocketIOServer server;
     public static void runServer() {
         running = true;
         // 0. Initialize the Server
@@ -51,7 +52,7 @@ public class GameSocketServer {
         config.setPort(9595);
 
         // 2. Create the server object
-        final SocketIOServer server = new SocketIOServer(config);
+        server = new SocketIOServer(config);
         System.out.println("[Info]: Starting server...");
         // 3. When a client connects
         server.addConnectListener(client -> {
@@ -324,9 +325,8 @@ public class GameSocketServer {
     }
     public static void stopServer() {
         // 你可以手动在这里把 running 置为 false，并且关闭 server
+        server.stop();
         running = false;
-        // TODO: 如果你保留了 SocketIOServer server 的引用，就在这里执行 server.stop();
-        System.out.println("[Info] GameSocketServer 停止了");
     }
     private static void serverInitialization(){
         MapCreator mapCreator=new MapCreator(seed);
