@@ -107,6 +107,7 @@ public abstract class Player extends Actor{
         GlyphLayout layout = new GlyphLayout(font, name);
         float textWidth = layout.width;
         font.draw(batch, name, predictedPosition.x + (CELL_SIZE /2f) - textWidth/2f  , predictedPosition.y + 80);
+        updateTileUnderID();
     }
 
     @Override

@@ -4,6 +4,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.TimeUtils;
+import io.github.infotest.MainGameScreen;
+import io.github.infotest.util.Logger;
 import io.github.infotest.util.MyAssetManager;
 import io.github.infotest.util.ServerConnection;
 
@@ -23,6 +26,7 @@ public abstract class Actor {
     protected Vector2 velocity;
     protected float lerpSpeed = 20f;
     protected Vector2 rotation;
+    protected int tileUnderID;
 
     // LibGDX related
     protected Texture texture;     // character texture
@@ -107,6 +111,15 @@ public abstract class Actor {
 
     public void kill(){
         isAlive = false;
+    }
+
+    public void updateTileUnderID() {
+        Vector2 predictedPosition = predictPosition();
+        Logger.log(predictedPosition.toString());
+        if (predictedPosition.x <= MainGameScreen.MAP_SIZE*32 && predictedPosition.y <= MainGameScreen.MAP_SIZE*32) {
+            tileUnderID = MainGameScreen.GAME_MAP[(int) (predictedPosition.x/32f)][(int) (predictedPosition.y/32f)];
+            Logger.log(tileUnderID+"");
+        }
     }
 
     /// Getter / Setter

@@ -138,6 +138,7 @@ public class NPC extends Actor {
     public void render(Batch batch, float delta) {
         batch.draw(new TextureRegion(texture), position.x, position.y, 0, 0,
             texture.getWidth(), texture.getHeight(), 3/4f, 3/4f,0);
+        //updateTileUnderID();
     }
     @Override
     public void update(float delta) {

@@ -19,6 +19,7 @@ public abstract class Gegner extends  Actor{
         if (texture != null) {
             batch.draw(texture, predictedPosition.x, predictedPosition.y);
         }
+        //updateTileUnderID();
     }
 
     public void getKilled(Player p){

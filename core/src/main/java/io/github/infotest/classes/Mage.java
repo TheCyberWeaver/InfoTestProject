@@ -97,6 +97,7 @@ public class Mage extends Player {
 
     @Override
     public void render(Batch batch, float delta) {
+        super.render(batch, delta);
         Vector2 predictedPosition = predictPosition();
         Animation<TextureRegion> oldState = STATE;
         if(isAttacking) {
