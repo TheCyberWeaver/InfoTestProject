@@ -434,7 +434,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
             if (Gdx.input.isKeyPressed(Input.Keys.T) && showMessageTimer >= 1) {
 
-                localPlayer.showMessage("You Sucks!!!",serverConnection);
+                localPlayer.showMessage(ToxicLines.getToxicLines(),serverConnection);
                 //TODO show different messages
                 showMessageTimer = 0;
             }
