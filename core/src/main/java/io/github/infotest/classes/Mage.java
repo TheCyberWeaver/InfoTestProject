@@ -134,7 +134,7 @@ public class Mage extends Player {
             currentFrame.flip(true, false);
         }
 
-        currentFrame.setPosition(position.x-92, position.y-60);
+        currentFrame.setPosition(position.x-currentFrame.getWidth()/2f, position.y-currentFrame.getHeight()/2f);
         currentFrame.setOrigin(currentFrame.getWidth()/2, currentFrame.getHeight()/2);
         currentFrame.setScale(0.75f);
         currentFrame.draw(batch);

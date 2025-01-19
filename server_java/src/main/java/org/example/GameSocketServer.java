@@ -50,7 +50,7 @@ public class GameSocketServer {
         // Corresponds to server.listen(9595, '0.0.0.0');
         config.setHostname("0.0.0.0");
         config.setPort(9595);
-
+        config.setExceptionListener(new MyExceptionListener());
         // 2. Create the server object
         server = new SocketIOServer(config);
         System.out.println("[Info]: Starting server...");

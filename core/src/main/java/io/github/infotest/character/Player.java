@@ -111,7 +111,7 @@ public abstract class Player extends Actor{
         Vector2 predictedPosition = predictPosition();
         //1. draw texture if player has texture
         if (texture != null) {
-            batch.draw(texture, predictedPosition .x, predictedPosition .y,32,32);
+            batch.draw(texture, predictedPosition .x-texture.getWidth()/2f, predictedPosition .y-texture.getHeight()/2f,32,32);
         }
         //2. render Player name
         GlyphLayout layout = new GlyphLayout(font, name);
