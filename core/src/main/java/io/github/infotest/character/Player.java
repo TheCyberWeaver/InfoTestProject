@@ -367,6 +367,7 @@ public abstract class Player extends Actor{
     }
     public void kill(ServerConnection serverConnection) {
         super.kill();
+        this.gold=0;
         serverConnection.sendPlayerDeath(this);
     }
     public void setRotation(Vector2 rotation) {
@@ -400,5 +401,13 @@ public abstract class Player extends Actor{
 
     public boolean isSeeAllActive() {
         return seeAllActive;
+    }
+
+    public int getGold() {
+        return gold;
+    }
+
+    public void updateGold(int gold) {
+        this.gold = gold;
     }
 }

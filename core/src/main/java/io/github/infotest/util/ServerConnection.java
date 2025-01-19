@@ -281,9 +281,14 @@ public class ServerConnection {
 
         if (deathMessage != null) {
             if (allPlayers.get(deathMessage)!=null) {
-                String attackerName= allPlayers.get(deathMessage).getName();
-                String deadPlayerName = allPlayers.get(targetId).getName();
-                uiLayer.showDeathMessage(attackerName, deadPlayerName);
+                Player attacker= allPlayers.get(deathMessage);
+                String attackerName= attacker.getName();
+                Player deadPlayer = allPlayers.get(targetId);
+                if(deadPlayer != null){
+                    String deadPlayerName = deadPlayer.getName();
+                    uiLayer.showDeathMessage(attackerName, deadPlayerName);
+                }
+
             }
             else{
                 String deadPlayerName = allPlayers.get(targetId).getName();
@@ -322,6 +327,8 @@ public class ServerConnection {
                 player.updateItems(playerData.itemIDs, assetManager);
                 player.updateRotationFromPlayerData(playerData.rotation.x,playerData.rotation.y);
                 player.updateisAlive(playerData.isAlive);
+                player.updateGold(playerData.gold);
+                //Logger.log("[Serverconnection Debug]: "+playerData.gold);
                 //Logger.log("[INFO]: Player Rotation update " + playerData.rotation.x+" "+playerData.rotation.y);
             }
         }
@@ -454,6 +461,16 @@ public class ServerConnection {
             tradeWithNPCData.put("NPCID", npc.id);
             tradeWithNPCData.put("itemID", item.id);
             socket.emit("playerTradeWithNPC", tradeWithNPCData);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    public void sendPlayerUpdateGold(Player player){
+        JSONObject playerUpdateGoldData = new JSONObject();
+        try {
+            playerUpdateGoldData.put("gold", player.getGold()+"");
+            socket.emit("playerUpdateGold", playerUpdateGoldData);
 
         } catch (JSONException e) {
             e.printStackTrace();

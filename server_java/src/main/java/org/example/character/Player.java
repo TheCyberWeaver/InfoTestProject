@@ -47,6 +47,7 @@ public class Player {
     public Position rotation;
 
     public String lastAttackedBy = "[Nothing]";
+    public int gold;
 
     public Player(String id, String name) {
         this.id = id;
@@ -58,6 +59,7 @@ public class Player {
         this.classtype = "";
         this.level = 0;
         this.mana = 0;
+        this.gold=100;
         this.isAlive = true;
     }
 

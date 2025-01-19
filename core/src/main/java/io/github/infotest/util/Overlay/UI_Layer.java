@@ -15,7 +15,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.*;
 import io.github.infotest.item.Item;
 import io.github.infotest.util.GameRenderer;
-import io.github.infotest.util.Logger;
 import io.github.infotest.util.MyAssetManager;
 import io.github.infotest.util.MyMath;
 
@@ -45,13 +44,16 @@ public class UI_Layer implements ApplicationListener {
     private float base;
 
     //DeathMessage
-    private BitmapFont font;
+    private BitmapFont messageFont;
     private String deathMessage = null;
     private float deathMsgTimer = 0f;
     private float deathMsgDuration = 5f;      // How long the message is fully visible
     private float deathMsgFadeDuration = 2f; // How long the message takes to fade out
     private boolean isDeathMessageVisible = false;
     private GlyphLayout glyphLayout; // For text measurement
+
+    //GoldBar
+    private BitmapFont goldBarfont;
 
     public UI_Layer( MyAssetManager assetManager) {
         this.assetManager = assetManager;
@@ -70,8 +72,11 @@ public class UI_Layer implements ApplicationListener {
         this.batch = new SpriteBatch();
         this.shapeRenderer = new ShapeRenderer();
 
-        font = new BitmapFont();
-        font.getData().setScale(2.0f);
+        messageFont = new BitmapFont();
+        messageFont.getData().setScale(2.0f);
+
+        goldBarfont = new BitmapFont();
+        goldBarfont.getData().setScale(2.0f);
 
         glyphLayout = new GlyphLayout();
     }
@@ -121,7 +126,15 @@ public class UI_Layer implements ApplicationListener {
     }
     private void renderGoldBar(){
         Texture texture=assetManager.getGoldBarAsset();
-        batch.draw(texture,viewport.getWorldWidth()-texture.getWidth()-20,20);
+        float barStartX=viewport.getWorldWidth()-texture.getWidth()-20;
+        float barStartY=20;
+        batch.draw(texture,barStartX,barStartY);
+
+        glyphLayout.setText(goldBarfont,localPlayer.getGold()+"");
+        float textWidth = glyphLayout.width;
+        float textHeight = glyphLayout.height;
+
+        messageFont.draw(batch, glyphLayout, barStartX+140, barStartY+texture.getHeight()/2f);
     }
     private void renderSkillSymbol() {
 
@@ -181,7 +194,7 @@ public class UI_Layer implements ApplicationListener {
             // 3) Only render if alpha > 0
             if (alpha > 0f) {
                 // Measure text with glyphLayout, if you want proper sizing
-                glyphLayout.setText(font, deathMessage);
+                glyphLayout.setText(messageFont, deathMessage);
                 float textWidth = glyphLayout.width;
                 float textHeight = glyphLayout.height;
 
@@ -208,8 +221,8 @@ public class UI_Layer implements ApplicationListener {
 
                 // 5) Re‐begin the batch for text
                 batch.begin();
-                font.setColor(1f, 1f, 1f, alpha);
-                font.draw(batch, glyphLayout, x + padding, y - padding);
+                messageFont.setColor(1f, 1f, 1f, alpha);
+                messageFont.draw(batch, glyphLayout, x + padding, y - padding);
             }
         }
     }
@@ -292,8 +305,8 @@ public class UI_Layer implements ApplicationListener {
         }
         batch.dispose();
         // Dispose font if you created it in create()
-        if (font != null) {
-            font.dispose();
+        if (messageFont != null) {
+            messageFont.dispose();
         }
     }
 

@@ -195,6 +195,13 @@ public class GameSocketServer {
                         server.getBroadcastOperations().sendEvent("playerAction",
                             new ActionData(targetId, "PlayerDeath"));
 
+                        if(players.get(targetPlayer.lastAttackedBy)!=null) {
+                            players.get(targetPlayer.lastAttackedBy).gold+= targetPlayer.gold;
+                        }
+                        else{
+                            System.out.println("[Warning]: Cannot find attack Source Player");
+                        }
+                        targetPlayer.gold=0;
                         broadcastDeathMessage(server, targetPlayer.lastAttackedBy,targetId);
                     } else {
                         System.out.println("[Debug]: target is NULL");
@@ -248,7 +255,7 @@ public class GameSocketServer {
             needPlayerUpdate=true;
         });
         server.addEventListener("playerTradeWithNPC", Object.class, (client, data, ackSender) -> {
-            System.out.println("playerTradeWithNPC: " + data);
+            //System.out.println("playerTradeWithNPC: " + data);
 
             Gson gson = new Gson();
             JsonObject json = gson.toJsonTree(data).getAsJsonObject();
@@ -274,6 +281,20 @@ public class GameSocketServer {
                 System.out.println("[Trading error]: player or NPC is NULL");
             }
             needNPCUpdate=true;
+            needPlayerUpdate=true;
+        });
+
+        server.addEventListener("playerUpdateGold", Object.class, (client, data, ackSender) -> {
+            //System.out.println("playerUpdateGold: " + data);
+
+            Gson gson = new Gson();
+            JsonObject json = gson.toJsonTree(data).getAsJsonObject();
+            int gold = Integer.parseInt(json.get("gold").getAsString());
+
+            String socketId = client.getSessionId().toString();
+            Player player = players.get(socketId);
+            player.gold=gold;
+
             needPlayerUpdate=true;
         });
 

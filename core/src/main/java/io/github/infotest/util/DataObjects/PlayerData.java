@@ -17,6 +17,7 @@ public class PlayerData {
     public int level;
     public double mana;
     public Rotation rotation;
+    public int gold;
 
     public static class Position {
         public double x;
