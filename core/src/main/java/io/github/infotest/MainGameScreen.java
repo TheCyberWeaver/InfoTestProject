@@ -40,7 +40,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     // Map data
     public static int GLOBAL_SEED; // this will be assigned by the seed from server
     public static final int CELL_SIZE = 32;
-    public static final int MAP_SIZE = 100;
+    public static final int MAP_SIZE = 1000;
     public static int numOfValidTextures = 6;
     public static int numOfValidDeco = 13;
 
@@ -74,6 +74,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     private float survivalTimer=0;
     private float showMessageTimer=0;
     private float currentTradingToNPCTimer=0;
+    private float cameraZoomTimer=5;
 
     //Settings
     private float waitAfterDeath=7f;
@@ -394,6 +395,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         survivalTimer += delta;
         showMessageTimer += delta;
         currentTradingToNPCTimer+=delta;
+        cameraZoomTimer+=delta;
 
         numberOfNPCInTheLastFrame = allNPCs.size();
         clicked = false;
@@ -548,8 +550,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             }
 
             if(!isDevelopmentMode){
-                if(camera.zoom<=defaultCameraZoom)camera.zoom+=0.005;
-                if(camera.zoom>=defaultCameraZoom)camera.zoom-=0.005;
+                if(camera.zoom<=defaultCameraZoom && cameraZoomTimer>=2)camera.zoom+=0.005;
+                if(camera.zoom>=defaultCameraZoom && cameraZoomTimer>=2)camera.zoom-=0.005;
             }
         }
     }
@@ -574,12 +576,12 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
     public boolean scrolled(float amountX, float amountY) {
         camera.zoom += amountY * 0.1f;
         if(!isDevelopmentMode){
-            camera.zoom = Math.max(0.5f, Math.min(1.5f, camera.zoom));
+            camera.zoom = Math.max(0.25f, Math.min(1.5f, camera.zoom));
         }
         if(isDevelopmentMode){
             camera.zoom = Math.max(0.01f, camera.zoom);
         }
-
+        cameraZoomTimer=0;
         return true;
     }
     @Override
