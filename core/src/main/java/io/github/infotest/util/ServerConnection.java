@@ -3,6 +3,7 @@ package io.github.infotest.util;
 import com.badlogic.gdx.math.Vector2;
 import io.github.infotest.character.Player;
 import io.github.infotest.character.NPC;
+import io.github.infotest.item.Item;
 import io.github.infotest.util.DataObjects.NPCData;
 import io.github.infotest.util.DataObjects.PlayerData;
 import io.github.infotest.util.Factory.NPCFactory;
@@ -238,6 +239,7 @@ public class ServerConnection {
             }
         }
     }
+
     private void doPlayerAction(JSONObject data) throws JSONException {
         String actionType = data.getString("actionType");
         String playerID   = data.getString("playerID");
@@ -317,7 +319,7 @@ public class ServerConnection {
                 // Old Player - update position
                 player.updateTargetPosition(new Vector2(x, y));
                 player.updateHPFromPlayerData((float)playerData.hp);
-                player.updateItemFromPlayerData(playerData.itemIDs, assetManager);
+                player.updateItems(playerData.itemIDs, assetManager);
                 player.updateRotationFromPlayerData(playerData.rotation.x,playerData.rotation.y);
                 player.updateisAlive(playerData.isAlive);
                 //Logger.log("[INFO]: Player Rotation update " + playerData.rotation.x+" "+playerData.rotation.y);
@@ -329,12 +331,22 @@ public class ServerConnection {
         // value 则是对应的 PlayerData 对象
         allNPCs=new ArrayList<>();
         for (NPCData npcData : NPCsMap) {
-//            Logger.log("Debug:"+socketId+" | "+playerData.name);
-            float x = npcData.position.x;
-            float y = npcData.position.y;
-
-            NPC npc = NPCFactory.createNPC(npcData.name,npcData.maxHP,new Vector2(x,y),npcData.gender,npcData.type,assetManager);
-            allNPCs.add(npc);
+            boolean found = false;
+            for(NPC npc : allNPCs){
+                if (npcData.id==npc.id){
+                    found = true;
+                    npc.updateItems(npcData.itemIDs);
+                    break;
+                }
+            }
+            if (!found) {
+//                Logger.log("Debug:"+socketId+" | "+playerData.name);
+                float x = npcData.position.x;
+                float y = npcData.position.y;
+                NPC npc = NPCFactory.createNPC(npcData.id, npcData.name,npcData.maxHP,new Vector2(x,y),npcData.gender,npcData.type,assetManager);
+                npc.updateItems(npcData.itemIDs);
+                allNPCs.add(npc);
+            }
         }
     }
 
@@ -437,7 +449,17 @@ public class ServerConnection {
             e.printStackTrace();
         }
     }
+    public void sendPlayerTradeWithNPC(NPC npc, Item item){
+        JSONObject tradeWithNPCData = new JSONObject();
+        try {
+            tradeWithNPCData.put("NPCID", npc.id);
+            tradeWithNPCData.put("itemID", item.id);
+            socket.emit("playerTradeWithNPC", tradeWithNPCData);
 
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
     public void disconnect() {
         if (socket != null) {
             socket.disconnect();

@@ -83,12 +83,25 @@ public class Player {
         this.level = l;
     }
 
-    public void pickItem(String item) {
-        itemIDs.add(item);
+    public void pickItem(String itemID) {
+        boolean picked=false;
+        for(int i=0;i<itemIDs.size();i++) {
+            if(itemIDs.get(i)==null) {
+                itemIDs.set(i,itemID);
+                picked=true;
+            }
+        }
+        if(!picked) {
+            itemIDs.add(itemID);
+        }
     }
 
-    public void dropItem(String item) {
-        itemIDs.remove(item);
+    public void dropItem(String itemID) {
+        for(int i=0;i<itemIDs.size();i++) {
+            if(itemIDs.get(i)==itemID) {
+                itemIDs.set(i,null);
+            }
+        }
     }
 
     public void takeDamage(float damage) {

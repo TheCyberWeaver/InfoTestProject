@@ -136,28 +136,28 @@ public class GameSocketServer {
             }
         });
 
-        // 7. Handle pickItem
-        server.addEventListener("pickItem", String.class, (client, item, ackSender) -> {
-            String socketId = client.getSessionId().toString();
-            Player player = players.get(socketId);
-            if (player != null) {
-                player.pickItem(item);
-                // Notify all clients
-                server.getBroadcastOperations().sendEvent("playerPickedItem",
-                    new PickDropData(socketId, player.itemIDs));
-            }
-        });
-
-        // 8. Handle dropItem
-        server.addEventListener("dropItem", String.class, (client, item, ackSender) -> {
-            String socketId = client.getSessionId().toString();
-            Player player = players.get(socketId);
-            if (player != null) {
-                player.dropItem(item);
-                server.getBroadcastOperations().sendEvent("playerDroppedItem",
-                    new PickDropData(socketId, player.itemIDs));
-            }
-        });
+//        // 7. Handle pickItem
+//        server.addEventListener("pickItem", String.class, (client, item, ackSender) -> {
+//            String socketId = client.getSessionId().toString();
+//            Player player = players.get(socketId);
+//            if (player != null) {
+//                player.pickItem(item);
+//                // Notify all clients
+//                server.getBroadcastOperations().sendEvent("playerPickedItem",
+//                    new PickDropData(socketId, player.itemIDs));
+//            }
+//        });
+//
+//        // 8. Handle dropItem
+//        server.addEventListener("dropItem", String.class, (client, item, ackSender) -> {
+//            String socketId = client.getSessionId().toString();
+//            Player player = players.get(socketId);
+//            if (player != null) {
+//                player.dropItem(item);
+//                server.getBroadcastOperations().sendEvent("playerDroppedItem",
+//                    new PickDropData(socketId, player.itemIDs));
+//            }
+//        });
 
         // 9. Handle various player actions
         server.addEventListener("playerAction", Object.class, (client, data, ackSender) -> {
@@ -240,6 +240,34 @@ public class GameSocketServer {
                     break;
             }
         });
+        server.addEventListener("playerTradeWithNPC", Object.class, (client, data, ackSender) -> {
+            System.out.println("playerTradeWithNPC: " + data);
+
+            Gson gson = new Gson();
+            JsonObject json = gson.toJsonTree(data).getAsJsonObject();
+
+            String NPCID = json.get("NPCID").getAsString();
+            NPC npc = null;
+            for(NPC npctmp : npcs) {
+                if( npctmp.id.equals(NPCID)){
+                    npc=npctmp;
+                }
+            }
+
+            String itemID = json.get("itemID").getAsString();
+
+
+            String socketId = client.getSessionId().toString();
+            Player player = players.get(socketId);
+            if (player != null && npc != null) {
+                System.out.println("[Trading]: Player"+player.name+" is traded ["+itemID+"] with "+npc.id);
+                player.pickItem(itemID);
+                npc.dropItem(itemID);
+            }else{
+                System.out.println("[Trading error]: player or NPC is NULL");
+            }
+        });
+
 
         // 10. Start the server
         server.start();

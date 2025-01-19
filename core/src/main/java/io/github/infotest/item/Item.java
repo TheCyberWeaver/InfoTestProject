@@ -10,8 +10,10 @@ public abstract class Item {
     public String description;
     private Texture texture; // Texture, wie das Item im Inventory/ market aussieht // ItemTexture: 14x14 Pixel
 
-    public Item(String name, String description, Texture texture) {
+    public Item(String id,String name, String description, Texture texture) {
         this.name = name;
+        this.id=id;
+        this.description=description;
         this.texture = texture;
     }
 

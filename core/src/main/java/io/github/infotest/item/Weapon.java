@@ -10,8 +10,8 @@ public class Weapon extends Item {
     //private float weight;
     private int durability;
 
-    public Weapon(MyAssetManager assetManager, int damage, float range) {
-        super("weapon", "just a weapon", assetManager.getLoadingScreenTexture());
+    public Weapon(String id,MyAssetManager assetManager, int damage, float range) {
+        super(id,"weapon", "just a weapon", assetManager.getLoadingScreenTexture());
         this.damage = damage;
         this.range = range;
         //this.weight = weight;

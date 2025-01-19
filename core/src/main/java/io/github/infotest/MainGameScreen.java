@@ -294,7 +294,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
                 Vector2 itemPos = currentTradingToNPC.getItemPos(i, localPlayer, uiLayer.getNScale(), uiLayer.getWindowSize());
                 if (MyMath.inInPixelRange(itemPos, clickPosition, 21)) {
                     //Player has Clicked on Item
-                    currentTradingToNPC.trade(i, localPlayer);
+                    currentTradingToNPC.trade(i, localPlayer,serverConnection);
                 }
             }
         } else if (clickPos.equals(oldPosition) && clicked) {
@@ -382,17 +382,32 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             //Debug Player status
             if (Gdx.input.isKeyPressed(Input.Keys.P) && isDevelopmentMode && debugTimer >= 1) {
 
-                Logger.log("-----[Debug: showing player status]-----");
-                Logger.log("socketID | Name | HP | ItemsLength | alive");
-                for (Map.Entry<String, Player> stringPlayerEntry : allPlayers.entrySet()) {
-                    Player tmpPlayer = stringPlayerEntry.getValue();
-                    Logger.log(stringPlayerEntry.getKey() + " " + tmpPlayer.getName() + " " + tmpPlayer.getHealthPoints() + " " + tmpPlayer.getItems().size() + " " + tmpPlayer.isAlive());
+//                Logger.log("-----[Debug: showing player status]-----");
+//                Logger.log("socketID | Name | HP | ItemsLength | alive");
+//                for (Map.Entry<String, Player> stringPlayerEntry : allPlayers.entrySet()) {
+//                    Player tmpPlayer = stringPlayerEntry.getValue();
+//                    Logger.log(stringPlayerEntry.getKey() + " " + tmpPlayer.getName() + " " + tmpPlayer.getHealthPoints() + " " + tmpPlayer.getItems().size() + " " + tmpPlayer.isAlive());
+//                    StringBuilder str = new StringBuilder();
+//                    for (Item i : tmpPlayer.getItems()) {
+//                        if (i == null) {
+//                            str.append("null ");
+//                        } else {
+//                            str.append(i).append(" ");
+//                        }
+//                    }
+//                    Logger.log("-> Items: " + str);
+//                }
+//                Logger.log("-----[Debug END]-----");
+                Logger.log("-----[Debug: showing npc status]-----");
+                for (NPC npc : allNPCs) {
+
+                    Logger.log(npc.getName() + " " + npc.getHealthPoints() +" "+ npc.getMarket().length);
                     StringBuilder str = new StringBuilder();
-                    for (Item i : tmpPlayer.getItems()) {
+                    for (Item i : npc.getMarket()) {
                         if (i == null) {
                             str.append("null ");
                         } else {
-                            str.append(i).append(" ");
+                            str.append(i.id).append(" ");
                         }
                     }
                     Logger.log("-> Items: " + str);

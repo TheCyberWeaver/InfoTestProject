@@ -5,10 +5,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import io.github.infotest.item.Apple;
 import io.github.infotest.item.Item;
+import io.github.infotest.util.Factory.ItemFactory;
 import io.github.infotest.util.Logger;
 import io.github.infotest.util.MyAssetManager;
+import io.github.infotest.util.ServerConnection;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +17,7 @@ import java.util.HashMap;
 import static io.github.infotest.MainGameScreen.uiLayer;
 
 public class NPC extends Actor {
-
+    public String id;
     protected String name;
     // 1.: Gender: 0 = male, 1 = female
     // 2.: Type: 0-7 NPC Type
@@ -32,19 +33,21 @@ public class NPC extends Actor {
     protected MyAssetManager assetManager;
 
 
+    public int maxItemsNumber=3;
 
-    public NPC(String name, int maxHealthPoints, Vector2 startPosition, float speed, int gender, int type, MyAssetManager assetManager) {
+    public NPC(String id, String name, int maxHealthPoints, Vector2 startPosition, float speed, int gender, int type ,MyAssetManager assetManager) {
         super(maxHealthPoints, startPosition, speed);
         this.name = name;
+        this.id=id;
         this.genderType = new Vector2(gender%2, type%8);
         this.isTrading = false;
         this.assetManager = assetManager;
         this.texture = genderTypeToTexture(gender%2, type%8);
         initMarketMap();
-        Item[] items = new Item[3];
-        items[0] = new Apple(assetManager);
-        items[1] = new Apple(assetManager);
-        items[2] = new Apple(assetManager);
+        Item[] items = new Item[maxItemsNumber]; //max Possible number of items
+//        items[0] = new Apple(assetManager);
+//        items[1] = new Apple(assetManager);
+//        items[2] = new Apple(assetManager);
         updateMarket(0, items);
     }
 
@@ -152,14 +155,15 @@ public class NPC extends Actor {
 
     }
 
-    public void trade(int itemID, Player player) {
-        if (itemID >= 0){
-            Item item = market[itemID];
+    public void trade(int itemIndex, Player player, ServerConnection serverConnection) {
+        if (itemIndex >= 0){
+            Item item = market[itemIndex];
             if (player.addItem(item)) {
-                market[itemID] = null;
+                market[itemIndex] = null;
             } else if (item != null) {
                 uiLayer.startSignRendering(0.5f, 1, 20);
             }
+            serverConnection.sendPlayerTradeWithNPC(this, item);
         }
     }
 
@@ -205,7 +209,14 @@ public class NPC extends Actor {
         return awns;
     }
 
-
+    public void updateItems(ArrayList<String> itemIDs){
+        for(int i = 0; i < itemIDs.size(); i++){
+            market[i%maxItemsNumber]= ItemFactory.createItem(itemIDs.get(i),assetManager);
+        }
+        for(int i = itemIDs.size(); i < maxItemsNumber; i++){
+            market[i]= null;
+        }
+    }
     @Override
     public String toString() {
         return "NPC: " + name;

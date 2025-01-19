@@ -355,10 +355,12 @@ public abstract class Player extends Actor{
     public void setId(String id) {
         this.id = id;
     }
-    public void updateItemFromPlayerData(String[] playerDataItems, MyAssetManager assetManager) {
-        for (String itemName : playerDataItems) {
-            Item item = ItemFactory.createItem(itemName, assetManager);
-            items.add(item);
+    public void updateItems(ArrayList<String> itemIDs,MyAssetManager assetManager){
+        for(int i = 0; i < itemIDs.size(); i++){
+            items.set(i % INV_SIZE, ItemFactory.createItem(itemIDs.get(i), assetManager));
+        }
+        for(int i = itemIDs.size(); i < INV_SIZE; i++){
+            items.set(i % INV_SIZE, null);
         }
     }
     public void kill(ServerConnection serverConnection) {

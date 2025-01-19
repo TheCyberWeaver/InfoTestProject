@@ -14,11 +14,25 @@ public class ItemFactory {
      * @throws IllegalArgumentException if the item name is not recognized
      */
     public static Item createItem(String itemID, MyAssetManager assetManager) {
-        switch (itemID) {
+        if(itemID==null)return null;
+        String itemName = getNameFromId(itemID);
+        switch (itemName) {
             case "Apple":
-                return new Apple(assetManager);
+                return new Apple(itemID, assetManager);
+
             default:
-                throw new IllegalArgumentException("Unknown item: " + itemID);
+                throw new IllegalArgumentException("Unknown item: " + itemName);
         }
     }
+    public static String getNameFromId(String itemID) {
+        if(itemID==null){
+            return null;
+        }
+        String[] parts = itemID.split("_");
+        if (parts.length > 0) {
+            return parts[0];
+        }
+        return null;
+    }
+
 }
