@@ -1,6 +1,7 @@
 package io.github.infotest.util;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 
 public class MyAssetManager {
@@ -330,4 +331,16 @@ public class MyAssetManager {
         manager.load("item/apple.png", Texture.class);
     }
 
+    public void loadStartGameMusicAssets(){
+        manager.load("music/StartGameMusic_1.mp3", Music.class);
+    }
+    public Music getStartGameMusicAssets(){
+        return manager.get("music/StartGameMusic_1.mp3", Music.class);
+    }
+    public void loadMainGameMusicAssets(){
+        manager.load("music/mainGameMusic_1.wav", Music.class);
+    }
+    public Music getMainGameMusicAssets(){
+        return manager.get("music/mainGameMusic_1.wav", Music.class);
+    }
 }

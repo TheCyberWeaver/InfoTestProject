@@ -5,6 +5,7 @@ package io.github.infotest;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -16,6 +17,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.infotest.util.Logger;
+import io.github.infotest.util.MyAssetManager;
 
 import static io.github.infotest.GameSettings.*;
 
@@ -32,15 +34,25 @@ public class StartScreen implements Screen {
     private final SpriteBatch batch;
     private final Texture texture;
 
+    private  MyAssetManager assetManager;
     public StartScreen(Main game) {
         this.game = game;
         this.batch = new SpriteBatch();
         texture=new Texture("ui/startscreen.png");
+
+        assetManager=new MyAssetManager();
+        assetManager.loadStartGameMusicAssets();
+        assetManager.manager.finishLoading();
     }
 
     @Override
     public void show() {
         Logger.log("[StartScreen] StartScreen started");
+
+        Music music =assetManager.getStartGameMusicAssets();
+        music.setLooping(true);
+        music.play();
+
         // Viewport initialization
         viewport = new ScreenViewport();
         stage = new Stage(viewport);

@@ -1,6 +1,7 @@
 package io.github.infotest;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -78,6 +79,8 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
 
     //Settings
     private float waitAfterDeath=7f;
+
+    Music music;
     public MainGameScreen(Game game) {
         this.game = (Main) game;
         this.camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -209,6 +212,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         assetManager.loadItemBarAssets();
         assetManager.loadItemAssets();
 
+        assetManager.loadMainGameMusicAssets();
 
         assetManager.manager.finishLoading();
 
@@ -248,6 +252,10 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
         }
 
         currentTradingToNPC = null;
+
+        music=assetManager.getMainGameMusicAssets();
+        music.setLooping(true);
+        music.play();
     }
     @Override
     public void onSeedReceived(int seed) {
@@ -384,6 +392,7 @@ public class MainGameScreen implements Screen, InputProcessor, ServerConnection.
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
+                    music.stop();
                     // Switch to the EndScreen, passing player's survival time, etc.
                     game.endGame(survivalTimer);
                 }
