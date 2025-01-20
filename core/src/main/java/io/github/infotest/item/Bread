@@ -1,0 +1,15 @@
+package io.github.infotest.item;
+
+import io.github.infotest.util.MyAssetManager;
+
+public class Bread extends Item {
+    public String color;
+
+//gibt 10 HP oder so
+    public Apple(MyAssetManager assetManager) {
+        super("bread","just a loaf of bread", assetManager.getLoadingScreenTexture());
+    }
+    public void render(){
+
+    }
+}
