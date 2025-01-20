@@ -26,7 +26,7 @@ public abstract class Gegner extends  Actor{
     }
 
 
-    public Player findPlayer(allPlayers.value Player){
+    public Player findPlayer(){
         if (allPlayers == null){
             return null;
         } else{
