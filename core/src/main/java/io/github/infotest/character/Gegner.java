@@ -27,11 +27,11 @@ public abstract class Gegner extends  Actor{
 
 
     public Player findPlayer(){
-        if (allPlayers == null){
-            return null;
-        } else{
-            distance = position.dst (player.getPosition());
-        }
+//        if (allPlayers == null){
+//            return null;
+//        } else{
+//            distance = position.dst (player.getPosition());
+//        }
         Player closestPlayer = null;
         float shortestDistance = Float.MAX_VALUE;
         for (int i = 0; i < allPlayers.length; i++){
